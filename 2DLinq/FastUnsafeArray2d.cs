@@ -140,9 +140,9 @@ namespace System.Linq.Processing2d.FastUnsafe
             where T : unmanaged
             where R : unmanaged
         {
-            var ab = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("StripeHandler"), AssemblyBuilderAccess.RunAndSave);
+            var ab = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("StripeHandler"), AssemblyBuilderAccess.RunAndCollect);
 
-            var tb = ab.DefineDynamicModule("StripeHandler", "StripeHandler.dll").DefineType("StripeHandler" + kernel.Method.Name, TypeAttributes.Class | TypeAttributes.Public);
+            var tb = ab.DefineDynamicModule("StripeHandler", "StripeHandler.dll").DefineType("StripeHandler", TypeAttributes.Class | TypeAttributes.Public);
 
             var length = tb.DefineField("_length", typeof(int), FieldAttributes.Private);
             var sourcePtr = tb.DefineField("_sourcePtr", typeof(T*), FieldAttributes.Private);
@@ -157,8 +157,6 @@ namespace System.Linq.Processing2d.FastUnsafe
             var t = tb.CreateType();
             var constructor = t.GetConstructor((from p in cb.GetParameters() select p.ParameterType).ToArray());
             var runMethod = t.GetMethod(rm.Name); // there is only one method with this name
-
-            ab.Save("StripeHandler.dll");
 
             return PrepareFactory<T>(constructor, runMethod);
         }
@@ -277,13 +275,6 @@ namespace System.Linq.Processing2d.FastUnsafe
 
             //return (T* srcPtr, int length, long delta, int width, object target) => Activator.CreateInstance(typeof(T), new object[] { (object)srcPtr, length, delta, width, target });
         }
-
-        public static void Print(MethodInfo method)
-        {
-            var ilr = ILReaderFactory.Create(method);
-            ilr.Accept(new ReadableILStringVisitor(new ReadableILStringToTextWriter(Console.Out)));
-        }
-        //public static SpecialArray<T> AsRelative<T>(this T[,] source, Bounds boundPolicy) => new SpecialArray<T>(source);
 
         public static R[,] Select<T, R>(this T[,] source, Func<T, R> kernel)
             where T : unmanaged

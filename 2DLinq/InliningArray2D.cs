@@ -85,11 +85,6 @@ namespace System.Linq.Processing2d.Fast
             //Print(inlined.Method);
             return data => inlined(kernel.Target, data);
         }
-        public static void Print(MethodInfo method)
-        {
-            var ilr = ILReaderFactory.Create(method);
-            ilr.Accept(new ReadableILStringVisitor(new ReadableILStringToTextWriter(Console.Out)));
-        }
 
         public static IArray2d<R> Select<T, R>(this T[,] source, Func<T, R> kernel)
             => GenerateFilter<T,R>((cell) => kernel(cell[0, 0]))(new ArrayWrapper<T>(source));
