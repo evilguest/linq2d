@@ -48,7 +48,41 @@ Assert.Equal(sample, q.ToArray());
 ```
 This time the number of cells being added for every target cell is the same, and the "general brightness" is preserved.
 In both cases above, Linq2d would verify the size of the input array to fit the provided filter kernel at least once. So, in the C4 case, an attempt to calculate the filter over an array smaller than (3 x 3) will fail.
-### Recurrent calculations
+### Multiple Results
+Sometimes same source data is used to create multiple resulting arrays:
+```csharp
+var left = new [,] { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 }};
+var right = new [,] { { 9, 8, 7 }, { 6, 5, 4 }, { 3, 2, 1 }};
+
+var sum = from l in left
+          from r in right
+          select l + r;
+
+var diff = from l in left
+           from r in right
+           select l - r;
+
+Assert.Equal(new [,] { { 10, 10, 10 }, { 10, 10, 10 }, { 10, 10, 10 }}, sum.ToArray());
+Assert.Equal(new [,] { { -8, -6, -4 }, { -2, 0, 2 }, { 4, 6, 8 }}, diff.ToArray());
+```
+
+Iterating only once can offer a better performance than repetitive iterations. This can be done by selecting a ValueTuple in the linq2d expression:
+```csharp
+var left = new [,] { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 }};
+var right = new [,] { { 9, 8, 7 }, { 6, 5, 4 }, { 3, 2, 1 }};
+
+var both = from l in left
+           from r in right
+           select ValueTuple.Create(l + r, l - r); 
+           // selecting (l + r, l - r) would be even better, but C# up to 7.3 doesn't support the tuple literals in Expression Trees. See also CS8743.
+
+var (s, d) = both.ToArrays(); // number and types of the arrays matches the number and types of the select clause members
+
+Assert.Equal(new [,] { { 10, 10, 10 }, { 10, 10, 10 }, { 10, 10, 10 }}, s);
+Assert.Equal(new [,] { { -8, -6, -4 }, { -2, 0, 2 }, { 4, 6, 8 }}, d);
+```
+
+### Recurrent Calculations
 Sometimes it might be useful to access the already calculated parts of the result array. For example, we might want to compute the "sum of all the cell values in the column from the current one (inclusive) to the top":
 ```csharp
 var sample = new[,] { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} };
@@ -60,6 +94,38 @@ Assert.Equal(new[,] { {1, 2, 3}, {5, 7, 9}, {12, 15, 18} }, q.ToArray();
 Result range variable is similar to the input reference, but it is a subject to a few extra limitations:
 - Only relative access is allowed. It is prohibited to get the "current" result value, since it hasn't been computed yet
 - It is required to provide the value for the result access outside of the result array, in an argument to the static `Result.SubstBy()` method.
+
+Multiple results selection can be combined with the recurrent calculation. Here is an expression that produces the integrals of both data and data squared:
+```csharp
+byte[,] grayImage = ImageHelpers.IO.LoadGrayScale("test.bmp");
+var integral = from g in grayImage
+               from ri in Result.SubstBy(0)  
+               from rq in Result.SubstBy(0)  
+               select ValueTuple.Create(
+                 g + ri[-1, 0] + ri[0, -1] - ri[-1, -1],
+                 g * g + rq[-1, 0] + rq[0, -1] - rq[-1, -1]);
+```
+
+The Result references should be the last in the sources list, and their count must be less than or equal to the count of the select clause members. 
+First Result reference refers to the member #1, second - to #2, and so on. I.e. if the result expression does not need the first recurrent result, then it should be ignored:
+```csharp
+byte[,] grayImage = ImageHelpers.IO.LoadGrayScale("test.bmp");
+var secondRecurrent = from g in grayImage
+               from _ in Result.SubstBy(0)  
+               from r in Result.SubstBy(0)  
+               select ValueTuple.Create(
+                 g * 2,
+                 g + r[-1, 0] + r[0, -1] - r[-1, -1]);
+```
+Same result could be achieved by swapping the order of the output parameters; then the dummy range variable is not needed:
+```csharp
+byte[,] grayImage = ImageHelpers.IO.LoadGrayScale("test.bmp");
+var secondRecurrent = from g in grayImage
+               from r in Result.SubstBy(0)  
+               select ValueTuple.Create(
+                 g + r[-1, 0] + r[0, -1] - r[-1, -1],
+                 g * 2);
+```
 ### Performance
 Performance is important in the numeric computations, especially when dealing with substantially large data sets.
 Linq2d attempts to alleviate the abstraction penalties incurred with the .Net framework: 
@@ -86,6 +152,7 @@ Intel Core i7-6600U CPU 2.60GHz (Skylake), 1 CPU, 4 logical and 2 physical cores
 | UnsafeC4 | p02652.bmp | 111.09 ms | 2.116 ms |  1.979 ms |  1.00 |    0.00 |
 |         LinqC4 | p02652.bmp |  91.01 ms | 1.812 ms |  4.547 ms |  0.81 |    0.05 |
 |   LinqC4Cached | p02652.bmp |  76.23 ms | 1.495 ms |  2.237 ms |  **0.69** |    0.03 |
+
 The C4 filter has been executed over the grayscale bitmaps, one is `5 184 * 6 433` px, the other is `5 184 * 4157` px. The bitmaps are converted into the `byte[,]` arrays; the filter outputs the `int[,]` array - remember that all arithmetics in C# is either `int` or `long`; there are no `+` or `/` operators defined for bytes. 
 The methods compared are as follows:
 - **NaturalC4**: a naive iteration with two nested cycles, fair access to the data array with the indexing operatior [,]. Illustrates the penalties for the range checks inserted by .Net to the idiomatic code, likely to be written by a novice developer.
