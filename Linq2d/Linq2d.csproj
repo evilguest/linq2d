@@ -1,0 +1,118 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Linq.Expressions.Deconstruct" Version="1.0.4" />
+    <PackageReference Include="Lokad.ILPack" Version="0.1.4" />
+    <PackageReference Include="Mono.Linq.Expressions" Version="2.0.0" />
+    <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
+    <PackageReference Include="System.Reflection.Emit.ILGeneration" Version="4.7.0" />
+    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Fast\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Array2d.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Array2d.tt</DependentUpon>
+    </None>
+    <None Include="ArrayQuery.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ArrayQuery.tt</DependentUpon>
+    </None>
+    <None Include="IArray.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>IArray.tt</DependentUpon>
+    </None>
+    <None Include="IArrayQuery.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>IArrayQuery.tt</DependentUpon>
+    </None>
+    <None Include="IArraySource.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>IArraySource.tt</DependentUpon>
+    </None>
+    <None Include="IArrayTransform.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>IArrayTransform.tt</DependentUpon>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Array2d.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Array2d.tt</DependentUpon>
+    </Compile>
+    <Compile Update="ArrayQuery.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ArrayQuery.tt</DependentUpon>
+    </Compile>
+    <Compile Update="IArray.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>IArray.tt</DependentUpon>
+    </Compile>
+    <Compile Update="IArrayQuery.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>IArrayQuery.tt</DependentUpon>
+    </Compile>
+    <Compile Update="IArraySource.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>IArraySource.tt</DependentUpon>
+    </Compile>
+    <Compile Update="IArrayTransform.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>IArrayTransform.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Array2d.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Array2d.cs</LastGenOutput>
+    </None>
+    <None Update="ArrayQuery.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ArrayQuery.cs</LastGenOutput>
+    </None>
+    <None Update="IArray.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>IArray.cs</LastGenOutput>
+    </None>
+    <None Update="IArrayQuery.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>IArrayQuery.cs</LastGenOutput>
+    </None>
+    <None Update="IArraySource.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>IArraySource.cs</LastGenOutput>
+    </None>
+    <None Update="IArrayTransform.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>IArrayTransform.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+</Project>

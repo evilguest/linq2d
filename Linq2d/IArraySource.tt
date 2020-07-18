@@ -1,0 +1,29 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+<#int maxArg = 16;#>
+namespace Linq2d
+{
+    public interface IArraySource<T>: IArrayQuery
+    {
+        public ArraySource<T> Source { get; }
+    }
+
+    public interface IArraySource<T1, T2>: IArrayQuery
+    {
+        public ArraySource<T1> Source1 { get; }
+        public ArraySource<T2> Source2 { get; }
+    }
+
+<#
+for(int n=3; n<=maxArg; n++)
+{
+#>
+    public interface IArraySource<T1<#for(int i=1; i<n; i++){ #>, T<#= i+1 #><# } #>>
+        : IArraySource<T1<#for(int i=1; i<n-1; i++){ #>, T<#= i+1 #><# } #>>
+    {
+        public ArraySource<T<#= n#>> Source<#= n#> { get; }
+    }
+<#
+}
+#>
+}

@@ -3,13 +3,13 @@ using System.Linq.Processing2d;
 
 namespace System.Linq.Processing2d.SlowDeferred
 {
-    internal class SingleSelectWrapper<T, R> : SlowDeferredArrayWrapperBase<R>, IQueryableArray2d<R>, IRelQueryableArray2d<R>
+    internal class SingleSelectWrapper<T, R> : SlowDeferredArrayWrapperBase<R>, IQueryableArray2d<R>
     {
         private readonly IArray2d<T> _source;
         private readonly Kernel<T, R> _kernel;
         private readonly int _h;
         private readonly int _w;
-        private readonly KernelMeasure<T> _km;
+        private readonly KernelMeasure _km;
 
         public SingleSelectWrapper(IArray2d<T> source, Kernel<T, R> kernel)
         {
@@ -18,6 +18,17 @@ namespace System.Linq.Processing2d.SlowDeferred
             _h = source.GetLength(0);
             _w = source.GetLength(1);
             _km = KernelMeasure.Measure(kernel);
+            if(source is IRelQueryableArray2d<T> rqa)
+            {
+                if (rqa.BoundOptions[BoundsDirection.Top] != Bounds.Skip)
+                    _km.xmin = 0;
+                if (rqa.BoundOptions[BoundsDirection.Bottom] != Bounds.Skip)
+                    _km.xmax = 0;
+                if (rqa.BoundOptions[BoundsDirection.Left] != Bounds.Skip)
+                    _km.ymin = 0;
+                if (rqa.BoundOptions[BoundsDirection.Right] != Bounds.Skip)
+                    _km.ymax = 0;
+            }
         }
 
         public override R this[int x, int y]
@@ -43,7 +54,7 @@ namespace System.Linq.Processing2d.SlowDeferred
         }
     }
 
-    internal class DualSelectWrapper<T, A, R> : SlowDeferredArrayWrapperBase<R>, IQueryableArray2d<R>, IRelQueryableArray2d<R>
+    internal class DualSelectWrapper<T, A, R> : SlowDeferredArrayWrapperBase<R>, IQueryableArray2d<R>
     {
         private readonly IArray2d<T> _left;
         private readonly IArray2d<A> _right;
@@ -100,20 +111,22 @@ namespace System.Linq.Processing2d.SlowDeferred
             _right = right ?? throw new ArgumentNullException(nameof(right));
             _kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
 
-            var km1 = new KernelMeasure<T>();
-            var km2 = new KernelMeasure<A>();
-            kernel(km1, km2);
-            _xmin = Math.Min(km1.xmin, km2.xmin);
-            _xmax = Math.Max(km1.xmax, km2.xmax);
-            _ymin = Math.Min(km1.ymin, km2.ymin);
-            _ymax = Math.Max(km1.ymax, km2.ymax);
             _h = Math.Min(left.GetLength(0), right.GetLength(0));
             _w = Math.Min(left.GetLength(1), right.GetLength(1));
+
+            var m = new KernelMeasure();
+            var km1 = new KernelMeasure<T>(m);
+            var km2 = new KernelMeasure<A>(m);
+            kernel(km1, km2);
+            _xmin = m.xmin;
+            _xmax = m.xmax;
+            _ymin = m.ymin;
+            _ymax = m.ymax;
         }
         
     }
 
-    internal class RecurrentSelectWrapper<T, R> : SlowDeferredArrayWrapperBase<R>, IQueryableArray2d<R>, IRelQueryableArray2d<R>
+    internal class RecurrentSelectWrapper<T, R> : SlowDeferredArrayWrapperBase<R>, IQueryableArray2d<R>
     {
         private readonly IArray2d<T> _source;
         private readonly Func<ICell<T>, ICell<R>, R> _kernel;
@@ -129,15 +142,16 @@ namespace System.Linq.Processing2d.SlowDeferred
         {
             _source = source ?? throw new ArgumentNullException(nameof(source));
             _kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
-            var km1 = new KernelMeasure<T>();
-            var km2 = new KernelMeasure<R>();
-            kernel(km1, km2);
-            _xmin = Math.Min(km1.xmin, km2.xmin);
-            _xmax = Math.Max(km1.xmax, km2.xmax);
-            _ymin = Math.Min(km1.ymin, km2.ymin);
-            _ymax = Math.Max(km1.ymax, km2.ymax);
             _h = source.GetLength(0);
             _w = source.GetLength(1);
+            var m = new KernelMeasure();
+            var km1 = new KernelMeasure<T>(m);
+            var km2 = new KernelMeasure<R>(m);
+            kernel(km1, km2);
+            _xmin = m.xmin;
+            _xmax = m.xmax;
+            _ymin = m.ymin;
+            _ymax = m.ymax;
         }
 
         public override R this[int x, int y] => ToArray()[x,y];
@@ -150,7 +164,7 @@ namespace System.Linq.Processing2d.SlowDeferred
             {
                 _result = new R[_h, _w];
                 var cell1 = new Cell<T>(_source);
-                var cell2 = new Cell<R>(new ArrayWrapper<R>(_result));
+                var cell2 = new Cell<R>(_result.Wrap(Bounds.Skip));
 
                 for (cell1._x = -_xmin; cell1._x < _h - _xmax; cell1._x++)
                 {
@@ -186,16 +200,18 @@ namespace System.Linq.Processing2d.SlowDeferred
         public abstract T[,] ToArray();
     }
 
-    public static class SlowArray2d
+    public static class SlowDeferredArray2d
     {
         public static IQueryableArray2d<R> Select<T, R>(this IQueryableArray2d<T> source, Func<T, R> kernel)=> new SingleSelectWrapper<T, R>(source, (cell) => kernel(cell[0, 0]));
         public static IQueryableArray2d<R> Select<T, R>(this IRelQueryableArray2d<T> source, Kernel<T, R> kernel)=> new SingleSelectWrapper<T, R>(source, kernel);
+        public static IQueryableArray2d<R> SelectMany<T, A, R>(this T[,] source, Func<T, A[,]> secondSelector, Func<T, A, R> resultSelector) => new DualSelectWrapper<T, A, R>(source.Wrap(Bounds.Skip), secondSelector(default).Wrap(Bounds.Skip), (cellL, cellR) => resultSelector(cellL[0, 0], cellR[0, 0]));
+        public static IQueryableArray2d<R> SelectMany<T, A, R>(this T[,] source, Func<T, IRelQueryableArray2d<A>> secondSelector, Func<T, ICell<A>, R> resultSelector) => new DualSelectWrapper<T, A, R>(source.Wrap(Bounds.Skip), secondSelector(default), (cellL, cellR) => resultSelector(cellL[0, 0], cellR));
         public static IQueryableArray2d<R> SelectMany<T, A, R>(this IQueryableArray2d<T> source, Func<T, IQueryableArray2d<A>> secondSelector, Func<T, A, R> resultSelector)=> new DualSelectWrapper<T, A, R>(source, secondSelector(default), (cellL, cellR) => resultSelector(cellL[0, 0], cellR[0, 0]));
         public static IQueryableArray2d<R> SelectMany<T, A, R>(this IQueryableArray2d<T> source, Func<T, IRelQueryableArray2d<A>> secondSelector, Func<T, ICell<A>, R> resultSelector)=> new DualSelectWrapper<T, A, R>(source, secondSelector(default), (cellL, cellR) => resultSelector(cellL[0, 0], cellR));
         public static IQueryableArray2d<R> SelectMany<T, A, R>(this IRelQueryableArray2d<T> source, Func<ICell<T>, IQueryableArray2d<A>> secondSelector, Func<ICell<T>, A, R> resultSelector)=> new DualSelectWrapper<T, A, R>(source, secondSelector(null), (cellL, cellR) => resultSelector(cellL, cellR[0, 0]));
         public static IQueryableArray2d<R> SelectMany<T, A, R>(this IRelQueryableArray2d<T> source, Func<ICell<T>, IRelQueryableArray2d<A>> secondSelector, Func<ICell<T>, ICell<A>, R> resultSelector)=> new DualSelectWrapper<T, A, R>(source, secondSelector(null), resultSelector);
         public static IArray2d<R> SelectMany<T, R>(this IRelQueryableArray2d<T> source, Func<ICell<T>, ArrayRecurrence<R>> secondSelector, Func<ICell<T>, ICell<R>, R> resultSelector)=> new RecurrentSelectWrapper<T, R>(source, resultSelector);
-        public static IArray2d<R> SelectMany<T, R>(this IQueryableArray2d<T> source, Func<T, ArrayRecurrence<R>> secondSelector, Func<T, ICell<R>, R> resultSelector)=> new RecurrentSelectWrapper<T, R>(source, (cell1, cell2) => resultSelector(cell1[0, 0], cell2));
+        public static IArray2d<R> SelectMany<T, R>(this T[,] source, Func<T, ArrayRecurrence<R>> secondSelector, Func<T, ICell<R>, R> resultSelector)=> new RecurrentSelectWrapper<T, R>(source.Wrap(Bounds.Skip), (cell1, cell2) => resultSelector(cell1[0, 0], cell2));
 
     }
 

@@ -1,0 +1,59 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+<#int maxRes = 4;#>
+<#int maxArg = 16;#>
+
+namespace Linq2d
+{
+    public interface IArrayQuery {};
+
+    #region One result
+
+    public interface IArrayQuery<R>: IArrayQuery, IArray<R>{};
+    public interface IArrayQuery<T, R>: 
+//        IArrayQuery<R>, 
+        IArraySource<T>, 
+        IArrayTransform<T, R>{};
+<#
+for(int n=2; n<=maxArg; n++)
+{
+#>
+
+        public interface IArrayQuery<<#for(int i=0; i<n; i++){ #>T<#= i+1 #>, <# } #>R>: 
+//        IArrayQuery<R>, 
+        IArraySource<T1<#for(int i=1; i<n; i++){ #>, T<#= i+1 #><# } #>>, 
+        IArrayTransform<<#for(int i=0; i<n; i++){ #>T<#= i+1 #>, <# } #>R>{};
+<#
+}
+#>
+    #endregion
+
+<#
+for(int k=2; k<=maxRes; k++)
+{
+#>
+
+    #region <#=k#> results
+
+    public interface IArrayQuery<#= k#><R1<#for(int i=1; i<k; i++){ #>, R<#= i+1 #><# } #>>:IArrayQuery, IArray<R1<#for(int i=1; i<k; i++){ #>, R<#= i+1 #><# } #>>{};
+    public interface IArrayQuery<#= k#><T, R1<#for(int i=1; i<k; i++){ #>, R<#= i+1 #><# } #>> : IArrayQuery<#= k#><R1<#for(int i=1; i<k; i++){ #>, R<#= i+1 #><# } #>>, IArraySource<T>, IArrayTransform<#= k#><T, R1<#for(int i=1; i<k; i++){ #>, R<#= i+1 #><# } #>>{};
+<#
+for(int n=2; n<=maxArg; n++)
+{
+#>
+
+        public interface IArrayQuery<#= k#><<#for(int i=0; i<n; i++){ #>T<#= i+1 #>, <# } #>R1<#for(int i=1; i<k; i++){ #>, R<#= i+1 #><# } #>>: 
+        IArrayQuery<#= k#><R1<#for(int i=1; i<k; i++){ #>, R<#= i+1 #><# } #>>, 
+        IArraySource<T1<#for(int i=1; i<n; i++){ #>, T<#= i+1 #><# } #>>, 
+        IArrayTransform<#= k#><<#for(int i=0; i<n; i++){ #>T<#= i+1 #>, <# } #>R1<#for(int i=1; i<k; i++){ #>, R<#= i+1 #><# } #>>{};
+<#
+}
+#>
+
+    #endregion
+<#
+}
+#>
+
+
+}

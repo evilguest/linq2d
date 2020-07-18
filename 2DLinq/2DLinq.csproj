@@ -9,8 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>System.Linq.Processing2d</RootNamespace>
     <AssemblyName>2DLinq</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <RuntimeIdentifier>win</RuntimeIdentifier>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -46,24 +48,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DynamicMethod.cs" />
+    <Compile Include="Expressions\DynamicMethod.cs" />
+    <Compile Include="Expressions\CellAccessInliner.cs" />
     <Compile Include="Expressions\ExpressionArray2d.cs" />
-    <Compile Include="FastUnsafeArray2d.cs" />
+    <Compile Include="Expressions\IntermediateAnonymousRemovalVisitor.cs" />
+    <Compile Include="Expressions\MultiSelectWrapper.cs" />
+    <Compile Include="Expressions\ReflectionHelper.cs" />
+    <Compile Include="Expressions\UnsafeArray2d.cs" />
     <Compile Include="FastArray2d.cs" />
     <Compile Include="Common.cs" />
-    <Compile Include="ILVisitors\CopyingILInstructionVisitor.cs" />
     <Compile Include="Expressions\ExpressionHelper.cs" />
     <Compile Include="ILWriter.cs" />
-    <Compile Include="ILVisitors\InliningILInstructionVisitor.cs" />
-    <Compile Include="ILVisitors\KernelInliningILInstructionVisitor.cs" />
-    <Compile Include="InliningArray2D.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ILVisitors\SafeInliningILInstructionVisitor.cs" />
     <Compile Include="SlowArray2d.cs" />
     <Compile Include="SlowDeferredArray2d.cs" />
-    <Compile Include="ILVisitors\UnsafeInliningILInstructionVisitor.cs" />
-    <Compile Include="ILVisitors\UnsafeInliningILInstructionVisitorBase.cs" />
-    <Compile Include="ILVisitors\UnsafeParallelInliningILInstructionVisitor.cs" />
+    <Compile Include="TypeHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

@@ -1,9 +1,20 @@
-﻿using System.Linq.Processing2d;
+﻿using BenchmarkHelpers;
 
 namespace FilterTests
 {
-    public class BasicArrayFilter : ArrayFilterBase, IArrayFilter<int>
+    public class BasicArrayFilter : ArrayFilterBase<int>, IArrayFilter<int>
     {
+        public int[,] C2()
+        {
+            var h = Data.GetLength(0);
+            var w = Data.GetLength(1);
+            var result = new int[h, w];
+            for (int i = 1; i < h - 1; i++)
+                for (int j = 1; j < w - 1; j++)
+                    result[i, j] = ( Data[i - 1, j] + Data[i + 1, j]) / 2;
+            return result;
+
+        }
         public int[,] C4()
         {
             var h = Data.GetLength(0);

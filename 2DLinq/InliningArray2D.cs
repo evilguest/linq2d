@@ -87,7 +87,7 @@ namespace System.Linq.Processing2d.Fast
         }
 
         public static IArray2d<R> Select<T, R>(this T[,] source, Func<T, R> kernel)
-            => GenerateFilter<T,R>((cell) => kernel(cell[0, 0]))(new ArrayWrapper<T>(source));
+            => GenerateFilter<T,R>((cell) => kernel(cell[0, 0]))(source.Wrap(Bounds.Skip));
         public static IArray2d<R> Select<T, R>(this IRelQueryableArray2d<T> source, Kernel<T, R> kernel) 
             => GenerateFilter(kernel)(source);
 

@@ -1,38 +1,39 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-
-
-using System.Linq.Processing2d;
+using System.Linq.Processing2d.Expressions;
 
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Jobs;
-using BenchmarkDotNet.Validators;
-using static System.Math;
-using System.Collections.Generic;
 using BenchmarkDotNet.Order;
+using BenchmarkHelpers;
 
 namespace FilterTests
 {
     [Orderer(SummaryOrderPolicy.FastestToSlowest)]
     public class FilterBenchmark
     {
-        [Params(1000)]
+        [Params(10)]
         public int W { get; set; }
-        [Params(1000)]
+        [Params(10)]
         public int H { get; set; }
 
-        [Params("C4", "C8")]
+        [Params("C4")]
         public string Method { get; set; }
 
         [Params(
-            typeof(BasicArrayFilter),
+            //typeof(BasicArrayFilter),
+            //typeof(UnsafeSIMDFilter),
+            //typeof(UnsafeSIMDSpanFilter),
             typeof(UnsafeFilter),
+            typeof(UnsafeAlternateFilter),
+            //typeof(ExpressionLinqFilter),
+            typeof(UnsafeParallelFilter)
             //typeof(DeferredLinqFilter),
             //typeof(FastLinqFilter),
-            typeof(BestLinqFilter)
+            //typeof(BestLinqFilter)
         )]
         [SameResult]
         public Type FilterType { get; set; }
@@ -67,11 +68,6 @@ namespace FilterTests
 
     class Program
     {
-        static IArray2d<int> Check(object arg0, IArray2d<int> arg1)
-        {
-            var r = new int[arg1.GetLength(0), arg1.GetLength(1)];
-            return new ArrayWrapper<int>(r);
-        }
         //static void Print<T>(IArray2d<T> matrix)
         //{
         //    var max = (from int m in matrix select Abs(m)).Max();
@@ -94,9 +90,13 @@ namespace FilterTests
                 Console.ReadKey();
             }
 
+            //var data = new int[,] { { 1, 2 }, { 3, 4 } };
+            //var t = from d in data 
+            //        from r in Recurrent.InitWith(0)
+            //        select d + r[-1, 0] + r[0, -1] - r[-1, -1];
             var summary = BenchmarkRunner.Run<FilterBenchmark>(
                 ManualConfig.Create(DefaultConfig.Instance)
-                    .With(Array2dReturnValueValidator.FailOnError));
+                    .AddValidator(Array2dReturnValueValidator.FailOnError));
 
             if (Debugger.IsAttached)
                 Console.ReadKey();

@@ -1,0 +1,23 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+<#int maxRes = 4;#>
+
+namespace Linq2d
+{
+    public interface IArray<R> {
+        R[,] ToArray();
+    };
+
+<#
+for(int n=2; n<=maxRes; n++)
+{
+#>
+
+    public interface IArray<R1<#for(int i=1; i<n; i++){ #>, R<#= i+1 #><# } #>>
+    {
+        (R1<#for(int i=1; i<n; i++){ #>, R<#= i+1 #><# } #>) ToArrays();
+    }
+<#
+}
+#>
+}

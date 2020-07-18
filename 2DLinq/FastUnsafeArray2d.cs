@@ -1,4 +1,4 @@
-﻿using ClrTest.Reflection;
+﻿//using ClrTest.Reflection;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -109,7 +109,7 @@ namespace System.Linq.Processing2d.FastUnsafe
                     ilg.Emit(OpCodes.Add); // source+delta = target;
 
                     var usilv = new UnsafeInliningILInstructionVisitor<T>(ilg, i, j, W, psource);
-                    new ILReader(kernel.Method).Accept(usilv);
+                    //new ILReader(kernel.Method).Accept(usilv);
 
                     ilg.Emit(OpCodes.Stind_I4);
 
@@ -142,7 +142,7 @@ namespace System.Linq.Processing2d.FastUnsafe
         {
             var ab = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("StripeHandler"), AssemblyBuilderAccess.RunAndCollect);
 
-            var tb = ab.DefineDynamicModule("StripeHandler", "StripeHandler.dll").DefineType("StripeHandler", TypeAttributes.Class | TypeAttributes.Public);
+            var tb = ab.DefineDynamicModule("StripeHandler").DefineType("StripeHandler", TypeAttributes.Class | TypeAttributes.Public);
 
             var length = tb.DefineField("_length", typeof(int), FieldAttributes.Private);
             var sourcePtr = tb.DefineField("_sourcePtr", typeof(T*), FieldAttributes.Private);
@@ -279,7 +279,7 @@ namespace System.Linq.Processing2d.FastUnsafe
         public static R[,] Select<T, R>(this T[,] source, Func<T, R> kernel)
             where T : unmanaged
             where R : unmanaged
-            => Select(new ArrayWrapper<T>(source), (cell) => kernel(cell[0, 0]));
+            => Select(source.Wrap(Bounds.Skip), (cell) => kernel(cell[0, 0]));
 
         public static R[,] Select<T, R>(this IRelQueryableArray2d<T> source, Kernel<T, R> kernel)
             where T : unmanaged

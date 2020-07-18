@@ -1,0 +1,238 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+<#int maxArg = 16;#>
+<#int maxRes = 4;#>
+using System;
+using System.Linq.Expressions;
+
+namespace Linq2d
+{
+    internal class ArrayQuery<T, R>: ArrayQuery1<R>, IArrayQuery<T, R>
+    {
+        public ArraySource<T> Source { get; }
+
+        private Func<T[,], R[,]> _transform;
+
+        public ArrayQuery(ArraySource<T> source, Expression<Func<Cell<T>, R>> kernel) : base(source, kernel)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source = source;
+        }
+
+        public ArrayQuery(IArraySource<T> source, LambdaExpression kernel): base(source, kernel)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source = source.Source;
+        }
+
+        public ArrayQuery(ArraySource<T> source, object resultInit, LambdaExpression kernel): base(source, kernel, resultInit)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(3).GetMethod().Name;
+            Source = source;
+        }
+
+        public Func<T[,], R[,]> Transform
+        {
+            get
+            {
+                if (_transform == null)
+                    _transform = BuildTransform<Func<T[,], R[,]>>();
+                return _transform;
+            }
+        }
+
+        protected override R[,] GetResult() => Transform(Source.Array);
+    }
+
+    public interface IArrayQueryRecurrentHalf { }
+    public interface IArrayQueryRecurrentHalf<T, R>: IArrayQueryRecurrentHalf, IArraySource<T> {}
+
+    public interface IArrayQueryRecurrent<T, R, A>: IArrayQueryRecurrentHalf<T, R> {}
+
+    internal class ArrayQueryRecurrent<T, R, A>: ArrayQuery<T, A>, IArrayQueryRecurrent<T, R, A>
+    {
+        public ArrayQueryRecurrent(ArraySource<T> source, Result<R> result, Expression<Func<Cell<T>, RelativeCell<R>, A>> kernel): base(source, result.InitValue, kernel){}
+    }
+    
+    internal class ArrayQuery<T1, T2, R> : ArrayQuery1<R>, IArrayQuery<T1, T2, R>
+    {
+        public ArrayQuery(ArraySource<T1> source1, ArraySource<T2> source2, Expression<Func<Cell<T1>, Cell<T2>, R>> kernel) : base(source1, source2, kernel)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = source1 ?? throw new ArgumentNullException(nameof(source1));
+            Source2 = source2 ?? throw new ArgumentNullException(nameof(source2));
+        }
+        public ArrayQuery(IArraySource<T1, T2> sources, Result<R> result, LambdaExpression kernel) : base(sources, kernel, result.InitValue)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = sources.Source1;
+            Source2 = sources.Source2;
+        }
+        public ArraySource<T1> Source1 { get; }
+        public ArraySource<T2> Source2 { get; }
+        private Func<T1[,], T2[,], R[,]> _transform;
+        public Func<T1[,], T2[,], R[,]> Transform
+        {
+            get
+            {
+                if (_transform == null)
+                    _transform = BuildTransform<Func<T1[,], T2[,], R[,]>>();
+                return _transform;
+            }
+        }
+
+        protected override R[,] GetResult() => Transform(Source1.Array, Source2.Array);
+
+    }
+
+<#
+for(int n=3; n<=maxArg; n++)
+{
+#>
+
+    internal class ArrayQuery<<#for(int i=0; i<n; i++){ #>T<#= i+1 #>, <# } #>R> : ArrayQuery1<R>, IArrayQuery<<#for(int i=0; i<n; i++){ #>T<#= i+1 #>, <# } #>R>
+    {
+<#
+for(int i=0; i<n; i++)
+{
+#>
+        public ArraySource<T<#= i+1 #>> Source<#= i+1 #>{ get; }
+<#
+}
+#>
+
+        private Func<<#for(int i=0; i<n; i++){ #>T<#= i+1 #>[,], <# } #>R[,]> _transform;
+
+        public ArrayQuery(IArraySource<T1<#for(int i=2; i<n; i++){ #>, T<#= i #><# } #>> sources, ArraySource<T<#= n#>> source<#= n#>, LambdaExpression kernel) : base(sources, source<#= n#>, kernel)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+<#
+for(int i=1; i<n; i++)
+{
+#>
+            Source<#= i #> = sources.Source<#= i #>;
+<#
+}
+#>
+            Source<#= n#> = source<#= n#> ?? throw new ArgumentNullException(nameof(source<#= n#>));
+        }
+
+        public ArrayQuery(IArraySource<T1<#for(int i=1; i<n; i++){ #>, T<#= i+1 #><# } #>> sources, Result<R> result, LambdaExpression kernel) : base(sources, kernel, result.InitValue)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+<#
+for(int i=1; i<=n; i++)
+{
+#>
+            Source<#= i #> = sources.Source<#= i #>;
+<#
+}
+#>
+        }
+
+        public ArrayQuery(IArraySource<T1<#for(int i=1; i<n; i++){ #>, T<#= i+1 #><# } #>> sources, LambdaExpression kernel) : base(sources, kernel)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+<#
+for(int i=1; i<=n; i++)
+{
+#>
+            Source<#= i #> = sources.Source<#= i #>;
+<#
+}
+#>
+        }
+
+        public Func<<#for(int i=0; i<n; i++){ #>T<#= i+1 #>[,], <# } #>R[,]> Transform
+        {
+            get
+            {
+                if (_transform == null)
+                    _transform = BuildTransform<Func<<#for(int i=0; i<n; i++){ #>T<#= i+1 #>[,], <# } #>R[,]>>();
+                return _transform;
+            }
+        }
+
+        protected override R[,] GetResult() => Transform(Source1.Array<#for(int i=2; i<=n; i++){#>, Source<#= i #>.Array<#}#>);
+    }
+<#
+}
+#>
+
+    internal class ArrayQuery2<T, R1, R2>: ArrayQuery2<R1, R2>, IArrayQuery2<T, R1, R2>
+    {
+        public ArraySource<T> Source { get; }
+
+        private Func<T[,], (R1[,], R2[,])> _transform;
+
+
+        public ArrayQuery2(ArraySource<T> source, Expression<Func<Cell<T>, (R1, R2)>> kernel) : base(source, kernel)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source = source;
+        }
+        public ArrayQuery2(ArraySource<T> source, Result<R1> result, Expression<Func<Cell<T>, RelativeCell<R1>, (R1, R2)>> kernel):base(source, kernel, result.InitValue)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source = source;
+        }
+
+        public ArrayQuery2(IArraySource<T> source, LambdaExpression kernel): base(source, kernel)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source = source.Source;
+        }
+
+        public ArrayQuery2(IArrayQueryRecurrentHalf<T, R1> source, Result<R2> result, LambdaExpression kernel): base(source, kernel, result.InitValue)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source = source.Source;
+        }
+
+
+        public Func<T[,], (R1[,], R2[,])> Transform
+        {
+            get
+            {
+                if (_transform == null)
+                    _transform = BuildTransform<Func<T[,], (R1[,], R2[,])>>();
+                return _transform;
+            }
+        }
+
+        protected override (R1[,], R2[,]) GetResult() => Transform(Source.Array);
+
+    }
+
+    internal class ArrayQuery2<T1, T2, R1, R2> : ArrayQuery2<R1, R2>, IArrayQuery2<T1, T2, R1, R2>
+    {
+        public ArrayQuery2(ArraySource<T1> source1, ArraySource<T2> source2, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> kernel) : base(source1, source2, kernel)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = source1 ?? throw new ArgumentNullException(nameof(source1));
+            Source2 = source2 ?? throw new ArgumentNullException(nameof(source2));
+        }
+        public ArrayQuery2(IArraySource<T1, T2> sources, Result<R1> result, LambdaExpression kernel) : base(sources, kernel, result.InitValue)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = sources.Source1;
+            Source2 = sources.Source2;
+        }
+        public ArraySource<T1> Source1 { get; }
+        public ArraySource<T2> Source2 { get; }
+        private Func<T1[,], T2[,], (R1[,], R2[,])> _transform;
+        public Func<T1[,], T2[,], (R1[,], R2[,])> Transform
+        {
+            get
+            {
+                if (_transform == null)
+                    _transform = BuildTransform<Func<T1[,], T2[,], (R1[,], R2[,])>>();
+                return _transform;
+            }
+        }
+
+        protected override (R1[,], R2[,]) GetResult() => Transform(Source1.Array, Source2.Array);
+
+    }
+
+}
