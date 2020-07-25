@@ -289,34 +289,43 @@ namespace Linq2d
                     // Vector part
                     {
 
-                        var vectorNodes = new HashSet<Expression>();
-                        var recurrentOverlap = false;
+                        //var vectorNodes = new HashSet<Expression>();
                         var vectorizable = true;
                         var coreKernels = new Expression[Results.Count];
                         coreRanges = baseRanges.Add(iVar, Constant(-minX), Subtract(hVar, Constant(maxX + 1))).Add(jVar, Constant(-minY), Subtract(wVar, Constant(maxY + 1)));
 
                         var argTypes = (from s in Sources select s.Type).Union(Results);
-
-                        var step = 32 / (from t in argTypes select (int)typeof(Unsafe).GetMethod("SizeOf").MakeGenericMethod(t).Invoke(null, null)).Max();
-
-                        for (int c = 0; c < Results.Count; c++)
+                        var stepSizes = new int[Results.Count];
+                        var vectorKernels = new Expression[Results.Count];
+                        //var step = 32 / (from t in argTypes select (int)typeof(Unsafe).GetMethod("SizeOf").MakeGenericMethod(t).Invoke(null, null)).Max();
+                        for (int c = 0; (c < Results.Count) && vectorizable; c++)
                         {
-                            if (c<ResultReplacements.Count)
-                                recurrentOverlap |= (km.Accesses[Kernel.Parameters[Sources.Count + c]].minY < 0);
+                            //if (c<ResultReplacements.Count)
+                            //    recurrentOverlap |= (km.Accesses[Kernel.Parameters[Sources.Count + c]].minY < 0);
                             coreKernels[c] = InlineKernel(kernels[c], iVar, jVar, hVar, wVar, coreRanges, resultVars, sourceArgs);
-                            vectorizable &= VectorVerify.CanBeVectorized(coreKernels[c], vectorNodes);
-
-                            for (var v = new Expressions.VectorInfo(false, null, null); !v.Success && step > 1; step >>= 1)
+                            //vectorizable &= VectorVerify.CanBeVectorized(coreKernels[c], vectorNodes);
+                            var v = new VectorizationResult(false, null, null, null);
+                            var step = 32;
+                            while (!v.Success && step > 1)
                             {
-                                v = Vectorizer.Vectorize(step, coreKernels[c]); // try smaller step sizes
+                                v = Vectorizer.Vectorize(step, coreKernels[c], resultVars, sourceArgs); // try smaller step sizes until it works
+                                stepSizes[c] = step;
+                                step >>= 1;
                             }
+                            if (v.Success)
+                            {
+                                vectorKernels[c] = v.Expression;
+                            }
+                            else
+                                vectorizable = false;
                         }
 
-                        if (vectorizable && !recurrentOverlap)
+                        if (vectorizable)
                         {
-                            var kcv = new KernelCompilerVector(ilg, wVar, vectorNodes);
-                            foreach (var vm in kcs.VariableMap)
-                                kcv.VariableMap[vm.Key] = vm.Value;
+                            var maxStep = stepSizes.Max();
+                            //var kcv = new KernelCompilerVector(ilg, wVar, vectorNodes);
+                            //foreach (var vm in kcs.VariableMap)
+                            //    kcv.VariableMap[vm.Key] = vm.Value;
 
 
                             var loopJVectorStart = ilg.DefineLabel();
@@ -326,17 +335,19 @@ namespace Linq2d
 
                                 for (int c = 0; c < Results.Count; c++)
                                 {
-                                    ilg.Ldloc(pTrgs[c]);
-                                    kcv.Load2dPointerOffset(Results[c], iVar, jVar);
-                                    kcv.Visit(coreKernels[c]);
-                                    ilg.Call(VectorData.StoreTable[Results[c]]);
+                                    for (var r = 0; r < maxStep / stepSizes[c]; r++)
+                                    {
+                                        ilg.Ldloc(pTrgs[c]);
+                                        kcs.Load2dPointerOffset(Results[c], iVar, Add(jVar, Constant(r*stepSizes[c])));
+                                        kcs.Visit(vectorKernels[c]);
+                                        ilg.Call(VectorData.VectorInfo[stepSizes[c]].StoreOperations[Results[c]]);
+                                    }
                                 }
-
-                                ilg.Increment(j, step);
+                                ilg.Increment(j, maxStep);
 
                                 ilg.MarkLabel(loopJVectorStart);
                                 ilg.Ldloc(j);
-                                ilg.Ldc(step + maxY);
+                                ilg.Ldc(maxStep + maxY);
                                 ilg.Add();
                                 ilg.Ldloc(w);
                                 ilg.Emit(OpCodes.Ble, loopJVectorBody);

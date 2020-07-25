@@ -446,32 +446,24 @@ namespace Linq2d.CodeGen
 
         }
 
-        private static Vector256<long> ShiftRightLogical(Vector256<long> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
-        private static Vector256<ulong> ShiftRightLogical(Vector256<ulong> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
-        private static Vector256<int> ShiftRightLogical(Vector256<int> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
-        private static Vector256<uint> ShiftRightLogical(Vector256<uint> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
-        private static Vector256<short> ShiftRightLogical(Vector256<short> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
-        private static Vector256<ushort> ShiftRightLogical(Vector256<ushort> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
+        public static Vector256<long> ShiftRightLogical(Vector256<long> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
+        public static Vector256<ulong> ShiftRightLogical(Vector256<ulong> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
+        public static Vector256<short> ShiftRightLogical(Vector256<short> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
+        public static Vector256<ushort> ShiftRightLogical(Vector256<ushort> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
 
-        private static Vector128<long> ShiftRightLogical(Vector128<long> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
-        private static Vector128<ulong> ShiftRightLogical(Vector128<ulong> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
-        private static Vector128<int> ShiftRightLogical(Vector128<int> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
-        private static Vector128<uint> ShiftRightLogical(Vector128<uint> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
-        private static Vector128<short> ShiftRightLogical(Vector128<short> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
-        private static Vector128<ushort> ShiftRightLogical(Vector128<ushort> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
-        private static Vector256<long> ShiftLeftLogical(Vector256<long> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
-        private static Vector256<ulong> ShiftLeftLogical(Vector256<ulong> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
-        private static Vector256<int> ShiftLeftLogical(Vector256<int> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
-        private static Vector256<uint> ShiftLeftLogical(Vector256<uint> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
-        private static Vector256<short> ShiftLeftLogical(Vector256<short> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
-        private static Vector256<ushort> ShiftLeftLogical(Vector256<ushort> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
+        public static Vector128<long> ShiftRightLogical(Vector128<long> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
+        public static Vector128<ulong> ShiftRightLogical(Vector128<ulong> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
+        public static Vector128<int> ShiftRightLogical(Vector128<int> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
+        public static Vector128<uint> ShiftRightLogical(Vector128<uint> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
+        public static Vector256<long> ShiftLeftLogical(Vector256<long> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
+        public static Vector256<ulong> ShiftLeftLogical(Vector256<ulong> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
+        public static Vector256<short> ShiftLeftLogical(Vector256<short> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
+        public static Vector256<ushort> ShiftLeftLogical(Vector256<ushort> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
 
-        private static Vector128<long> ShiftLeftLogical(Vector128<long> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
-        private static Vector128<ulong> ShiftLeftLogical(Vector128<ulong> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
-        private static Vector128<int> ShiftLeftLogical(Vector128<int> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
-        private static Vector128<uint> ShiftLeftLogical(Vector128<uint> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
-        private static Vector128<short> ShiftLeftLogical(Vector128<short> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
-        private static Vector128<ushort> ShiftLeftLogical(Vector128<ushort> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
+        public static Vector128<long> ShiftLeftLogical(Vector128<long> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
+        public static Vector128<ulong> ShiftLeftLogical(Vector128<ulong> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
+        public static Vector128<int> ShiftLeftLogical(Vector128<int> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
+        public static Vector128<uint> ShiftLeftLogical(Vector128<uint> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
     }
     public unsafe class Vector8Info : VectorInfo
     {
@@ -508,6 +500,10 @@ namespace Linq2d.CodeGen
 
                 InitBinary128<short>(ExpressionType.Or, Sse2.Or);
                 InitBinary128<ushort>(ExpressionType.Or, Sse2.Or);
+                InitBinary128Forced<short, int>(ExpressionType.RightShift, ShiftRightLogical);
+                InitBinary128Forced<ushort, int>(ExpressionType.RightShift, ShiftRightLogical);
+                InitBinary128Forced<short, int>(ExpressionType.LeftShift, ShiftLeftLogical);
+                InitBinary128Forced<ushort, int>(ExpressionType.LeftShift, ShiftLeftLogical);
             }
             if (Sse3.IsSupported)
             {
@@ -544,6 +540,12 @@ namespace Linq2d.CodeGen
                 InitBinary256<float>(ExpressionType.Subtract, Avx.Subtract);
                 InitBinary256<float>(ExpressionType.Multiply, Avx.Multiply);
                 InitBinary256<float>(ExpressionType.Divide, Avx.Divide);
+
+                InitBinary256Forced<int, int>(ExpressionType.RightShift, ShiftRightLogical);
+                InitBinary256Forced<uint, int>(ExpressionType.RightShift, ShiftRightLogical);
+
+                InitBinary256Forced<int, int>(ExpressionType.LeftShift, ShiftLeftLogical);
+                InitBinary256Forced<uint, int>(ExpressionType.LeftShift, ShiftLeftLogical);
             }
             if (Avx2.IsSupported)
             {
@@ -564,6 +566,14 @@ namespace Linq2d.CodeGen
                 InitBinary256<uint>(ExpressionType.Multiply, Avx2.MultiplyLow);
             }
         }
+        public static Vector256<int> ShiftRightLogical(Vector256<int> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
+        public static Vector256<uint> ShiftRightLogical(Vector256<uint> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
+        public static Vector256<int> ShiftLeftLogical(Vector256<int> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
+        public static Vector256<uint> ShiftLeftLogical(Vector256<uint> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
+        public static Vector128<short> ShiftRightLogical(Vector128<short> t, int s) => Sse2.ShiftRightLogical(t, (byte)s);
+        public static Vector128<ushort> ShiftRightLogical(Vector128<ushort> t, int s) => Sse2.ShiftRightLogical(t, (byte)s);
+        public static Vector128<short> ShiftLeftLogical(Vector128<short> t, int s) => Sse2.ShiftLeftLogical(t, (byte)s);
+        public static Vector128<ushort> ShiftLeftLogical(Vector128<ushort> t, int s) => Sse2.ShiftLeftLogical(t, (byte)s);
     }
     public unsafe class Vector16Info : VectorInfo
     {
@@ -662,153 +672,153 @@ namespace Linq2d.CodeGen
         };
 
         public static IReadOnlyDictionary<int, IVectorInfo> VectorInfo { get => _vectorInfo; }
-        public static MethodInfo GetLoadAndConvertOperation256(Type sourceType, Type targetType)
-        {
-            MethodInfo result = null;
-            _lac256.TryGetValue((sourceType, targetType), out result);
-            return result;
-        }
-        public MethodInfo GetLoadAndConvertOperation128(Type sourceType)
-        {
-            throw new NotSupportedException();
-        }
+        //public static MethodInfo GetLoadAndConvertOperation256(Type sourceType, Type targetType)
+        //{
+        //    MethodInfo result = null;
+        //    _lac256.TryGetValue((sourceType, targetType), out result);
+        //    return result;
+        //}
+        //public MethodInfo GetLoadAndConvertOperation128(Type sourceType)
+        //{
+        //    throw new NotSupportedException();
+        //}
 
 
-        private static readonly Dictionary<(Type sourceType, Type targetType), MethodInfo> _lac256 = new Dictionary<(Type sourceType, Type targetType), MethodInfo>();
-        public static IReadOnlyDictionary<(Type sourceType, Type targetType), MethodInfo> LoadAndConvertTable { get => _lac256; }
+        //private static readonly Dictionary<(Type sourceType, Type targetType), MethodInfo> _lac256 = new Dictionary<(Type sourceType, Type targetType), MethodInfo>();
+        //public static IReadOnlyDictionary<(Type sourceType, Type targetType), MethodInfo> LoadAndConvertTable { get => _lac256; }
 
 
-        private static void InitLoadAndConvertCall256<T, R>()
-            where R : unmanaged
-            where T : unmanaged
-        {
-            Type typeT = typeof(T);
-            Type typeR = typeof(R);
-            string name;
-            Type type;
-            if(typeT == typeR)
-            {
-                type = typeof(Avx);
-                name = "LoadVector256";
-            }
-            else
-            {
-                type = typeof(Avx2);
-                name = $"ConvertToVector256{typeR.Name}";
-            }
-            _lac256[(typeT, typeR)] = type.GetMethod(name, new[] { typeT.MakePointerType() });
-        }
+        //private static void InitLoadAndConvertCall256<T, R>()
+        //    where R : unmanaged
+        //    where T : unmanaged
+        //{
+        //    Type typeT = typeof(T);
+        //    Type typeR = typeof(R);
+        //    string name;
+        //    Type type;
+        //    if(typeT == typeR)
+        //    {
+        //        type = typeof(Avx);
+        //        name = "LoadVector256";
+        //    }
+        //    else
+        //    {
+        //        type = typeof(Avx2);
+        //        name = $"ConvertToVector256{typeR.Name}";
+        //    }
+        //    _lac256[(typeT, typeR)] = type.GetMethod(name, new[] { typeT.MakePointerType() });
+        //}
 
-        private static readonly Dictionary<(Type sourceType, Type targetType), MethodInfo> _c256 = new Dictionary<(Type sourceType, Type targetType), MethodInfo>();
-        public static IReadOnlyDictionary<(Type sourceType, Type targetType), MethodInfo> ConvertTable { get => _c256; }
+        //private static readonly Dictionary<(Type sourceType, Type targetType), MethodInfo> _c256 = new Dictionary<(Type sourceType, Type targetType), MethodInfo>();
+        //public static IReadOnlyDictionary<(Type sourceType, Type targetType), MethodInfo> ConvertTable { get => _c256; }
 
-        private static void InitConvertCall<T, R>(Func<Vector256<T>, Vector256<R>> conversion)
-            where T: unmanaged
-            where R: unmanaged
-        {
-            _c256[(typeof(T), typeof(R))] = conversion.Method;
-        }
-        private static void InitConvertCall256<T, R>()
-            where R : unmanaged
-            where T : unmanaged
-        {
-            Type typeT = typeof(T);
-            Type typeR = typeof(R);
-            var m = typeof(Avx2).GetMethod($"ConvertToVector256{typeR.Name}", new[] { typeof(Vector128<T>) });
-            if (m == null)
-                m = typeof(Avx).GetMethod($"ConvertToVector256{typeR.Name}", new[] { typeof(Vector256<T>) });
-            _c256[(typeT, typeR)] = m;
+        //private static void InitConvertCall<T, R>(Func<Vector256<T>, Vector256<R>> conversion)
+        //    where T: unmanaged
+        //    where R: unmanaged
+        //{
+        //    _c256[(typeof(T), typeof(R))] = conversion.Method;
+        //}
+        //private static void InitConvertCall256<T, R>()
+        //    where R : unmanaged
+        //    where T : unmanaged
+        //{
+        //    Type typeT = typeof(T);
+        //    Type typeR = typeof(R);
+        //    var m = typeof(Avx2).GetMethod($"ConvertToVector256{typeR.Name}", new[] { typeof(Vector128<T>) });
+        //    if (m == null)
+        //        m = typeof(Avx).GetMethod($"ConvertToVector256{typeR.Name}", new[] { typeof(Vector256<T>) });
+        //    _c256[(typeT, typeR)] = m;
 
-        }
+        //}
 
         private static readonly Dictionary<MethodInfo, MethodInfo> _methodTable = new Dictionary<MethodInfo, MethodInfo>();
         public static IReadOnlyDictionary<MethodInfo, MethodInfo> MethodTable { get => _methodTable; }
-        private static void InitMethodCall<T>(Func<T, T> scalar, Func<Vector256<T>, Vector256<T>> vector)
-            where T : unmanaged
-            => _methodTable[scalar.Method] = vector.Method;
+        //private static void InitMethodCall<T>(Func<T, T> scalar, Func<Vector256<T>, Vector256<T>> vector)
+        //    where T : unmanaged
+        //    => _methodTable[scalar.Method] = vector.Method;
 
-        private static void InitMethodCall<T>(Func<T, T, T> scalar, Func<Vector256<T>, Vector256<T>, Vector256<T>> vector)
-            where T : unmanaged
-            => _methodTable[scalar.Method] = vector.Method;
+        //private static void InitMethodCall<T>(Func<T, T, T> scalar, Func<Vector256<T>, Vector256<T>, Vector256<T>> vector)
+        //    where T : unmanaged
+        //    => _methodTable[scalar.Method] = vector.Method;
 
-        private static void InitMethodCall<T, R>(Func<T, R> scalar, Func<Vector256<T>, Vector256<R>> vector)
-            where T : unmanaged
-            where R : unmanaged 
-            => _methodTable[scalar.Method] = vector.Method;
+        //private static void InitMethodCall<T, R>(Func<T, R> scalar, Func<Vector256<T>, Vector256<R>> vector)
+        //    where T : unmanaged
+        //    where R : unmanaged 
+        //    => _methodTable[scalar.Method] = vector.Method;
 
-        private static void InitMethodCall<T1, T2, R>(Func<T1, T2, R> scalar, Func<Vector256<T1>, Vector256<T2>, Vector256<R>> vector)
-            where T1 : unmanaged
-            where T2 : unmanaged
-            where R : unmanaged
-            => _methodTable[scalar.Method] = vector.Method;
+        //private static void InitMethodCall<T1, T2, R>(Func<T1, T2, R> scalar, Func<Vector256<T1>, Vector256<T2>, Vector256<R>> vector)
+        //    where T1 : unmanaged
+        //    where T2 : unmanaged
+        //    where R : unmanaged
+        //    => _methodTable[scalar.Method] = vector.Method;
         
 
-        private static readonly Dictionary<Type, MethodInfo> _l256 = new Dictionary<Type, MethodInfo>();
-        public static IReadOnlyDictionary<Type, MethodInfo> LoadTable { get => _l256; }
+        //private static readonly Dictionary<Type, MethodInfo> _l256 = new Dictionary<Type, MethodInfo>();
+        //public static IReadOnlyDictionary<Type, MethodInfo> LoadTable { get => _l256; }
 
-        private static readonly Dictionary<(ExpressionType ex, Type l, Type r), MethodInfo> _binaryOperations = new Dictionary<(ExpressionType, Type, Type), MethodInfo>();
-        public static IReadOnlyDictionary<(ExpressionType ex, Type l, Type r), MethodInfo> BinaryOperations { get => _binaryOperations; }
-        public static IReadOnlyDictionary<(ExpressionType ex, Type o), MethodInfo> UnaryOperations { get => _unaryOperations; }
+        //private static readonly Dictionary<(ExpressionType ex, Type l, Type r), MethodInfo> _binaryOperations = new Dictionary<(ExpressionType, Type, Type), MethodInfo>();
+        //public static IReadOnlyDictionary<(ExpressionType ex, Type l, Type r), MethodInfo> BinaryOperations { get => _binaryOperations; }
+        //public static IReadOnlyDictionary<(ExpressionType ex, Type o), MethodInfo> UnaryOperations { get => _unaryOperations; }
 
-        private static readonly Dictionary<Type, MethodInfo> _s256 = new Dictionary<Type, MethodInfo>();
-        private static readonly Dictionary<(ExpressionType ex, Type o), MethodInfo> _unaryOperations = new Dictionary<(ExpressionType ex, Type o), MethodInfo>();
+        //private static readonly Dictionary<Type, MethodInfo> _s256 = new Dictionary<Type, MethodInfo>();
+        //private static readonly Dictionary<(ExpressionType ex, Type o), MethodInfo> _unaryOperations = new Dictionary<(ExpressionType ex, Type o), MethodInfo>();
 
-        public static IReadOnlyDictionary<Type, MethodInfo> StoreTable { get => _s256; }
+        //public static IReadOnlyDictionary<Type, MethodInfo> StoreTable { get => _s256; }
 
-        private static void InitOperationTable<T1, T2, R>(ExpressionType et, Expression<Func<T1, T2, R>> method)
-        {
-            Expression e = method.Body;
-            if (e is BlockExpression be)
-                e = be.Expressions[0];
-            if (e is MethodCallExpression mce)
-                _binaryOperations[(et, typeof(T1), typeof(T2))] = mce.Method;
-            else
-                throw new ArgumentException($"Invalid expression type passed to {nameof(InitOperationTable)}", nameof(method));
-        }
+        //private static void InitOperationTable<T1, T2, R>(ExpressionType et, Expression<Func<T1, T2, R>> method)
+        //{
+        //    Expression e = method.Body;
+        //    if (e is BlockExpression be)
+        //        e = be.Expressions[0];
+        //    if (e is MethodCallExpression mce)
+        //        _binaryOperations[(et, typeof(T1), typeof(T2))] = mce.Method;
+        //    else
+        //        throw new ArgumentException($"Invalid expression type passed to {nameof(InitOperationTable)}", nameof(method));
+        //}
 
-        private static void InitOperationTable<T, R>(ExpressionType et, Expression<Func<T, R>> method)
-        {
-            Expression e = method.Body;
-            if (e is BlockExpression be)
-                e = be.Expressions[0];
-            if (e is MethodCallExpression mce)
-                _unaryOperations[(et, typeof(T))] = mce.Method;
-            else
-                throw new ArgumentException($"Invalid expression type passed to {nameof(InitOperationTable)}", nameof(method));
-        }
+        //private static void InitOperationTable<T, R>(ExpressionType et, Expression<Func<T, R>> method)
+        //{
+        //    Expression e = method.Body;
+        //    if (e is BlockExpression be)
+        //        e = be.Expressions[0];
+        //    if (e is MethodCallExpression mce)
+        //        _unaryOperations[(et, typeof(T))] = mce.Method;
+        //    else
+        //        throw new ArgumentException($"Invalid expression type passed to {nameof(InitOperationTable)}", nameof(method));
+        //}
 
 
-        private static void InitOperationTable256<T>(ExpressionType et, string methodName = null)
-        {
-            methodName = methodName ?? et.ToString();
-            var typeT = typeof(T);
-            var vectorT = typeof(Vector256<>).MakeGenericType(typeT);
-            MethodInfo m = null;
-            if (Avx.IsSupported)
-                m = typeof(Avx).GetMethod(methodName, new[] { vectorT, vectorT });
-            if (m == null && Avx2.IsSupported)
-                m = typeof(Avx2).GetMethod(methodName, new[] { vectorT, vectorT });
+        //private static void InitOperationTable256<T>(ExpressionType et, string methodName = null)
+        //{
+        //    methodName = methodName ?? et.ToString();
+        //    var typeT = typeof(T);
+        //    var vectorT = typeof(Vector256<>).MakeGenericType(typeT);
+        //    MethodInfo m = null;
+        //    if (Avx.IsSupported)
+        //        m = typeof(Avx).GetMethod(methodName, new[] { vectorT, vectorT });
+        //    if (m == null && Avx2.IsSupported)
+        //        m = typeof(Avx2).GetMethod(methodName, new[] { vectorT, vectorT });
 
-            if (m != null)
-                _binaryOperations[(et, vectorT, vectorT)] = m;
-        }
+        //    if (m != null)
+        //        _binaryOperations[(et, vectorT, vectorT)] = m;
+        //}
 
-        private static void InitLoadCall256<T>()
-        {
-            Type typeT = typeof(T);
-            if(Avx.IsSupported)
-                _l256[typeT] = typeof(Avx).GetMethod("LoadVector256", new[] { typeT.MakePointerType() });
+        //private static void InitLoadCall256<T>()
+        //{
+        //    Type typeT = typeof(T);
+        //    if(Avx.IsSupported)
+        //        _l256[typeT] = typeof(Avx).GetMethod("LoadVector256", new[] { typeT.MakePointerType() });
 
-        }
+        //}
 
-        private static void InitStoreCall256<T>()
-        {
-            Type typeT = typeof(T);
-            if (Avx.IsSupported)
-                _s256[typeT] = typeof(Avx).GetMethod("Store", new[] { typeT.MakePointerType(), typeof(Vector256<>).MakeGenericType(typeT)});
-        }
+        //private static void InitStoreCall256<T>()
+        //{
+        //    Type typeT = typeof(T);
+        //    if (Avx.IsSupported)
+        //        _s256[typeT] = typeof(Avx).GetMethod("Store", new[] { typeT.MakePointerType(), typeof(Vector256<>).MakeGenericType(typeT)});
+        //}
 
-        static VectorData()
+        /*static VectorData()
         {
             InitLoadAndConvertCall256<byte, byte>();
             InitLoadAndConvertCall256<byte, short>();
@@ -951,7 +961,7 @@ namespace Linq2d.CodeGen
             InitMethodCall<uint>(Math.Max, Avx2.Max);
             InitMethodCall<float>(Math.Max, Avx.Max);
             InitMethodCall<double>(Math.Max, Avx.Max);
-        }
+        }*/
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector256<short> Negate(Vector256<short> a) => Avx2.MultiplyLow(a, Vector256.Create((short)-1));
@@ -967,7 +977,7 @@ namespace Linq2d.CodeGen
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector256<double> Negate(Vector256<double> a) => Avx.Multiply(a, Vector256.Create(-1.0));
-        public static R Load<T, R>(T[,] array, int i, int j)
+        public static R Load<T, R>(T[,] array, int i, int j, int size)
             => throw new NotImplementedException();
 
     }

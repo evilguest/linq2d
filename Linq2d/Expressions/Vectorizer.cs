@@ -11,15 +11,28 @@ namespace Linq2d.Expressions
     class Vectorizer: ExpressionVisitor
     {
         
-        public static VectorInfo Vectorize(int vectorSize, Expression expression)
+        public static VectorizationResult Vectorize(int vectorSize, Expression expression, ParameterExpression[] resultVars, ParameterExpression[] sourceArgs)
         {
-            var v = new Vectorizer(vectorSize);
+            var v = new Vectorizer(vectorSize, resultVars, sourceArgs);
+            if (expression is ConstantExpression ce)
+            {
+                if (VectorData.VectorInfo[vectorSize].LiftOperations.ContainsKey(ce.Type))
+                    return new VectorizationResult(true, Expression.Call(VectorData.VectorInfo[vectorSize].LiftOperations[ce.Type], ce), null, null);
+                else
+                    return new VectorizationResult(false, expression, expression, $"Failed to lift the constant {ce.Value} to {ce.Type} vector of size {vectorSize}");
+
+            }
             var vectorizedExpression = v.Visit(expression);
-            return new VectorInfo(v._success, vectorizedExpression, v._blockedBy);
+            return new VectorizationResult(v._success, vectorizedExpression, v._blockedBy, v._reason);
         }
 
-        private Vectorizer(int vectorSize)
-            => _vectorSize = vectorSize;
+        private Vectorizer(int vectorSize, ParameterExpression[] resultVars, ParameterExpression[] sourceArgs)
+        {
+            _vectorSize = vectorSize;
+            _resultVars = new HashSet<ParameterExpression>(resultVars ?? throw new ArgumentNullException(nameof(resultVars)));
+            _sourceArgs = new HashSet<ParameterExpression>(sourceArgs ?? throw new ArgumentNullException(nameof(sourceArgs)));
+        }
+
         public override Expression Visit(Expression node) 
         {
             if (!_success) 
@@ -51,19 +64,19 @@ namespace Linq2d.Expressions
                     if (VectorInfo.LiftOperations.ContainsKey(ifTrue.Type))
                         ifTrue = ConvertToVector(ifTrue);
                     else
-                        return Fail(node);
+                        return Fail(ifTrue, $"Failed to lift the {ifTrue.Type} expression to vector of size {_vectorSize}");
                 }
                 if (!IsVector(ifFalse.Type))
                 {
                     if (VectorInfo.LiftOperations.ContainsKey(ifFalse.Type))
                         ifFalse = ConvertToVector(ifFalse);
                     else
-                        return Fail(node);
+                        return Fail(ifFalse, $"Failed to lift the {ifFalse.Type} expression to vector of size {_vectorSize}");
                 }
                 if (VectorInfo.ConditionalOperations.ContainsKey((test.Type, ifTrue.Type)))
                     return Expression.Call(VectorInfo.ConditionalOperations[(test.Type, ifTrue.Type)], test, ifTrue, ifFalse);
                 else
-                    return Fail(node);
+                    return Fail(node, $"Failed to find a conditional operation over {test.Type} vector of size {_vectorSize}");
             }
             else
                 return node.Update(test, ifTrue, ifFalse);
@@ -71,21 +84,36 @@ namespace Linq2d.Expressions
         private IVectorInfo VectorInfo { get => VectorData.VectorInfo[_vectorSize]; }
         protected override Expression VisitIndex(IndexExpression node)
         {
-            if (node.Indexer == ArrayItem(node.Type))
+            if (node.Object is ParameterExpression pe && (_resultVars.Contains(pe) || _sourceArgs.Contains(pe)))
             {
-                if (VectorInfo.LoadAndConvertOperations.ContainsKey((node.Type, node.Type)))
-                    return Expression.Call(GetLoadSubstitute(node.Type, node.Type), node.Object, node.Arguments[0], node.Arguments[1]);
-                else
+                // we need to check if the array access is the recursive one, and the first argument is zero, then the second
+                // argument should be below -_vectorSize; otherwise vectorization is dangerous
+                if (_resultVars.Contains(pe))
                 {
-                    return Fail(node);
-                }    
+                    if (node.Arguments[0] is ConstantExpression ce)
+                    {
+                        if ((int)ce.Value == 0)
+                        {
+                            if (!(Arithmetic.Simplify(Expression.LessThan(node.Arguments[1], Expression.Constant(-_vectorSize)), Ranges.No) is ConstantExpression le) || (bool)le.Value != true)
+                                return Fail(node, $"Cannot prove that the same-row access to the {pe.Name} is vectorization-safe for step {_vectorSize}");
+                        }
+                    }
+                    else return Fail(node, $"We can't prove that the recursive access to {pe.Name} is vectorization-safe");
+                }
+
+                if (VectorInfo.LoadAndConvertOperations.ContainsKey((node.Type, node.Type)))
+                    return Expression.Call(GetLoadSubstitute(node.Type, node.Type), node.Object, node.Arguments[0], node.Arguments[1], Expression.Constant(_vectorSize));
+                else
+                    return Fail(node, $"Failed to find a suitable load operation for the {node.Type} vector of size {_vectorSize}");
+                    
             }
             else return node;
         }
-        private Expression Fail(Expression node)
+        private Expression Fail(Expression node, string reason)
         {
             _blockedBy = node;
             _success = false;
+            _reason = reason;
             return node;
         }
 
@@ -97,9 +125,9 @@ namespace Linq2d.Expressions
             if(node.Operand is IndexExpression ieo && ieo.Indexer == ArrayItem(ieo.Type))
             {
                 if (VectorInfo.LoadAndConvertOperations.ContainsKey((ieo.Type, node.Type)))
-                    return Expression.Call(GetLoadSubstitute(ieo.Type, node.Type), ieo.Object, ieo.Arguments[0], ieo.Arguments[1]);
+                    return Expression.Call(GetLoadSubstitute(ieo.Type, node.Type), ieo.Object, ieo.Arguments[0], ieo.Arguments[1], Expression.Constant(_vectorSize));
                 else
-                    return Fail(node);
+                    return Fail(node, $"Failed to find a load-and-conver operation from type {ieo.Type} to {node.Type} vector of size {_vectorSize}");
             }
             var operand = Visit(node.Operand);
 
@@ -114,14 +142,14 @@ namespace Linq2d.Expressions
                     if (VectorInfo.Vector.ContainsKey(node.Type) && VectorInfo.ConvertOperations.ContainsKey((operand.Type, VectorInfo.Vector[node.Type])))
                         return Expression.Call(VectorInfo.ConvertOperations[(operand.Type, VectorInfo.Vector[node.Type])], operand);
                     else
-                        return Fail(node);
+                        return Fail(node, $"Failed to find a suitable convert operation from {operand.Type} to {node.Type} for vector of size {_vectorSize}");
                 }
                 else
                 {
                     if (VectorInfo.UnaryOperations.ContainsKey((node.NodeType, operandElementType)))
                         return Expression.Call(VectorInfo.UnaryOperations[(node.NodeType, operandElementType)], operand);
                     else
-                        return Fail(node);
+                        return Fail(node, $"Failed to find a {node.NodeType} operation for {operandElementType} vector of size {_vectorSize}");
                 }
             }
             else return node.Update(operand);
@@ -175,7 +203,7 @@ namespace Linq2d.Expressions
             if (VectorInfo.BinaryOperations.ContainsKey((node.NodeType, left.Type, right.Type)))
                 return Expression.MakeBinary(node.NodeType, left, right, false, VectorInfo.BinaryOperations[(node.NodeType, left.Type, right.Type)]);
 
-            return Fail(node);
+            return Fail(node, $"Failed to find a vector {node.NodeType} operation over {left.Type} and {right.Type}");
         }
 
         protected override Expression VisitMethodCall(MethodCallExpression node)
@@ -187,7 +215,7 @@ namespace Linq2d.Expressions
                 if (VectorInfo.MethodTable.ContainsKey(node.Method))
                     return Expression.Call(obj, VectorInfo.MethodTable[node.Method], arguments);
                 else
-                    return Fail(node);
+                    return Fail(node, $"Failed to find a vector analog of {node.Method} operation");
             }
             return base.VisitMethodCall(node);
         }
@@ -195,23 +223,28 @@ namespace Linq2d.Expressions
             => typeof(VectorData).GetMethod(nameof(VectorData.Load)).MakeGenericMethod(t, VectorInfo.Vector[r]);
 
         private bool _success = true;
+        private string _reason;
         private Expression _blockedBy;
         private readonly int _vectorSize;
+        private readonly HashSet<ParameterExpression> _resultVars;
+        private readonly HashSet<ParameterExpression> _sourceArgs;
+
 
         //private VectorInfo VectorInfo { get; private set; }
         private static PropertyInfo ArrayItem(Type t) => t.MakeArrayType(2).GetProperty("Item");
     }
-    public class VectorInfo
+    public class VectorizationResult
     {
         public bool Success { get; }
         public Expression Expression { get; }
         public Expression BlockedBy { get; }
-
-        public VectorInfo(bool success, Expression expression, Expression blockedBy)
+        public string Reason { get; }
+        public VectorizationResult(bool success, Expression expression, Expression blockedBy, string reason)
         {
             Success = success;
             Expression = expression;
             BlockedBy = blockedBy;
+            Reason = reason;
         }
     }
 }

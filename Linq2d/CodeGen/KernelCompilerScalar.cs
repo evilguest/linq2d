@@ -14,9 +14,25 @@ namespace Linq2d.CodeGen
 
         protected override Expression VisitMethodCall(MethodCallExpression node)
         {
-            var r = base.VisitMethodCall(node); // prepare arguments
-            Generator.Call(node.Method);
-            return r;
+            if(node.Method.IsConstructedGenericMethod && node.Method.GetGenericMethodDefinition() == typeof(VectorData).GetMethod(nameof(VectorData.Load)))
+            {
+                var pArray = Visit(node.Arguments[0]);
+                var itemType = node.Arguments[0].Type.GetElementType();
+
+                Load2dPointerOffset(itemType, node.Arguments[1], node.Arguments[2]);
+                
+                int vectorSize = (int)(node.Arguments[3] as ConstantExpression).Value;
+                var m = VectorData.VectorInfo[vectorSize].LoadAndConvertOperations[(itemType, node.Type.GetGenericArguments()[0])];
+
+                Generator.Call(m);
+                return node;
+            }
+            else
+            {
+                var r = base.VisitMethodCall(node); // prepare arguments
+                Generator.Call(node.Method);
+                return r;
+            }
         }
         protected override Expression VisitConstant(ConstantExpression node)
         {
@@ -70,7 +86,11 @@ namespace Linq2d.CodeGen
         protected override Expression VisitUnary(UnaryExpression node)
         {
             var expr = base.VisitUnary(node);
-            switch (expr.NodeType)
+            if(node.Method != null)
+            {
+                Generator.Call(node.Method);
+            }
+            else switch (expr.NodeType)
             {
                 case ExpressionType.Convert:
                     try
@@ -104,7 +124,7 @@ namespace Linq2d.CodeGen
             {ExpressionType.Add, OpCodes.Add },
             {ExpressionType.AddChecked, OpCodes.Add_Ovf },
             {ExpressionType.Multiply, OpCodes.Mul },
-            { ExpressionType.MultiplyChecked, OpCodes.Mul_Ovf},
+            {ExpressionType.MultiplyChecked, OpCodes.Mul_Ovf},
             {ExpressionType.Subtract, OpCodes.Sub },
             {ExpressionType.SubtractChecked, OpCodes.Sub_Ovf },
             {ExpressionType.Divide, OpCodes.Div },
@@ -114,7 +134,11 @@ namespace Linq2d.CodeGen
             {ExpressionType.Equal, OpCodes.Ceq },
             {ExpressionType.And, OpCodes.And },
             {ExpressionType.Or, OpCodes.Or },
-            {ExpressionType.RightShift, OpCodes.Shr }
+            {ExpressionType.RightShift, OpCodes.Shr },
+            {ExpressionType.GreaterThanOrEqual, OpCodes.Bge },
+            {ExpressionType.LessThanOrEqual, OpCodes.Ble },
+            {ExpressionType.AndAlso, OpCodes.Brfalse },
+            {ExpressionType.OrElse, OpCodes.Brtrue },
         };
         public static IReadOnlyDictionary<Type, OpCode> LoadTable { get; } = new Dictionary<Type, OpCode>()
         {
@@ -150,6 +174,13 @@ namespace Linq2d.CodeGen
         protected override Expression VisitBinary(BinaryExpression node)
         {
             Expression ret; // will handle the operands
+            if(node.Method != null)
+            {
+                Visit(node.Left);
+                Visit(node.Right);
+                Generator.Call(node.Method);
+                return node;
+            }
             switch (node.NodeType)
             {
                 case ExpressionType.Add:
@@ -171,7 +202,7 @@ namespace Linq2d.CodeGen
                     var trueLabel = Generator.DefineLabel();
                     var endLabel = Generator.DefineLabel();
                     ret = base.VisitBinary(node);
-                    Generator.Emit(node.NodeType == ExpressionType.GreaterThanOrEqual ? OpCodes.Bge : OpCodes.Ble, trueLabel);
+                    Generator.Emit(BinaryOpTable[node.NodeType], trueLabel);
                     Generator.Ldc(0);
                     Generator.Br(endLabel);
                     Generator.MarkLabel(trueLabel);
@@ -183,15 +214,13 @@ namespace Linq2d.CodeGen
                     var l = Visit(node.Left);
                     var skipLabel = Generator.DefineLabel();
                     Generator.Emit(OpCodes.Dup);
-                    Generator.Emit(node.NodeType == ExpressionType.AndAlso ? OpCodes.Brfalse : OpCodes.Brtrue, skipLabel);
+                    Generator.Emit(BinaryOpTable[node.NodeType], skipLabel);
                     Generator.Emit(OpCodes.Pop);
-                    var r = Visit(node.Right);
+                    Visit(node.Right);
                     Generator.MarkLabel(skipLabel);
 
                     ret = node;
                     break;
-
-
 
                 default: throw new InvalidOperationException($"Cannot compile the binary expression of type {node.NodeType}");
             }

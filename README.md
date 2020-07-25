@@ -49,7 +49,7 @@ Assert.Equal(sample, q.ToArray());
 This time the number of cells being added for every target cell is the same, and the "general brightness" is preserved.
 In both cases above, Linq2d would verify the size of the input array to fit the provided filter kernel at least once. So, in the C4 case, an attempt to calculate the filter over an array smaller than (3 x 3) will fail.
 ### Multiple Results
-Sometimes same source data is used to create multiple resulting arrays:
+Sometimes the same source data is used to create multiple resulting arrays:
 ```csharp
 var left = new [,] { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 }};
 var right = new [,] { { 9, 8, 7 }, { 6, 5, 4 }, { 3, 2, 1 }};
@@ -74,9 +74,11 @@ var right = new [,] { { 9, 8, 7 }, { 6, 5, 4 }, { 3, 2, 1 }};
 var both = from l in left
            from r in right
            select ValueTuple.Create(l + r, l - r); 
-           // selecting (l + r, l - r) would be even better, but C# up to 7.3 doesn't support the tuple literals in Expression Trees. See also CS8743.
+           // selecting (l + r, l - r) would be even better, but C# up to 7.3 
+           // doesn't support the tuple literals in Expression Trees. See also CS8743.
 
-var (s, d) = both.ToArrays(); // number and types of the arrays matches the number and types of the select clause members
+var (s, d) = both.ToArrays(); // the number and types of the arrays do match the 
+                              // number and types of the select clause members
 
 Assert.Equal(new [,] { { 10, 10, 10 }, { 10, 10, 10 }, { 10, 10, 10 }}, s);
 Assert.Equal(new [,] { { -8, -6, -4 }, { -2, 0, 2 }, { 4, 6, 8 }}, d);
