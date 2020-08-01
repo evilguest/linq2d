@@ -366,10 +366,11 @@ namespace Linq2d.CodeGen
                 InitLoadAndConvert<long>(Avx.LoadVector256);
                 InitLoadAndConvert<ulong>(Avx.LoadVector256);
                 InitLoadAndConvert<double>(Avx.LoadVector256);
-                InitLoadAndConvert((byte* address) => Avx.ConvertToVector256Double(Sse41.ConvertToVector128Int32(address)));
-                InitLoadAndConvert((sbyte* address) => Avx.ConvertToVector256Double(Sse41.ConvertToVector128Int32(address)));
-                InitLoadAndConvert((short* address) => Avx.ConvertToVector256Double(Sse41.ConvertToVector128Int32(address)));
-                InitLoadAndConvert((ushort* address) => Avx.ConvertToVector256Double(Sse41.ConvertToVector128Int32(address)));
+                InitLoadAndConvert<byte, double>(ConvertToVector256Double);
+                InitLoadAndConvert<sbyte, double>(ConvertToVector256Double);
+                InitLoadAndConvert<short, double>(ConvertToVector256Double);
+                InitLoadAndConvert<ushort, double>(ConvertToVector256Double);
+                InitLoadAndConvert<int, double>(ConvertToVector256Double);
 
                 InitLift<long>(Vector256.Create);
                 InitLift<ulong>(Vector256.Create);
@@ -434,17 +435,25 @@ namespace Linq2d.CodeGen
                 InitConditional256<long>(Avx2.BlendVariable);
                 InitConditional256<ulong>(Avx2.BlendVariable);
             }
-
-            static Vector256<double> LessThan(Vector256<double> l, Vector256<double> r)
-                => Avx.Compare(l, r, FloatComparisonMode.OrderedLessThanSignaling);
-            static Vector256<double> GreaterThan(Vector256<double> l, Vector256<double> r)
-                => Avx.Compare(l, r, FloatComparisonMode.OrderedGreaterThanSignaling);
-            static Vector256<double> LessThanOrEqual(Vector256<double> l, Vector256<double> r)
-                => Avx.Compare(l, r, FloatComparisonMode.OrderedLessThanOrEqualSignaling);
-            static Vector256<double> GreaterThanOrEqual(Vector256<double> l, Vector256<double> r)
-                => Avx.Compare(l, r, FloatComparisonMode.OrderedGreaterThanOrEqualSignaling);
-
         }
+        public static Vector256<double> LessThan(Vector256<double> l, Vector256<double> r)
+            => Avx.Compare(l, r, FloatComparisonMode.OrderedLessThanSignaling);
+        public static Vector256<double> GreaterThan(Vector256<double> l, Vector256<double> r)
+            => Avx.Compare(l, r, FloatComparisonMode.OrderedGreaterThanSignaling);
+        public static Vector256<double> LessThanOrEqual(Vector256<double> l, Vector256<double> r)
+            => Avx.Compare(l, r, FloatComparisonMode.OrderedLessThanOrEqualSignaling);
+        public static Vector256<double> GreaterThanOrEqual(Vector256<double> l, Vector256<double> r)
+            => Avx.Compare(l, r, FloatComparisonMode.OrderedGreaterThanOrEqualSignaling);
+        public static Vector256<double> ConvertToVector256Double(byte* address)
+            => Avx.ConvertToVector256Double(Sse41.ConvertToVector128Int32(address));
+        public static Vector256<double> ConvertToVector256Double(sbyte* address)
+            => Avx.ConvertToVector256Double(Sse41.ConvertToVector128Int32(address));
+        public static Vector256<double> ConvertToVector256Double(short* address)
+            => Avx.ConvertToVector256Double(Sse41.ConvertToVector128Int32(address));
+        public static Vector256<double> ConvertToVector256Double(ushort* address)
+            => Avx.ConvertToVector256Double(Sse41.ConvertToVector128Int32(address));
+        public static Vector256<double> ConvertToVector256Double(int* address)
+            => Avx.ConvertToVector256Double(Sse2.LoadVector128(address));
 
         public static Vector256<long> ShiftRightLogical(Vector256<long> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
         public static Vector256<ulong> ShiftRightLogical(Vector256<ulong> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);

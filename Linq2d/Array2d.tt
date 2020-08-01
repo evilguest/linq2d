@@ -42,12 +42,6 @@ namespace Linq2d
 
         #endregion
 
-        #region Experiments
-
-        //public static R[,] ToArray<T, R>(this IArrayQueryRecurrent<T, R, R> recurrent)=>null;
-
-        #endregion
-
         #region One array recurrent
         public static IArrayTransform<T, R> SelectMany<T, R>(this T[,] source, Func<object, Result<R>> secondSelector, Expression<Func<Cell<T>, RelativeCell<R>, R>> resultSelector) 
             => new ArrayQuery<T, R>(source.Wrap(), secondSelector(default).InitValue, resultSelector);
@@ -68,7 +62,6 @@ namespace Linq2d
             => new ArrayQuery2<T, R1, R2>(source.Wrap(), kernel);
         public static IArrayQuery2<T, R1, R2> Select<T, R1, R2>(this ArraySource<T> source, Expression<Func<Cell<T>, (R1, R2)>> kernel) 
             => new ArrayQuery2<T, R1, R2>(source, kernel);
-
         public static IArrayQuery2<T, R1, R2> Select<T, _, R1, R2>(this IArrayQuery<T, _> source, Expression<Func<_, (R1, R2)>> kernel) 
             => new ArrayQuery2<T, R1, R2>(source, kernel);
         #endregion
@@ -85,17 +78,31 @@ namespace Linq2d
             => new ArrayQuery2<T, R1, R2>(source, secondSelector(default), resultSelector);
         #endregion
 
-        #region Two arrays
-        public static IArrayQuery<T1, T2, R> SelectMany<T1, T2, R>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, R>> resultSelector) 
-            => new ArrayQuery<T1, T2, R>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
-        public static IArrayQuery<T1, T2, R> SelectMany<T1, T2, R>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, R>> resultSelector) 
-            => new ArrayQuery<T1, T2, R>(source.Wrap(), secondSelector(default), resultSelector);
+        #region One array three results
+        public static IArrayTransform3<T, R1, R2, R3> Select<T, R1, R2, R3>(this T[,] source, Expression<Func<Cell<T>, (R1, R2, R3)>> kernel) 
+            => new ArrayQuery3<T, R1, R2, R3>(source.Wrap(), kernel);
+        public static IArrayQuery3<T, R1, R2, R3> Select<T, R1, R2, R3>(this ArraySource<T> source, Expression<Func<Cell<T>, (R1, R2, R3)>> kernel) 
+            => new ArrayQuery3<T, R1, R2, R3>(source, kernel);
+        public static IArrayQuery3<T, R1, R2, R3> Select<T, _, R1, R2, R3>(this IArrayQuery<T, _> source, Expression<Func<_, (R1, R2, R3)>> kernel) 
+            => new ArrayQuery3<T, R1, R2, R3>(source, kernel);
+        public static IArrayTransform3<T, R1, R2, R3> SelectMany<T, R1, R2, R3>(this T[,] source, Func<object, Result<R1>> secondSelector, Expression<Func<Cell<T>, RelativeCell<R1>, (R1, R2, R3)>> resultSelector) 
+            => new ArrayQuery3<T, R1, R2, R3>(source.Wrap(), secondSelector(default), resultSelector);
 
+
+        #endregion
+
+        #region Two arrays
+        public static IArrayQuery<T1, T2, R> SelectMany<T1, T2, R>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, R>> resultSelector)
+            => new ArrayQuery<T1, T2, R>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery<T1, T2, R> SelectMany<T1, T2, R>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, R>> resultSelector)
+            => new ArrayQuery<T1, T2, R>(source.Wrap(), secondSelector(default), resultSelector);
         public static IArrayQuery<T1, T2, R> SelectMany<T1, T2, R>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, R>> resultSelector) 
             => new ArrayQuery<T1, T2, R>(source, secondSelector(default).Wrap(), resultSelector);
         public static IArrayQuery<T1, T2, R> SelectMany<T1, T2, R>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, R>> resultSelector)
             => new ArrayQuery<T1, T2, R>(source, secondSelector(default), resultSelector);
 
+        public static IArrayQuery<T1, T2, R> Select<T1, T2, _, R>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, R>> resultSelector)
+            => new ArrayQuery<T1, T2, R>(source, resultSelector);
         public static IArrayTransform<T1, T2, R> SelectMany<T1, T2, _, R>(this IArrayQuery<T1, T2, _> source, Func<object, Result<R>> secondSelector, Expression<Func<_, RelativeCell<R>, R>> resultSelector)
             => new ArrayQuery<T1, T2, R>(source, secondSelector(default), resultSelector);
         #endregion
