@@ -64,6 +64,14 @@ namespace Linq2d
             Source1 = sources.Source1;
             Source2 = sources.Source2;
         }
+
+        public ArrayQuery(IArraySource<T1, T2> sources, LambdaExpression kernel) : base(sources, kernel)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = sources.Source1;
+            Source2 = sources.Source2;
+        }
+
         public ArraySource<T1> Source1 { get; }
         public ArraySource<T2> Source2 { get; }
         private Func<T1[,], T2[,], R[,]> _transform;
@@ -80,7 +88,7 @@ namespace Linq2d
         protected override R[,] GetResult() => Transform(Source1.Array, Source2.Array);
 
     }
-
+    
 
     internal class ArrayQuery<T1, T2, T3, R> : ArrayQuery1<R>, IArrayQuery<T1, T2, T3, R>
     {
@@ -1152,4 +1160,83 @@ namespace Linq2d
 
     }
 
+    # region 3 results
+    internal class ArrayQuery3<T, R1, R2, R3>: ArrayQuery3<R1, R2, R3>, IArrayQuery3<T, R1, R2, R3>
+    {
+        public ArraySource<T> Source { get; }
+
+        private Func<T[,], (R1[,], R2[,], R3[,])> _transform;
+
+
+        public ArrayQuery3(ArraySource<T> source, Expression<Func<Cell<T>, (R1, R2, R3)>> kernel) : base(source, kernel)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source = source;
+        }
+        public ArrayQuery3(ArraySource<T> source, Result<R1> result, Expression<Func<Cell<T>, RelativeCell<R1>, (R1, R2, R3)>> kernel):base(source, kernel, result.InitValue)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source = source;
+        }
+
+        public ArrayQuery3(IArraySource<T> source, LambdaExpression kernel): base(source, kernel)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source = source.Source;
+        }
+
+        public ArrayQuery3(IArrayQueryRecurrentHalf<T, R1> source, Result<R2> result, LambdaExpression kernel): base(source, kernel, result.InitValue)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source = source.Source;
+        }
+
+
+        public Func<T[,], (R1[,], R2[,], R3[,])> Transform
+        {
+            get
+            {
+                if (_transform == null)
+                    _transform = BuildTransform<Func<T[,], (R1[,], R2[,], R3[,])>>();
+                return _transform;
+            }
+        }
+
+        protected override (R1[,], R2[,], R3[,]) GetResult() => Transform(Source.Array);
+
+    }
+
+    internal class ArrayQuery3<T1, T2, R1, R2, R3> : ArrayQuery3<R1, R2, R3>, IArrayQuery3<T1, T2, R1, R2, R3>
+    {
+        public ArrayQuery3(ArraySource<T1> source1, ArraySource<T2> source2, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2, R3)>> kernel) : base(source1, source2, kernel)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = source1 ?? throw new ArgumentNullException(nameof(source1));
+            Source2 = source2 ?? throw new ArgumentNullException(nameof(source2));
+        }
+        public ArrayQuery3(IArraySource<T1, T2> sources, Result<R1> result, LambdaExpression kernel) : base(sources, kernel, result.InitValue)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = sources.Source1;
+            Source2 = sources.Source2;
+        }
+        public ArraySource<T1> Source1 { get; }
+        public ArraySource<T2> Source2 { get; }
+        private Func<T1[,], T2[,], (R1[,], R2[,], R3[,])> _transform;
+
+        public Func<T1[,], T2[,], (R1[,], R2[,], R3[,])> Transform
+        {
+            get
+            {
+                if (_transform == null)
+                    _transform = BuildTransform<Func<T1[,], T2[,], (R1[,], R2[,], R3[,])>>();
+                return _transform;
+            }
+        }
+
+        protected override (R1[,], R2[,], R3[,]) GetResult() => Transform(Source1.Array, Source2.Array);
+
+    }
+
+    # endregion
 }

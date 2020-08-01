@@ -8,44 +8,17 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using static System.Linq.Expressions.Expression;
 
 namespace Linq2d
 {
-    internal class ArrayQueryBase
+    internal class ArrayQueryBase: IVectorizable
     {
         public LambdaExpression Kernel { get; }
-
         public List<ArraySource> Sources { get; } = new List<ArraySource>();
         public List<Type> Results { get; } = new List<Type>();
         public List<object> ResultReplacements { get;} = new List<object>();
         public string MethodName { get; protected set; }
-        //public bool Recurrent { get; }
-        //private int _h;
-        //public int Height { get => _h; }
-        //private int _w;
-        //public int Width { get => _w; }
-
-        //static (int h, int w) EnsureSameSize(IEnumerable<ArraySource> arrays)
-        //{
-        //    bool hasData = false;
-        //    (int h, int w) size = (0, 0);
-        //    foreach (var a in arrays)
-        //    {
-        //        if (hasData)
-        //        {
-        //            if (a.Height != size.h || a.Width != size.w)
-        //                throw new InvalidOperationException($"Sources are not the same size");
-        //        }
-        //        else
-        //        {
-        //            size = (a.Height, a.Width);
-        //            hasData = true;
-        //        }
-        //    }
-        //    return hasData ? size : throw new InvalidOperationException("No sources are provided");
-        //}
         protected ArrayQueryBase(ArraySource source, LambdaExpression kernel)
         {
             Sources.Add(source);
@@ -91,6 +64,9 @@ namespace Linq2d
             Sources.Add(right);
             ResultReplacements.Add(resultInit);
         }
+        public bool Vectorized { get; private set; } = false;
+        public VectorizationResult VectorizationResult { get; private set; } = null;
+
         protected D BuildTransform<D>()
             where D : Delegate
         {
@@ -308,21 +284,26 @@ namespace Linq2d
                             var step = 32;
                             while (!v.Success && step > 1)
                             {
-                                v = Vectorizer.Vectorize(step, coreKernels[c], resultVars, sourceArgs); // try smaller step sizes until it works
+                                v = Vectorizer.Vectorize(step, coreKernels[c], resultVars, sourceArgs); 
                                 stepSizes[c] = step;
-                                step >>= 1;
+                                step >>= 1; // try smaller step sizes until it works
                             }
                             if (v.Success)
                             {
                                 vectorKernels[c] = v.Expression;
                             }
                             else
+                            {
                                 vectorizable = false;
+                                VectorizationResult = v;
+                            }
                         }
 
                         if (vectorizable)
                         {
+                            Vectorized = true;
                             var maxStep = stepSizes.Max();
+                            var minStep = stepSizes.Min();
                             //var kcv = new KernelCompilerVector(ilg, wVar, vectorNodes);
                             //foreach (var vm in kcs.VariableMap)
                             //    kcv.VariableMap[vm.Key] = vm.Value;
@@ -333,17 +314,20 @@ namespace Linq2d
                             {
                                 var loopJVectorBody = ilg.DefineAndMarkLabel();
 
-                                for (int c = 0; c < Results.Count; c++)
+                                for (var unroll = 0; unroll < maxStep / minStep; unroll++)
                                 {
-                                    for (var r = 0; r < maxStep / stepSizes[c]; r++)
+                                    for (int c = 0; c < Results.Count; c++)
                                     {
-                                        ilg.Ldloc(pTrgs[c]);
-                                        kcs.Load2dPointerOffset(Results[c], iVar, Add(jVar, Constant(r*stepSizes[c])));
-                                        kcs.Visit(vectorKernels[c]);
-                                        ilg.Call(VectorData.VectorInfo[stepSizes[c]].StoreOperations[Results[c]]);
+                                        if (minStep * unroll % stepSizes[c] == 0)
+                                        {
+                                            ilg.Ldloc(pTrgs[c]);
+                                            kcs.Load2dPointerOffset(Results[c], iVar, jVar);
+                                            kcs.Visit(vectorKernels[c]);
+                                            ilg.Call(VectorData.VectorInfo[stepSizes[c]].StoreOperations[Results[c]]);
+                                        }
                                     }
+                                    ilg.Increment(j, minStep);
                                 }
-                                ilg.Increment(j, maxStep);
 
                                 ilg.MarkLabel(loopJVectorStart);
                                 ilg.Ldloc(j);
@@ -540,48 +524,4 @@ namespace Linq2d
             return new CellAccessInliner(i, j, h, w, replacements);
         }
     }
-    internal abstract class ArrayQuery1<R>: ArrayQueryBase
-    {
-        protected ArrayQuery1(ArraySource source, LambdaExpression kernel, object initValue) : base(source, kernel, initValue) { }
-        protected ArrayQuery1(IArrayQuery sources, LambdaExpression kernel, R initValue) : base(sources, kernel, initValue) { }
-        protected ArrayQuery1(ArraySource source, LambdaExpression kernel) : base(source, kernel) { }
-        protected ArrayQuery1(IArrayQuery sources, LambdaExpression kernel) : base(sources, kernel) { }
-        protected ArrayQuery1(ArraySource left, ArraySource right, LambdaExpression kernel) : base(left, right, kernel) { }
-        protected ArrayQuery1(IArrayQuery sources, ArraySource right, LambdaExpression kernel) : base(sources, right, kernel) { }
-
-        protected R[,] _result;
-        protected abstract R[,] GetResult();
-        public R[,] ToArray()
-        {
-            if (_result == null)
-                _result = GetResult();
-            return _result;
-        }
-    }
-
-    internal abstract class ArrayQuery2<R1, R2> : ArrayQueryBase
-    {
-        protected ArrayQuery2(ArraySource source, LambdaExpression kernel, R1 initValue1) : base(source, kernel, initValue1) { }
-        //protected ArrayQuery2(ArraySource source, LambdaExpression kernel, R1 initValue1, R2 initValue2) : this(source, kernel, initValue1)
-        //    => ResultReplacements.Add(initValue2);
-
-        protected ArrayQuery2(IArrayQuery sources, LambdaExpression kernel, R1 initValue1) : base(sources, kernel, initValue1) { }
-        protected ArrayQuery2(IArrayQueryRecurrentHalf sources, LambdaExpression kernel, R2 initValue2) : base((IArrayQuery)sources, kernel)
-            => ResultReplacements.Add(initValue2);
-
-        protected ArrayQuery2(ArraySource source, LambdaExpression kernel) : base(source, kernel) { }
-        protected ArrayQuery2(IArrayQuery sources, LambdaExpression kernel) : base(sources, kernel) { }
-        protected ArrayQuery2(ArraySource left, ArraySource right, LambdaExpression kernel) : base(left, right, kernel) { }
-        protected ArrayQuery2(IArrayQuery sources, ArraySource right, LambdaExpression kernel) : base(sources, right, kernel) { }
-
-        protected (R1[,], R2[,])? _result;
-        protected abstract (R1[,], R2[,]) GetResult();
-        public (R1[,], R2[,]) ToArrays()
-        {
-            if (!_result.HasValue)
-                _result = GetResult();
-            return _result.Value;
-        }
-    }
-
 }
