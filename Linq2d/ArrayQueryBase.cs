@@ -265,8 +265,7 @@ namespace Linq2d
                     // Vector part
                     {
 
-                        //var vectorNodes = new HashSet<Expression>();
-                        var vectorizable = true;
+                        var vectorizable = Array2d.TryVectorize;
                         var coreKernels = new Expression[Results.Count];
                         coreRanges = baseRanges.Add(iVar, Constant(-minX), Subtract(hVar, Constant(maxX + 1))).Add(jVar, Constant(-minY), Subtract(wVar, Constant(maxY + 1)));
 
@@ -276,17 +275,15 @@ namespace Linq2d
                         //var step = 32 / (from t in argTypes select (int)typeof(Unsafe).GetMethod("SizeOf").MakeGenericMethod(t).Invoke(null, null)).Max();
                         for (int c = 0; (c < Results.Count) && vectorizable; c++)
                         {
-                            //if (c<ResultReplacements.Count)
-                            //    recurrentOverlap |= (km.Accesses[Kernel.Parameters[Sources.Count + c]].minY < 0);
                             coreKernels[c] = InlineKernel(kernels[c], iVar, jVar, hVar, wVar, coreRanges, resultVars, sourceArgs);
-                            //vectorizable &= VectorVerify.CanBeVectorized(coreKernels[c], vectorNodes);
                             var v = new VectorizationResult(false, null, null, null);
-                            var step = 32;
-                            while (!v.Success && step > 1)
+
+                            // try smaller step sizes until it works
+                            // todo: replace 32 and 2 to suitable boundaries to avoid testing the dead ends
+                            for (var step = 32; !v.Success && step > 2; step >>= 1) 
                             {
-                                v = Vectorizer.Vectorize(step, coreKernels[c], resultVars, sourceArgs); 
+                                v = Vectorizer.Vectorize(step, coreKernels[c], resultVars, sourceArgs);
                                 stepSizes[c] = step;
-                                step >>= 1; // try smaller step sizes until it works
                             }
                             if (v.Success)
                             {
@@ -298,16 +295,12 @@ namespace Linq2d
                                 VectorizationResult = v;
                             }
                         }
-
+                       
                         if (vectorizable)
                         {
                             Vectorized = true;
                             var maxStep = stepSizes.Max();
                             var minStep = stepSizes.Min();
-                            //var kcv = new KernelCompilerVector(ilg, wVar, vectorNodes);
-                            //foreach (var vm in kcs.VariableMap)
-                            //    kcv.VariableMap[vm.Key] = vm.Value;
-
 
                             var loopJVectorStart = ilg.DefineLabel();
                             ilg.Br(loopJVectorStart);
@@ -338,7 +331,8 @@ namespace Linq2d
                             }
                         }
 
-                        var loopJStart = ilg.DefineLabel(); // now we get to the scalar part
+                        // now we get to the scalar part
+                        var loopJStart = ilg.DefineLabel(); 
                         ilg.Br(loopJStart);
                         {
                             var loopJBody = ilg.DefineAndMarkLabel();

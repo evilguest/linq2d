@@ -10,6 +10,9 @@ namespace Linq2d
     }
     public static class Array2d
     {
+        #region control
+        public static bool TryVectorize { get; set; } = true;
+        #endregion
         #region One array
 
         /// <summary>

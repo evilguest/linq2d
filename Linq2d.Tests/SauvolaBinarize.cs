@@ -1,5 +1,6 @@
 ﻿using System;
 using Xunit;
+using square = System.Int64;
 
 namespace Linq2d.Tests
 {
@@ -27,10 +28,10 @@ namespace Linq2d.Tests
 
             var integral = from g in grayImage
                            from ri in Result.SubstBy(0)
-                           from rq in Result.SubstBy(0)
+                           from rq in Result.SubstBy(0L)
                            select ValueTuple.Create(
-                               g + ri[-1, 0] + ri[0, -1] - ri[-1, -1],
-                           g * g + rq[-1, 0] + rq[0, -1] - rq[-1, -1]);
+                               ri[-1, 0] + ri[0, -1] - ri[-1, -1] + g,
+                               rq[-1, 0] + rq[0, -1] - rq[-1, -1] + g * g);
 
             var (integral_image_linq, integral_sqimg_linq) = integral.ToArrays();
 
@@ -55,7 +56,7 @@ namespace Linq2d.Tests
             var diffA = diff.ToArray();
             TestHelper.AssertEqual(CalculateDiff(integral_image_linq, whalf), diff.ToArray());
 
-            var sqdiff = from i in integral_sqimg_linq.With(OutOfBoundsStrategy.Integral(0))
+            var sqdiff = from i in integral_sqimg_linq.With(OutOfBoundsStrategy.Integral(0L))
                          let tl = i.Offset(-whalf - 1, -whalf - 1)
                          let tr = i.Offset(-whalf - 1, whalf)
                          let bl = i.Offset(whalf, -whalf - 1)
@@ -95,7 +96,7 @@ namespace Linq2d.Tests
             return result;
         }
 
-        private double[,] CalculateStd(int[,] sqdiff, int[,] diff, int[,] area, double[,] mean)
+        private double[,] CalculateStd(square[,] sqdiff, int[,] diff, int[,] area, double[,] mean)
         {
             var (h, w) = ArrayHelper.EnsureSize(0, 0, sqdiff, diff, area, mean);
             var result = new double[h, w];
@@ -133,6 +134,28 @@ namespace Linq2d.Tests
             return result;
         }
 
+        private static square[,] CalculateDiff(square[,] integralImage, int whalf)
+        {
+            var result = new square[integralImage.Height(), integralImage.Width()];
+            for (int i = 0; i < result.Height(); i++)
+                for (int j = 0; j < result.Width(); j++)
+                {
+                    var xmin = Math.Max(0, i - whalf);
+                    var ymin = Math.Max(0, j - whalf);
+                    var xmax = Math.Min(result.Height() - 1, i + whalf);
+                    var ymax = Math.Min(result.Width() - 1, j + whalf);
+
+                    if (xmin == 0 && ymin == 0)
+                        result[i, j] = integralImage[xmax, ymax];
+                    else if (xmin == 0)
+                        result[i, j] = integralImage[xmax, ymax] - integralImage[xmax, ymin - 1];
+                    else if (ymin == 0)
+                        result[i, j] = integralImage[xmax, ymax] - integralImage[xmin - 1, ymax];
+                    else
+                        result[i, j] = integralImage[xmax, ymax] - integralImage[xmin - 1, ymax] - integralImage[xmax, ymin - 1] + integralImage[xmin - 1, ymin - 1];
+                }
+            return result;
+        }
         private static int[,] CalculateDiff(int[,] integralImage, int whalf)
         {
             var result = new int[integralImage.Height(), integralImage.Width()];
@@ -178,10 +201,10 @@ namespace Linq2d.Tests
             return result;
         }
 
-        private static (int[,], int[,]) DoubleIntegrateSlow(int h, int w, byte[,] grayImage)
+        private static (int[,], square[,]) DoubleIntegrateSlow(int h, int w, byte[,] grayImage)
         {
             var integral_image = new int[h, w];
-            var integral_sqimg = new int[h, w];
+            var integral_sqimg = new square[h, w];
             integral_image[0, 0] = grayImage[0, 0];
             integral_sqimg[0, 0] = grayImage[0, 0] * grayImage[0, 0];
 
@@ -212,18 +235,19 @@ namespace Linq2d.Tests
 
             var integral = from g in grayImage
                            from ri in Result.SubstBy(0)
-                           from rq in Result.SubstBy(0)
+                           from rq in Result.SubstBy(0L)
                            select ValueTuple.Create(
-                               g + ri[-1, 0] + ri[0, -1] - ri[-1, -1],
-                           g * g + rq[-1, 0] + rq[0, -1] - rq[-1, -1]);
+                               ri[-1, 0] + ri[0, -1] - ri[-1, -1] + g,
+                               rq[-1, 0] + rq[0, -1] - rq[-1, -1] + g * g);
 
             var (integral_image, integral_sqimg) = integral.ToArrays();
+
 
             var whalf = W / 2;
 
             var t = from g in grayImage
                     from i in integral_image.With(OutOfBoundsStrategy.Integral(0))
-                    from q in integral_sqimg.With(OutOfBoundsStrategy.Integral(0)) 
+                    from q in integral_sqimg.With(OutOfBoundsStrategy.Integral(0L)) 
                     let tl = i.Offset(-whalf-1, -whalf-1)  let tr = i.Offset(-whalf-1, whalf)
                     let bl = i.Offset(whalf, -whalf-1)   let br = i.Offset(whalf, whalf)
                     let tlq = q.Offset(-whalf-1, -whalf-1) let trq = q.Offset(-whalf-1, whalf)

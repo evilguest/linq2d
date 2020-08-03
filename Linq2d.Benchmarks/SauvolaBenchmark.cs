@@ -1,12 +1,15 @@
 ﻿using BenchmarkDotNet.Attributes;
+using Mono.Linq.Expressions;
 using System;
 
 namespace Linq2d.Benchmarks
 {
     public class SauvolaBenchmark : ImageBenchmark
     {
-        private Func<byte[,], (int[,], long[,])> _preIntegrate;
-        private Func<byte[,], int[,], long[,], byte[,]> _edgeDetect;
+        private Func<byte[,], (int[,], long[,])> _preIntegrateScalar;
+        private Func<byte[,], int[,], long[,], byte[,]> _edgeDetectScalar;
+        private Func<byte[,], (int[,], long[,])> _preIntegrateVector;
+        private Func<byte[,], int[,], long[,], byte[,]> _edgeDetectVector;
 
 
 
@@ -14,35 +17,63 @@ namespace Linq2d.Benchmarks
         public override void Initialize()
         {
             base.Initialize();
-            _preIntegrate = GetIntegral().Transform;
-            _edgeDetect = GetDetect(new int[0, 0], new long[0, 0]).Transform;
-            var t = _edgeDetect(new byte[20, 20], new int[20, 20], new long[20, 20]); // force JIT
-            Console.WriteLine(t.Length);
+            Array2d.TryVectorize = true;
+            _preIntegrateVector = GetIntegral().Transform;
+            var edgeDetectVector = GetDetect(new int[0, 0], new long[0, 0]);
+            _edgeDetectVector = edgeDetectVector.Transform;
+            IVectorizable ev = ((IVectorizable)edgeDetectVector);
+            if (!ev.Vectorized)
+            {
+                Console.WriteLine($"Sauvola Edge Detect vectorization failed due to the expression\n{ev.VectorizationResult.BlockedBy.ToCSharpCode()}\n  :{ev.VectorizationResult.Reason}");
+                Console.ReadLine();
+                throw new InvalidOperationException(ev.VectorizationResult.Reason);
+            }
+            Array2d.TryVectorize = false; // force scalar
+            _preIntegrateScalar = GetIntegral().Transform;
+            _edgeDetectScalar = GetDetect(new int[0, 0], new long[0, 0]).Transform;
+
+            var t = _edgeDetectVector(new byte[20, 20], new int[20, 20], new long[20, 20]); // force JIT
+            t = _edgeDetectScalar(new byte[20, 20], new int[20, 20], new long[20, 20]); // force JIT
+            //Console.WriteLine(t.Length);
         }
 
-        [Benchmark(Baseline = true)]
+        [Benchmark]
         public byte[,] SafeSauvola()
         {
             return Tests.SauvolaBinarize.BaseBinarize(_data);
         }
-        [Benchmark]
-        public byte[,] UnsafeSauvola()
+        [Benchmark(Baseline = true)]
+        public byte[,] UnsafeSauvolaScalar()
         {
-            var (p, q) = _preIntegrate(_data);
+            var (p, q) = _preIntegrateScalar(_data);
             return Transform(_data, p, q);
         }
 
         [Benchmark]
-        public byte[,] LinqSauvola()
+        public byte[,] LinqSauvolaVector()
         {
+            Array2d.TryVectorize = true;
             var (p, q) = GetIntegral().ToArrays();
             return GetDetect(p, q).ToArray();
         }
         [Benchmark]
-        public byte[,] CachedLinqSauvola()
+        public byte[,] LinqSauvolaScalar()
         {
-            var (p, q) = _preIntegrate(_data);
-            return _edgeDetect(_data, p, q);
+            Array2d.TryVectorize = false;
+            var (p, q) = GetIntegral().ToArrays();
+            return GetDetect(p, q).ToArray();
+        }
+        [Benchmark]
+        public byte[,] CachedLinqSauvolaVector()
+        {
+            var (p, q) = _preIntegrateVector(_data);
+            return _edgeDetectVector(_data, p, q);
+        }
+        [Benchmark]
+        public byte[,] CachedLinqSauvolaScalar()
+        {
+            var (p, q) = _preIntegrateScalar(_data);
+            return _edgeDetectScalar(_data, p, q);
         }
 
         private IArrayTransform2<byte, int, long> GetIntegral() =>
@@ -68,14 +99,14 @@ namespace Linq2d.Benchmarks
             let area = (br.X - tl.X) * (br.Y - tl.Y)
             let diff = br.Value + tl.Value - tr.Value - bl.Value
             let sqdiff = brq.Value + tlq.Value - trq.Value - blq.Value
-            let mean = diff / area
+            let mean = (double)diff / area
             let std = Math.Sqrt((sqdiff - diff * mean) / (area - 1))
 
             let threshold = mean * (1 + K * ((std / 128) - 1))
 
             select g > threshold ? (byte)255 : (byte)0;
 
-        [Params(4, 5)] //[Params(1, 2, 3, 4, 5, 6, 7, 8)]
+        [Params(5)] //[Params(1, 2, 3, 4, 5, 6, 7, 8)]
         public int WHalf { get; set; } = 5;
         public static readonly double K = 0.1;
 
@@ -84,13 +115,13 @@ namespace Linq2d.Benchmarks
             Array[] arrayArray = new Array[3];
             fixed (byte* numPtr1 = &_param0[0, 0])
             {
-                arrayArray[0] = (Array)_param0;
+                arrayArray[0] = _param0;
                 fixed (int* numPtr2 = &_param1[0, 0])
                 {
-                    arrayArray[1] = (Array)_param1;
+                    arrayArray[1] = _param1;
                     fixed (long* numPtr3 = &_param2[0, 0])
                     {
-                        arrayArray[2] = (Array)_param2;
+                        arrayArray[2] = _param2;
                         ValueTuple<int, int> valueTuple = ArrayHelper.EnsureSize(11, 11, arrayArray);
                         int length1 = valueTuple.Item1;
                         int length2 = valueTuple.Item2;

@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.Intrinsics;
 using Linq2d.CodeGen;
+using Linq2d.CodeGen.Fake;
 
 namespace Linq2d.Expressions
 {
@@ -117,8 +118,14 @@ namespace Linq2d.Expressions
             return node;
         }
 
-        private static bool IsVector(Type type) 
-            => type.IsGenericType && (type.GetGenericTypeDefinition() == typeof(Vector256<>) || type.GetGenericTypeDefinition() == typeof(Vector128<>));
+        private static bool IsVector(Type type)
+        {
+            if (!type.IsGenericType)
+                return false;
+            var g = type.GetGenericTypeDefinition();
+            return g == typeof(Vector256<>) || g == typeof(Vector128<>) || g == typeof(Vector32<>);
+        }
+
         protected override Expression VisitUnary(UnaryExpression node)
         {
             // first things first: if the node operand is an index and we're trying to convert...
