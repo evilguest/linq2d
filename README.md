@@ -104,8 +104,8 @@ var integral = from g in grayImage
                from ri in Result.SubstBy(0)  
                from rq in Result.SubstBy(0)  
                select ValueTuple.Create(
-                 g + ri[-1, 0] + ri[0, -1] - ri[-1, -1],
-                 g * g + rq[-1, 0] + rq[0, -1] - rq[-1, -1]);
+                 ri[-1, 0] + ri[0, -1] - ri[-1, -1] + g,
+                 rq[-1, 0] + rq[0, -1] - rq[-1, -1] + g * g);
 ```
 
 The Result references should be the last in the sources list, and their count must be less than or equal to the count of the select clause members. 
@@ -155,7 +155,7 @@ Intel Core i7-6600U CPU 2.60GHz (Skylake), 1 CPU, 4 logical and 2 physical cores
 |         LinqC4 | p02652.bmp |  91.01 ms | 1.812 ms |  4.547 ms |  0.81 |    0.05 |
 |   LinqC4Cached | p02652.bmp |  76.23 ms | 1.495 ms |  2.237 ms |  **0.69** |    0.03 |
 
-The C4 filter has been executed over the grayscale bitmaps, one is `5 184 * 6 433` px, the other is `5 184 * 4157` px. The bitmaps are converted into the `byte[,]` arrays; the filter outputs the `int[,]` array - remember that all arithmetics in C# is either `int` or `long`; there are no `+` or `/` operators defined for bytes. 
+The C4 filter has been executed over the grayscale bitmaps, one is `5 184 * 6 433` px, the other is `5 184 * 4 157` px. The bitmaps are converted into the `byte[,]` arrays; the filter outputs the `int[,]` array - remember that all arithmetics in C# is either `int` or `long`; there are no `+` or `/` operators defined for bytes. 
 The methods compared are as follows:
 - **NaturalC4**: a naive iteration with two nested cycles, fair access to the data array with the indexing operatior [,]. Illustrates the penalties for the range checks inserted by .Net to the idiomatic code, likely to be written by a novice developer.
 - **UnsafeC4**: baseline method for measuring the performance; uses the fixed pointers to the array data for both input and result to avoid the range checks. Might be written by a seasoned developer who is familiar with the unsafe features of C#.
