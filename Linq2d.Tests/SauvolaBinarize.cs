@@ -178,28 +178,6 @@ namespace Linq2d.Tests
                 }
             return result;
         }
-        private static double[,] CalculateDiff(double[,] integralImage, int whalf)
-        {
-            var result = new double[integralImage.Height(), integralImage.Width()];
-            for (int i = 0; i < result.Height(); i++)
-                for (int j = 0; j < result.Width(); j++)
-                {
-                    var xmin = Math.Max(0, i - whalf);
-                    var ymin = Math.Max(0, j - whalf);
-                    var xmax = Math.Min(result.Height() - 1, i + whalf);
-                    var ymax = Math.Min(result.Width() - 1, j + whalf);
-
-                    if (xmin == 0 && ymin == 0)
-                        result[i, j] = integralImage[xmax, ymax];
-                    else if (xmin == 0)
-                        result[i, j] = integralImage[xmax, ymax] - integralImage[xmax, ymin - 1];
-                    else if (ymin == 0)
-                        result[i, j] = integralImage[xmax, ymax] - integralImage[xmin - 1, ymax];
-                    else
-                        result[i, j] = integralImage[xmax, ymax] - integralImage[xmin - 1, ymax] - integralImage[xmax, ymin - 1] + integralImage[xmin - 1, ymin - 1];
-                }
-            return result;
-        }
 
         private static (int[,], square[,]) DoubleIntegrateSlow(int h, int w, byte[,] grayImage)
         {
