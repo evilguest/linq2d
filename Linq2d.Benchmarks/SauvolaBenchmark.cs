@@ -24,8 +24,7 @@ namespace Linq2d.Benchmarks
             IVectorizable ev = ((IVectorizable)edgeDetectVector);
             if (!ev.Vectorized)
             {
-                Console.WriteLine($"Sauvola Edge Detect vectorization failed due to the expression\n{ev.VectorizationResult.BlockedBy.ToCSharpCode()}\n  :{ev.VectorizationResult.Reason}");
-                Console.ReadLine();
+                Console.WriteLine($"Sauvola Edge Detect vectorization failed due to the expression\n{ev.VectorizationResult.BlockedBy.ToCSharpCode()}:\n  {ev.VectorizationResult.Reason}");
                 throw new InvalidOperationException(ev.VectorizationResult.Reason);
             }
             Array2d.TryVectorize = false; // force scalar
