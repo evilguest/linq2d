@@ -8,7 +8,8 @@ namespace Linq2d.Benchmarks
     {
 
         protected byte[,] _data;
-        protected Func<byte[,], int[,]> _integrate;
+        protected Func<byte[,], int[,]> _integrateVector;
+        protected Func<byte[,], int[,]> _integrateScalar;
 
         [Params("p00743.bmp")]//, "p02652.bmp")]
         public string FileName { get; set; } = "p00743.bmp";

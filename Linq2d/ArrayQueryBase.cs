@@ -275,7 +275,10 @@ namespace Linq2d
                         //var step = 32 / (from t in argTypes select (int)typeof(Unsafe).GetMethod("SizeOf").MakeGenericMethod(t).Invoke(null, null)).Max();
                         for (int c = 0; (c < Results.Count) && vectorizable; c++)
                         {
-                            coreKernels[c] = InlineKernel(kernels[c], iVar, jVar, hVar, wVar, coreRanges, resultVars, sourceArgs);
+                            if (!Array2d.PoolCSEVariables)
+                                _variablePool = null;
+
+                            coreKernels[c] = InlineKernel(kernels[c], iVar, jVar, hVar, wVar, coreRanges, resultVars, sourceArgs, ref _variablePool);
                             var v = new VectorizationResult(false, null, null, null);
 
                             // try smaller step sizes until it works
@@ -427,11 +430,14 @@ namespace Linq2d
             return dm.CreateDelegate();
         }
 
+        private IEnumerable<ParameterExpression> _variablePool;
         private void HandleSingleResultElement(ILGenerator ilg, Expression kernel, Type resultType, ParameterExpression[] resultVars, ParameterExpression[] sourceArgs, ParameterExpression hVar, ParameterExpression wVar, IReadOnlyDictionary<Expression, (Expression minVal, Expression maxVal)> ranges, KernelCompilerScalar kcs, LocalBuilder pTarget, Expression i, Expression j)
         {
+            if (!Array2d.PoolCSEVariables)
+                _variablePool = null;
             ilg.Ldloc(pTarget);
             kcs.Load2dPointerOffset(resultType, i, j);
-            var inlinedKernel = InlineKernel(kernel, i, j, hVar, wVar, ranges, resultVars, sourceArgs);
+            var inlinedKernel = InlineKernel(kernel, i, j, hVar, wVar, ranges, resultVars, sourceArgs, ref _variablePool);
             kcs.Visit(inlinedKernel);
             ilg.Store(resultType);
         }
@@ -457,7 +463,7 @@ namespace Linq2d
             var h_var = Variable(typeof(int), "h");
             var w_var = Variable(typeof(int), "w");
    
-            var inlinedKernel = InlineKernel(Kernel.Body, i_var, j_var, h_var, w_var, GetBaseRanges(h_var, w_var), resultVars, sourceArgs);
+            var inlinedKernel = InlineKernel(Kernel.Body, i_var, j_var, h_var, w_var, GetBaseRanges(h_var, w_var), resultVars, sourceArgs, ref _variablePool);
             var ne = inlinedKernel as NewExpression;
             var block = new List<Expression>();
             block.Add(Assign(h_var, Call(sourceArgs[0], sourceArgs[0].Type.GetMethod("GetLength", new[] { typeof(int) }), Constant(0))));
@@ -496,12 +502,13 @@ namespace Linq2d
             return nne.Compile();
         }
 
-        private Expression InlineKernel(Expression kernel, Expression i, Expression j, Expression h, Expression w, IReadOnlyDictionary<Expression, (Expression minVal, Expression maxVal)> variableRanges, ParameterExpression[] resultVars, ParameterExpression[] sourceArgs)
+        private Expression InlineKernel(Expression kernel, Expression i, Expression j, Expression h, Expression w, IReadOnlyDictionary<Expression, (Expression minVal, Expression maxVal)> variableRanges, ParameterExpression[] resultVars, ParameterExpression[] sourceArgs, ref IEnumerable<ParameterExpression> variablePool)
         {
             var inlinedKernel = GetKernelInliner(i, j, h, w, resultVars, sourceArgs).Visit(kernel);
 
             inlinedKernel = Arithmetic.Simplify(inlinedKernel, variableRanges);
-            inlinedKernel = CommonSubexpressions.Eliminate(inlinedKernel);
+            if(Array2d.EliminateCommonSubexpressions)
+                inlinedKernel = CommonSubexpressions.Eliminate(inlinedKernel, ref variablePool);
             return inlinedKernel;
         }
 

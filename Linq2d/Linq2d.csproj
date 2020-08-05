@@ -3,6 +3,11 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Version>0.1</Version>
+    <Authors>evilguest</Authors>
+    <Company></Company>
+    <Copyright>evilguest</Copyright>
   </PropertyGroup>
 
   <ItemGroup>

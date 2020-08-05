@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Linq;
 using System.Reflection.Metadata;
 
 namespace Linq2d.Expressions
 {
+
     class CommonSubexpressions
     {
-        public static Expression Eliminate(Expression expression)
+        public static Expression Eliminate(Expression expression, ref IEnumerable<ParameterExpression> variablePool)
         {
+            var pool = new VariablePool(variablePool);
             do
             {
                 var q = from e in ExpressionCounter.Evaluate(expression)
@@ -19,11 +20,12 @@ namespace Linq2d.Expressions
                 var mostExpensive = q.FirstOrDefault();
                 if (mostExpensive == null)
                     break;
-                // introduce a variable for e
-                var t = Expression.Variable(mostExpensive.Type);
+                // introduce a variable for mostExpensive
+                var t = pool.GetVariable(mostExpensive.Type);
                 // TODO: fix the order of the variables. Assignments should go after all depends
                 expression = MergeBlocks(t, mostExpensive, ExpressionReplacer.Replace(expression, mostExpensive, t, new CodeComparer()));
             } while (true);
+            variablePool = pool.Variables;
             return expression;
         }
 

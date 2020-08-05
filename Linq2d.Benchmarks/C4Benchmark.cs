@@ -1,4 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
+using Mono.Linq.Expressions;
+using System;
 
 namespace Linq2d.Benchmarks
 {
@@ -12,7 +14,15 @@ namespace Linq2d.Benchmarks
         public override void Initialize()
         {
             base.Initialize();
-            _integrate = GetQuery().Transform;
+            Array2d.TryVectorize = true;
+            var q = GetQuery();
+            _integrateVector = q.Transform;
+            var ev = (IVectorizable)q;
+            if(!ev.Vectorized)
+                Console.Error.WriteLine($"C4 vectorization failed due to the expression\n{ev.VectorizationResult.BlockedBy.ToCSharpCode()}:\n  {ev.VectorizationResult.Reason}");
+
+            Array2d.TryVectorize = false;
+            _integrateScalar = GetQuery().Transform;
         }
 
         private IArrayTransform<byte, int> GetQuery() => 
@@ -73,7 +83,7 @@ namespace Linq2d.Benchmarks
             return res;
         }
 
-        [Benchmark(Baseline =true)]
+        [Benchmark(Baseline=true)]
         public unsafe int[,] UnsafeC4()
         {
             return Tests.SimpleFilters.C4NNUnsafeScalar(_data);
@@ -84,9 +94,9 @@ namespace Linq2d.Benchmarks
             return GetQuery().ToArray();
         }
         [Benchmark]
-        public int[,] LinqC4Cached()
+        public int[,] LinqC4VectorCached()
         {
-            return _integrate(_data);
+            return _integrateVector(_data);
         }
     }
 }

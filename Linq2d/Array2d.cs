@@ -12,6 +12,8 @@ namespace Linq2d
     {
         #region control
         public static bool TryVectorize { get; set; } = true;
+        public static bool EliminateCommonSubexpressions { get; set; } = true;
+        public static bool PoolCSEVariables { get; set; } = true;
         #endregion
         #region One array
 

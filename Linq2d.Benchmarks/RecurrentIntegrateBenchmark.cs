@@ -1,5 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using ImageHelpers;
+using Mono.Linq.Expressions;
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
@@ -14,11 +15,23 @@ namespace Linq2d.Benchmarks
         public override void Initialize()
         {
             base.Initialize();
-            _integrate = (from d in _data
-                          from r in Result.SubstBy(0)
-                          select d + r[0, -1] + r[-1, 0] - r[-1, -1]).Transform;
+            Array2d.TryVectorize = true;
+            var vectorIntegrate = GetIntegrate();
+            IVectorizable ev = ((IVectorizable)vectorIntegrate);
+            if (!ev.Vectorized)
+                Console.Error.WriteLine($"Recurrent integration failed due to the expression\n{ev.VectorizationResult.BlockedBy.ToCSharpCode()}:\n  {ev.VectorizationResult.Reason}");
+            _integrateVector = vectorIntegrate.Transform;
+
+            Array2d.TryVectorize = false;
+            _integrateScalar = GetIntegrate().Transform;
         }
 
+        private IArrayTransform<byte, int> GetIntegrate()
+        {
+            return (from d in _data
+                    from r in Result.SubstBy(0)
+                    select d + r[0, -1] + r[-1, 0] - r[-1, -1]);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Vector256<int> Aggregate(Vector256<int> t, int carry)
@@ -54,8 +67,10 @@ namespace Linq2d.Benchmarks
 
 
         [Benchmark(Baseline = true)]
-        unsafe public int[,] IntegrateAvx1Pass()
+        unsafe public int[,] IntegrateUnsafeVector()
         {
+            if (!Avx2.IsSupported)
+                throw new InvalidOperationException("Avx2 is not supported - cannot perform vector operation");
             int w = _data.Width();
             int h = _data.Height();
             int[,] res = new int[h, w];
@@ -76,7 +91,7 @@ namespace Linq2d.Benchmarks
 
                         t = Aggregate(t, c);
 
-                        Avx2.Store(pTrg, t);
+                        Avx.Store(pTrg, t);
                         c = t.GetElement(Vector256<int>.Count - 1);
 
                         pSrc += Vector256<int>.Count;
@@ -105,11 +120,11 @@ namespace Linq2d.Benchmarks
 
                         c = t.GetElement(Vector256<int>.Count - 1);
 
-                        var p = Avx2.LoadVector256(pTrg - w); // prev line vector
+                        var p = Avx.LoadVector256(pTrg - w); // prev line vector
 
                         t = Avx2.Add(t, p);
 
-                        Avx2.Store(pTrg, t);
+                        Avx.Store(pTrg, t);
                         pSrc += Vector256<int>.Count;
                         pTrg += Vector256<int>.Count;
                     }
@@ -128,57 +143,8 @@ namespace Linq2d.Benchmarks
             return res;
         }
 
-        /*[Benchmark] unsafe public int[,] IntegrateAvx1PassWithIf()
-        {
-            int w = _data.Width();
-            int h = _data.Height();
-            int[,] res = new int[h, w];
-
-            Vector256<int> shiftRight = RightShift;
-
-            fixed (byte* pSource = &_data[0, 0])
-            fixed (int* pTarget = &res[0, 0])
-            {
-                var pSrc = pSource;
-                var pTrg = pTarget;
-
-                for (var i = 0; i < h; i++)
-                {
-                    var j = 0;
-                    var c = 0;
-                    //handle vector part 
-                    for (; j + Vector256<int>.Count <= w; j += Vector256<int>.Count)
-                    {
-                        var t = Avx2.ConvertToVector256Int32(pSrc);
-
-                        t = Aggregate(t, c);
-
-                        c = t.GetElement(7);
-
-                        if (i > 0)
-                        {
-                            var p = Avx.LoadVector256(pTrg - w); // prev line vector
-                            t = Avx2.Add(t, p);
-                        }
-                        Avx2.Store(pTrg, t);
-                        pSrc += Vector256<int>.Count;
-                        pTrg += Vector256<int>.Count;
-                    }
-
-                    // handle the tail
-                    for (; j < w; j++)
-                    {
-                        c += *pSrc++;
-                        *pTrg = c + ((i > 0) ? *(pTrg - w) : 0);
-                        pTrg++;
-                    }
-                }
-            }
-            return res;
-        }
-        */
-
-        [Benchmark] public unsafe int[,] IntegrateAvx1PassStupid()
+        [Benchmark] 
+        public unsafe int[,] IntegrateUnsafeVectorBranched()
         {
             int w = _data.Width();
             int h = _data.Height();
@@ -217,7 +183,7 @@ namespace Linq2d.Benchmarks
                                 t = Avx2.Subtract(t, Avx.LoadVector256(pTrg - w - 8));
                         }
 
-                        Avx2.Store(pTrg, t);
+                        Avx.Store(pTrg, t);
                         pr = t;
                         pSrc += Vector256<int>.Count;
                         pTrg += Vector256<int>.Count;
@@ -243,26 +209,28 @@ namespace Linq2d.Benchmarks
                         pSrc++;
                         pTrg++;
                     }
-
                 }
             }
             return res;
         }
         
 
-        [Benchmark] public int[,] IntegrateLinqCached()
+        [Benchmark] 
+        public int[,] IntegrateLinqCachedScalar()
         {
-            return _integrate(_data);
+            return _integrateScalar(_data);
+        }
+        [Benchmark]
+        public int[,] IntegrateLinqCachedVector()
+        {
+            return _integrateVector(_data);
         }
 
 
-        [Benchmark] public int[,] IntegrateLinq()
+        [Benchmark]
+        public int[,] IntegrateLinqScalar()
         {
-
-            var re = from d in _data
-                     from r in Result.SubstBy(0)
-                     select d + r[0, -1] + r[-1, 0] - r[-1, -1];
-            return re.ToArray();
+            return GetIntegrate().ToArray();
         }
 
 
