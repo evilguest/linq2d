@@ -24,6 +24,7 @@ jobs:
     - name: Test
       run: dotnet test --no-restore --verbosity normal 
   benchmark:
+    runs-on: ubuntu-latest
     steps:
     - name: Get tool
       run: dotnet tool install -g BenchmarkDotNet.Tool
