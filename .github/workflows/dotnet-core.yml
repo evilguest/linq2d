@@ -29,4 +29,4 @@ jobs:
     - name: Get tool
       run: dotnet tool install -g BenchmarkDotNet.Tool
     - name: Benchmark
-      run: dotnet benchmark Linq2d.Benchmarks/Linq2d.Benchmarks.exe --filter *
+      run: dotnet benchmark ./Linq2d.Benchmarks/bin/Release/netcoreapp3.1/Linq2d.Benchmarks.dll --filter *
