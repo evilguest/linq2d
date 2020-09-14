@@ -22,6 +22,10 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Test
-      run: dotnet test --no-restore --verbosity normal
+      run: dotnet test --no-restore --verbosity normal 
+  benchmark:
+    steps:
+    - name: Get tool
+      run: dotnet tool install -g BenchmarkDotNet.Tool
     - name: Benchmark
-      run: dotnet benchmark Linq2d.Benchmarks\Linq2d.Benchmarks.exe --filter *
+      run: dotnet benchmark Linq2d.Benchmarks/Linq2d.Benchmarks.exe --filter *
