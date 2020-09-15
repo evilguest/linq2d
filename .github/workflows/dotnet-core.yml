@@ -17,7 +17,7 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
-    - name: Get DBN tool
+    - name: Get BDN tool
       run: dotnet tool install -g BenchmarkDotNet.Tool
     - name: Install dependencies
       run: dotnet restore
@@ -28,4 +28,4 @@ jobs:
     - name: LookAround
       run: ls
     - name: Benchmark
-      run: dotnet benchmark /home/runner/work/linq2d/linq2d/Linq2d.Benchmarks/bin/Release/netcoreapp3.1/Linq2d.Benchmarks.dll --filter *
+      run: dotnet benchmark ./Linq2d.Benchmarks/bin/Release/netcoreapp3.1/Linq2d.Benchmarks.dll --runtimes netcoreapp3.1 --filter *
