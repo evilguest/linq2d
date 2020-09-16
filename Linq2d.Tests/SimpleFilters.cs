@@ -129,8 +129,6 @@ namespace Linq2d.Tests
                     select (d[-1, 0] + d[0, -1] + d[1, 0] + d[0, 1]) / 4;
             var p = q.ToArray();
             var r = C4UnsafeScalar(data);
-            var ps = ArrayHelper.Dump(p, "{0,4:D}");
-            var rs = ArrayHelper.Dump(r, "{0,4:D}");
             Assert.Equal(r, p);
         }
 
@@ -171,8 +169,6 @@ namespace Linq2d.Tests
                     select (d[-1, 0] + d[0, -1] + d[1, 0] + d[0, 1]) / 4;
             var p = q.ToArray();
             var r = C4NNUnsafeScalar(data);
-            var ps = ArrayHelper.Dump(p, "{0,4:D}");
-            var rs = ArrayHelper.Dump(r, "{0,4:D}");
             Assert.Equal(r, p);
         }
 
