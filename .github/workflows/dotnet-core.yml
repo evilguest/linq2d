@@ -23,11 +23,5 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Test
       run: dotnet test --no-restore --verbosity normal 
-    - name: Setup .NET Core 2.1 for BDN (???)
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 2.1.810
-    - name: Get BDN tool
-      run: dotnet tool install -g BenchmarkDotNet.Tool
     - name: Benchmark
-      run: dotnet benchmark ./Linq2d.Benchmarks/bin/Release/netcoreapp3.1/Linq2d.Benchmarks.dll --runtimes netcoreapp3.1 --filter *
+      run: dotnet run ./Linq2d.Benchmarks/bin/Release/netcoreapp3.1/Linq2d.Benchmarks.dll --runtimes netcoreapp3.1 --filter *
