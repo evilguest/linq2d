@@ -25,9 +25,13 @@ jobs:
       run: dotnet test --no-restore --verbosity normal 
     - name: Lookaround
       run: ls 
+    - name: Lookaround 1
       run: ls ./Linq2d.Benchmarks
+    - name: Lookaround 2
       run: ls ./Linq2d.Benchmarks/bin
+    - name: Lookaround 3
       run: ls ./Linq2d.Benchmarks/bin/Release
+    - name: Lookaround 4
       run: ls ./Linq2d.Benchmarks/bin/Release/netcoreapp3.1
     - name: Benchmark
       run: dotnet run ./Linq2d.Benchmarks/bin/Release/netcoreapp3.1/Linq2d.Benchmarks.dll --runtimes netcoreapp3.1 --filter *
