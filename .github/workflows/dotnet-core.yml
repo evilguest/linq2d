@@ -34,4 +34,4 @@ jobs:
     - name: Lookaround 4
       run: ls ./Linq2d.Benchmarks/bin/Release/netcoreapp3.1
     - name: Benchmark
-      run: dotnet run ./Linq2d.Benchmarks/bin/Release/netcoreapp3.1/Linq2d.Benchmarks.dll --runtimes netcoreapp3.1 --filter *
+      run: dotnet ./Linq2d.Benchmarks/bin/Release/netcoreapp3.1/Linq2d.Benchmarks.dll --runtimes netcoreapp3.1 --filter *
