@@ -19,7 +19,13 @@ namespace Linq2d.Benchmarks
             var vectorIntegrate = GetIntegrate();
             IVectorizable ev = ((IVectorizable)vectorIntegrate);
             if (!ev.Vectorized)
-                Console.Error.WriteLine($"Recurrent integration failed due to the expression\n{ev.VectorizationResult.BlockedBy.ToCSharpCode()}:\n  {ev.VectorizationResult.Reason}");
+            {
+                Console.Error.Write("Recurrent integration failed");
+                if (ev.VectorizationResult != null)
+                    Console.Error.WriteLine($" due to the expression\n{ev.VectorizationResult.BlockedBy.ToCSharpCode()}:\n  {ev.VectorizationResult.Reason}");
+                else
+                    Console.Error.WriteLine();
+            }
             _integrateVector = vectorIntegrate.Transform;
 
             Array2d.TryVectorize = false;
