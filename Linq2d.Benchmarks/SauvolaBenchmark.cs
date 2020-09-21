@@ -92,8 +92,8 @@ namespace Linq2d.Benchmarks
             let blq = q.Offset(WHalf, -WHalf - 1)
             let brq = q.Offset(WHalf, WHalf)
             let area = (br.X - tl.X) * (br.Y - tl.Y)
-            let diff = br.Value + tl.Value - tr.Value - bl.Value
-            let sqdiff = brq.Value + tlq.Value - trq.Value - blq.Value
+            let diff = br + tl - tr - bl 
+            let sqdiff = brq + tlq - trq  - blq 
             let mean = (double)diff / area
             let std = Math.Sqrt((sqdiff - diff * mean) / (area - 1))
 
@@ -153,8 +153,8 @@ namespace Linq2d.Benchmarks
                         var sqdiff = sqPtr[width * xmax + ymax];
                         if (xmin > 0)
                         {
-                            diff -= -pPtr[width * (xmin - 1) + ymax];
-                            sqdiff -= -sqPtr[width * (xmin - 1) + ymax];
+                            diff -= pPtr[width * (xmin - 1) + ymax];
+                            sqdiff -= sqPtr[width * (xmin - 1) + ymax];
                         }
                         if (ymin > 0)
                         {
