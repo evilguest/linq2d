@@ -10,7 +10,7 @@ namespace Linq2d.Expressions
 {
     using System;
 
-    public static partial class Arithmetic
+    public static class Arithmetic
     {
         public static Expression Simplify(Expression expression, IReadOnlyDictionary<Expression, (Expression minVal, Expression maxVal)> variableRanges)
         {
