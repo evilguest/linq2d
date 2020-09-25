@@ -14,7 +14,10 @@ namespace Linq2d
         public static bool TryVectorize { get; set; } = true;
         public static bool EliminateCommonSubexpressions { get; set; } = true;
         public static bool PoolCSEVariables { get; set; } = true;
+        public static bool SaveDynamicCode { get; set; } = false;
+        public static bool MoveLoopInvariants {get; set; } = true;
         #endregion
+
         #region One array
 
         /// <summary>
