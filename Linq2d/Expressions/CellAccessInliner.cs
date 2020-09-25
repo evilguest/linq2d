@@ -45,10 +45,21 @@ namespace Linq2d.Expressions
         {
             var operand = Visit(node.Operand);
 
+            if (node.NodeType==ExpressionType.Convert && operand is MethodCallExpression mce && mce.Method == CellOffset(mce.Type.GetGenericArguments()[0]))
+            {
+                var dx = mce.Arguments[0];
+                var dy = mce.Arguments[1];
+                var (_, to, oobStrategy) = _replacements[mce.Object];
+                operand = CheckBounds(node.Type, dx, dy, to, oobStrategy);
+            }
+
+
             if (node.NodeType == ExpressionType.Convert && operand.Type == node.Type)
                 return operand; // conversion to self
             else
                 return node.Update(operand);
+            ///
+            ///
         }
 
         protected override Expression VisitBinary(BinaryExpression node)
