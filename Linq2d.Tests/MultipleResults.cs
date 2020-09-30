@@ -28,11 +28,11 @@ namespace Linq2d.Tests
         public void Test2Results1Recursive(int h, int w, int seed)
         {
             var xex = from d in ArrayHelper.InitAllRand(h, w, seed)
-                      from r in Result.SubstBy(0)
+                      from r in Result.InitWith(0)
                       select d + r[-1, 0];
 
             var q = from d in ArrayHelper.InitAllRand(h, w, seed)
-                    from r in Result.SubstBy(0)
+                    from r in Result.InitWith(0)
                     select ValueTuple.Create(d + r[-1, 0], d + 0);
 
             var (x, y) = q.ToArrays();
@@ -45,18 +45,18 @@ namespace Linq2d.Tests
         public void Test2Results2Recursive(int h, int w, int seed)
         {
             var xex = from d in ArrayHelper.InitAllRand(h, w, seed)
-                      from r in Result.SubstBy(0)
+                      from r in Result.InitWith(0)
                       select d + r[0, -1];
 
             var t = xex.Transform;
 
             var yex = from d in ArrayHelper.InitAllRand(h, w, seed)
-                      from r in Result.SubstBy(0)
+                      from r in Result.InitWith(0)
                       select d + r[-1, 0];
 
             var q = from d in ArrayHelper.InitAllRand(h, w, seed)
-                    from r1 in Result.SubstBy(0)
-                    from r2 in Result.SubstBy(0)
+                    from r1 in Result.InitWith(0)
+                    from r2 in Result.InitWith(0)
                     select ValueTuple.Create(d + r1[0, -1], d + r2[-1, 0]);
 
             var (x, y) = q.ToArrays();
@@ -88,11 +88,11 @@ namespace Linq2d.Tests
         public void Test3Results1Recursive(int h, int w, int seed)
         {
             var xex = from d in ArrayHelper.InitAllRand(h, w, seed)
-                      from r in Result.SubstBy(0)
+                      from r in Result.InitWith(0)
                       select d + r[-1, 0];
 
             var q = from d in ArrayHelper.InitAllRand(h, w, seed)
-                    from r in Result.SubstBy(0)
+                    from r in Result.InitWith(0)
                     select ValueTuple.Create(d + r[-1, 0], d + 0, d - 0);
 
             var (x, y, z) = q.ToArrays();
@@ -105,18 +105,18 @@ namespace Linq2d.Tests
         public void Test3Results2Recursive(int h, int w, int seed)
         {
             var xex = from d in ArrayHelper.InitAllRand(h, w, seed)
-                      from r in Result.SubstBy(0)
+                      from r in Result.InitWith(0)
                       select d + r[0, -1];
 
             var t = xex.Transform;
 
             var yex = from d in ArrayHelper.InitAllRand(h, w, seed)
-                      from r in Result.SubstBy(0)
+                      from r in Result.InitWith(0)
                       select d + r[-1, 0];
 
             var q = from d in ArrayHelper.InitAllRand(h, w, seed)
-                    from r1 in Result.SubstBy(0)
-                    from r2 in Result.SubstBy(0)
+                    from r1 in Result.InitWith(0)
+                    from r2 in Result.InitWith(0)
                     select ValueTuple.Create(d + r1[0, -1], d + r2[-1, 0]);
 
             var (x, y) = q.ToArrays();
@@ -130,18 +130,18 @@ namespace Linq2d.Tests
         public void Test3Results3Recursive(int h, int w, int seed)
         {
             var xex = from d in ArrayHelper.InitAllRand(h, w, seed)
-                      from r in Result.SubstBy(0)
+                      from r in Result.InitWith(0)
                       select d + r[0, -1];
 
             var t = xex.Transform;
 
             var yex = from d in ArrayHelper.InitAllRand(h, w, seed)
-                      from r in Result.SubstBy(0)
+                      from r in Result.InitWith(0)
                       select d + r[-1, 0];
 
             var q = from d in ArrayHelper.InitAllRand(h, w, seed)
-                    from r1 in Result.SubstBy(0)
-                    from r2 in Result.SubstBy(0)
+                    from r1 in Result.InitWith(0)
+                    from r2 in Result.InitWith(0)
                     select ValueTuple.Create(d + r1[0, -1], d + r2[-1, 0]);
 
             var (x, y) = q.ToArrays();

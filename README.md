@@ -75,7 +75,8 @@ var both = from l in left
            from r in right
            select ValueTuple.Create(l + r, l - r); 
            // selecting (l + r, l - r) would be even better, but C# up to 7.3 
-           // doesn't support the tuple literals in Expression Trees. See also CS8743.
+           // doesn't support the tuple literals in Expression Trees. See also CS8143 and
+           // https://github.com/dotnet/roslyn/issues/12897.
 
 var (s, d) = both.ToArrays(); // the number and types of the arrays do match the 
                               // number and types of the select clause members

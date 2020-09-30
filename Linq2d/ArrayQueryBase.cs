@@ -40,7 +40,7 @@ namespace Linq2d
                     if (outerArg.Type != aqb.Kernel.ReturnType)
                         throw new InvalidCastException($"Outer lambda expects to consume type {outerArg.Type}, inner produces {aqb.Kernel.ReturnType}");
 
-                    var newBody = ExpressionReplacer.Replace(kernel.Body, outerArg, aqb.Kernel.Body); // consider introducing a local instead of repetitive expression calculation
+                    var newBody = ExpressionReplacer.Replace(kernel.Body, outerArg, aqb.Kernel.Body); 
                     newBody = new IntermediateAnonymousRemovalVisitor().Visit(newBody);
 
                     var newLambda = Lambda(newBody, aqb.Kernel.Parameters.Union(kernel.Parameters.Skip(1)));
@@ -108,8 +108,8 @@ namespace Linq2d
             {
                 if (Kernel.Body is IArgumentProvider ip && ip.ArgumentCount == Results.Count)
                 {
-                    for (int i = 0; i < Results.Count; i++)
-                        kernels[i] = ip.GetArgument(i);
+                    for (int с = 0; с < Results.Count; с++)
+                        kernels[с] = ip.GetArgument(с);
                 }
                 else throw new InvalidOperationException($"Cannot recognize the selector function. Expect a ValueTuple construction call with the number of components equal to {Results.Count}");
                   
@@ -120,7 +120,7 @@ namespace Linq2d
 
             var baseRanges = GetBaseRanges(hVar, wVar, maxX - minX, maxY - minY);
 
-            var dm = new DynamicMethod<D>(MethodName, saveAssembly: true);
+            var dm = new DynamicMethod<D>(MethodName, saveAssembly: Array2d.SaveDynamicCode);
 
             dm.GenerateIL(ilg =>
             {
@@ -275,8 +275,8 @@ namespace Linq2d
                         //var step = 32 / (from t in argTypes select (int)typeof(Unsafe).GetMethod("SizeOf").MakeGenericMethod(t).Invoke(null, null)).Max();
                         for (int c = 0; (c < Results.Count) && vectorizable; c++)
                         {
-                            if (!Array2d.PoolCSEVariables)
-                                _variablePool = null;
+                            if (!Array2d.PoolCSEVariables)  // if the user disabled pooling, then
+                                _variablePool = null;       // reset the pool on each iteration, suppressing the reuse
 
                             coreKernels[c] = InlineKernel(kernels[c], iVar, jVar, hVar, wVar, coreRanges, resultVars, sourceArgs, ref _variablePool);
                             var v = new VectorizationResult(false, null, null, null);
@@ -305,6 +305,12 @@ namespace Linq2d
                             var maxStep = stepSizes.Max();
                             var minStep = stepSizes.Min();
 
+                            // time to calculate all the common subexpressions that aren't dependent on the iteration variables:
+                            if (Array2d.MoveLoopInvariants)
+                            {
+                                BlockExpression loopInvariants = vectorKernels.GetInvariants(iVar, jVar);
+                                kcs.Visit(loopInvariants);
+                            }
                             var loopJVectorStart = ilg.DefineLabel();
                             ilg.Br(loopJVectorStart);
                             {
@@ -430,6 +436,7 @@ namespace Linq2d
             return dm.CreateDelegate();
         }
 
+
         private IEnumerable<ParameterExpression> _variablePool;
         private void HandleSingleResultElement(ILGenerator ilg, Expression kernel, Type resultType, ParameterExpression[] resultVars, ParameterExpression[] sourceArgs, ParameterExpression hVar, ParameterExpression wVar, IReadOnlyDictionary<Expression, (Expression minVal, Expression maxVal)> ranges, KernelCompilerScalar kcs, LocalBuilder pTarget, Expression i, Expression j)
         {
@@ -508,7 +515,7 @@ namespace Linq2d
 
             inlinedKernel = Arithmetic.Simplify(inlinedKernel, variableRanges);
             if(Array2d.EliminateCommonSubexpressions)
-                inlinedKernel = CommonSubexpressions.Eliminate(inlinedKernel, ref variablePool);
+                inlinedKernel = inlinedKernel.EliminateCommonSubexpressions(ref variablePool);
             return inlinedKernel;
         }
 

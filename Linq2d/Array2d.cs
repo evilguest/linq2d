@@ -18,6 +18,13 @@ namespace Linq2d
         public static bool MoveLoopInvariants {get; set; } = true;
         #endregion
 
+        #region window functions
+        public static (Cell<T> tl, Cell<T> tr, Cell<T> bl, Cell<T> br) Window<T>(this Cell<T> cell, int size)
+            =>(cell, cell, cell, cell);
+        public static int Area<T>(this (Cell<T> tl, Cell<T> tr, Cell<T> bl, Cell<T> br) window)=>(window.br.X - window.tl.X) * (window.br.Y - window.tl.Y);
+        
+        #endregion
+
         #region One array
 
         /// <summary>

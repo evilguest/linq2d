@@ -83,12 +83,32 @@ namespace Linq2d.Expressions
         private static readonly PropertyInfo CellY = typeof(Cell).GetProperty(nameof(Cell.Y));
         private static readonly PropertyInfo CellH = typeof(Cell).GetProperty(nameof(Cell.H));
         private static readonly PropertyInfo CellW = typeof(Cell).GetProperty(nameof(Cell.W));
+        private static readonly MethodInfo Window = typeof(Array2d).GetMethod(nameof(Array2d.Window));
+        private static readonly MethodInfo Area = typeof(Array2d).GetMethod(nameof(Array2d.Area));
 
         private static PropertyInfo ArrayItem(Type t) => t.MakeArrayType(2).GetProperty("Item");
         private static MethodInfo ArrayLength(Type t) => t.MakeArrayType(2).GetMethod(nameof(Array.GetLength));
 
+        private static ConstructorInfo WindowType(Type cellT) 
+            => typeof(ValueTuple<,,,>).MakeGenericType(cellT, cellT, cellT, cellT).GetConstructor(new[] { cellT, cellT, cellT, cellT });
         protected override Expression VisitMethodCall(MethodCallExpression node)
         {
+            //if(node.Object == null)
+            //{
+            //    if(node.Method.GetGenericMethodDefinition() == Window)
+            //    {
+            //        var cellExpr = node.Arguments[0];
+            //        var cellType = node.Arguments[0].Type.GetGenericArguments()[0];
+            //        var sizeExpr = node.Arguments[1];
+            //        var halfWinExpr = Divide(sizeExpr, Constant(2));
+            //        return New(WindowType(node.Arguments[0].Type), 
+            //            Call(cellExpr, CellOffset(cellType), Subtract(Negate(halfWinExpr), Constant(1)), Subtract(Negate(halfWinExpr), Constant(1))
+            //    }
+            //    if(node.Method == Area)
+            //    {
+
+            //    }
+            //}
             if (ShouldReplace(node.Object))
             {
                 var arrayType = node.Object.Type.GetGenericArguments()[0];

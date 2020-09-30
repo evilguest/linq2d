@@ -8,6 +8,7 @@
     <Authors>evilguest</Authors>
     <Company></Company>
     <Copyright>evilguest</Copyright>
+    <Configurations>Debug;Release;LinuxRelease</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

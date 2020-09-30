@@ -8,6 +8,6 @@
 
     public static class Result
     {
-        public static Result<R> SubstBy<R>(R substValue) => new Result<R>(substValue);
+        public static Result<R> InitWith<R>(R substValue) => new Result<R>(substValue);
     }
 }

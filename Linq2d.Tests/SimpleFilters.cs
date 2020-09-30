@@ -1,7 +1,19 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using Xunit;
 
+namespace Test
+{
+    using System.Linq;
+    public class Sample
+    {
+        public static void Fail()
+        {
+            var source = new[,] { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } };
+            var result = (from int s in source
+                          select s + 42).ToArray();
+        }
+    }
+}
 namespace Linq2d.Tests
 {
     public class SimpleFilters
@@ -69,6 +81,62 @@ namespace Linq2d.Tests
             fixed (int* pTarget = &res[0, 0])
             {
                 // handle top left corner
+                pTarget[0] = (2 * pSource[0] + pSource[1] + pSource[w]) / 4;
+
+                //handle first line
+                for (var j = 1; j < w - 1; j++)
+                    pTarget[j] = (
+                                    pSource[j - 1]
+                                    + pSource[j]
+                                    + pSource[j + 1]
+                                    + pSource[w + j]
+                                ) / 4;
+                // handle top right corner
+                pTarget[w - 1] = (2 * pSource[w - 1] + pSource[w - 2] + pSource[w + w - 1]) / 4;
+
+                //handle the other lines
+
+                for (var i = 1; i < h - 1; i++)
+                {
+                    // handle the first column
+                    pTarget[i * w] = (pSource[i * w] + pSource[w * (i - 1)] + pSource[w * (i + 1)] + pSource[i * w + 1]) / 4;
+
+                    //handle the other columns
+                    for (var j = 1; j < w - 1; j++)
+                        pTarget[i * w + j] = (
+                              pSource[w * (i - 1) + j]
+                            + pSource[i * w + j - 1]
+                            + pSource[w * (i + 1) + j]
+                            + pSource[w * i + j + 1]
+                            ) / 4;
+                    //handle the last column
+                    pTarget[i * w + w - 1] = (pSource[i * w + w - 2] + pSource[i * w + w - 1] + pSource[w * (i - 1) + w - 1] + pSource[w * (i + 1) + w - 1]) / 4;
+                }
+                // handle the bottom left corner
+                pTarget[w * (h - 1)] = (2 * pSource[w * (h - 1)] + pSource[w * (h - 2)] + pSource[w * (h - 1) + 1]) / 4;
+
+                //handle last line
+                for (var j = 1; j < w - 1; j++)
+                    pTarget[w * (h - 1) + j] = (
+                                    pSource[w * (h - 1) + j - 1]
+                                    + pSource[w * (h - 1) + j]
+                                    + pSource[w * (h - 1) + j + 1]
+                                    + pSource[(w * (h - 2)) + j]
+                                ) / 4;
+                // handle bottom right corner
+                pTarget[w * h - 1] = (2 * pSource[w * h - 1] + pSource[w * h - 2] + pSource[w * (h - 1) - 1]) / 4;
+                return res;
+            }
+        }
+        public static unsafe int[,] C4NNUnsafeScalarWSZCheck(byte[,] data)
+        {
+            int w = data.Width();
+            int h = data.Height();
+            int[,] res = new int[h, w];
+            fixed (byte* pSource = &data[0, 0])
+            fixed (int* pTarget = &res[0, 0])
+            {
+                // handle top left corner
                 pTarget[0] = (2 * pSource[0] + ((w > 1) ? pSource[1] : pSource[0]) + ((h > 1) ? pSource[w] : pSource[0])) / 4;
 
                 //handle first line
@@ -92,13 +160,13 @@ namespace Linq2d.Tests
                     //handle the other columns
                     for (var j = 1; j < w - 1; j++)
                         pTarget[i * w + j] = (
-                              pSource[w * (i - 1) + j]
+                                pSource[w * (i - 1) + j]
                             + pSource[i * w + j - 1]
                             + pSource[w * (i + 1) + j]
                             + pSource[w * i + j + 1]
                             ) / 4;
                     //handle the last column
-                    pTarget[i * w + w - 1] = ((w > 1 ? pSource[i * w + w - 2] : pSource[i * w + w - 1]) + pSource[i * w + w - 1]+ pSource[w * (i - 1) + w - 1] + pSource[w * (i + 1) + w - 1]) / 4;
+                    pTarget[i * w + w - 1] = ((w > 1 ? pSource[i * w + w - 2] : pSource[i * w + w - 1]) + pSource[i * w + w - 1] + pSource[w * (i - 1) + w - 1] + pSource[w * (i + 1) + w - 1]) / 4;
                 }
                 // handle the bottom left corner
                 pTarget[w * (h - 1)] = (2 * pSource[w * (h - 1)] + (h > 1 ? pSource[w * (h - 2)] : pSource[w * (h - 1)]) + (w > 1 ? pSource[w * (h - 1) + 1] : pSource[w * (h - 1)])) / 4;
@@ -116,6 +184,7 @@ namespace Linq2d.Tests
                 return res;
             }
         }
+        
 
         [Theory]
         //[InlineData(1, 2, 4)] -- known to fail; will review this corner case later.

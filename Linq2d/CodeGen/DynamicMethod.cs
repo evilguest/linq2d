@@ -29,7 +29,7 @@ namespace Linq2d.CodeGen
 
                 ModuleBuilder m = a.DefineDynamicModule(a.GetName().Name + ".dll");
 
-                var t = m.DefineType(name);
+                var t = m.DefineType(name, TypeAttributes.Public | TypeAttributes.Sealed);
                 _emiMethod = t.DefineMethod("Transform", MethodAttributes.Public | MethodAttributes.Static, returnType, parameterTypes);
             }
             else

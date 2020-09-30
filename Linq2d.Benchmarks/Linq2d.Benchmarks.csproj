@@ -35,6 +35,16 @@
     <ProjectReference Include="..\ImageHelpers\ImageHelpers.csproj" />
     <ProjectReference Include="..\Linq2d.Tests\Linq2d.Tests.csproj" />
     <ProjectReference Include="..\Linq2d\Linq2d.csproj" />
+    <ProjectReference Include="..\SauvolaBinarizeCPP\SauvolaBinarizeCPP.vcxproj">
+      <Private>true</Private>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <OutputItemType>Content</OutputItemType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </ProjectReference>
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="echo copy /Y $(ProjectDir)..\x64\$(ConfigurationName)\SauvolaBinarizeCPP.dll $(targetDir)&#xD;&#xA;copy /Y $(ProjectDir)..\x64\$(ConfigurationName)\SauvolaBinarizeCPP.dll $(targetDir)" />
+  </Target>
 
 </Project>

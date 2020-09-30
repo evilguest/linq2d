@@ -83,6 +83,18 @@ namespace Linq2d.Expressions
                 return node.Update(test, ifTrue, ifFalse);
         }
         private IVectorInfo VectorInfo { get => VectorData.VectorInfo[_vectorSize]; }
+
+        private int? RecursiveOverlap(Expression e)
+            => (e is IndexExpression ie
+                && ie.Object is ParameterExpression pe
+                && _resultVars.Contains(pe)
+                && ie.Arguments[0] is ConstantExpression dxConst
+                && (int)dxConst.Value == 0
+                && ie.Arguments[1] is ConstantExpression dyConst
+                && (int)dyConst.Value >= -_vectorSize) ? -(int?)dyConst.Value : null;
+
+
+        
         protected override Expression VisitIndex(IndexExpression node)
         {
             if (node.Object is ParameterExpression pe && (_resultVars.Contains(pe) || _sourceArgs.Contains(pe)))
@@ -91,9 +103,9 @@ namespace Linq2d.Expressions
                 // argument should be below -_vectorSize; otherwise vectorization is dangerous
                 if (_resultVars.Contains(pe))
                 {
-                    if (node.Arguments[0] is ConstantExpression ce)
+                    if (node.Arguments[0] is ConstantExpression dxConst) // x access
                     {
-                        if ((int)ce.Value == 0)
+                        if ((int)dxConst.Value == 0)                     // result[0, ...]
                         {
                             if (!(Arithmetic.Simplify(Expression.LessThan(node.Arguments[1], Expression.Constant(-_vectorSize)), Ranges.No) is ConstantExpression le) || (bool)le.Value != true)
                                 return Fail(node, $"Cannot prove that the same-row access to the {pe.Name} is vectorization-safe for step {_vectorSize}");
@@ -206,6 +218,21 @@ namespace Linq2d.Expressions
             }
             if (!IsVector(right.Type))
                 right = ConvertToVector(right);
+
+            // check if any of the nodes accesses the sameRow recursive
+            var lro = RecursiveOverlap(left);
+            if (lro.HasValue) // A-ha! 
+            {
+                // do the smart stuff with the left node.
+                left = left;
+            }
+
+            var rro = RecursiveOverlap(left);
+            if (rro.HasValue) // A-ha! 
+            {
+                // do the smart stuff with the right node.
+                right = right;
+            }
 
             if (VectorInfo.BinaryOperations.ContainsKey((node.NodeType, left.Type, right.Type)))
                 return Expression.MakeBinary(node.NodeType, left, right, false, VectorInfo.BinaryOperations[(node.NodeType, left.Type, right.Type)]);

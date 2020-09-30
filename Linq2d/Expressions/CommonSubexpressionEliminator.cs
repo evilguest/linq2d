@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Linq;
-using System.Reflection.Metadata;
+using Linq.Expressions.Deconstruct;
+using System.Runtime.InteropServices;
+using System;
 
 namespace Linq2d.Expressions
 {
-
-    class CommonSubexpressions
+    static class CommonSubexpressions
     {
-        public static Expression Eliminate(Expression expression, ref IEnumerable<ParameterExpression> variablePool)
+        public static Expression EliminateCommonSubexpressions(this Expression expression, ref IEnumerable<ParameterExpression> variablePool)
         {
             var pool = new VariablePool(variablePool);
             do
@@ -28,6 +29,92 @@ namespace Linq2d.Expressions
             variablePool = pool.Variables;
             return expression;
         }
+        public static bool DependsOn(this Expression expression, IEnumerable<ParameterExpression> variables)
+        {
+            return DependencyChecker.FindInvariant(expression, variables) == null;
+        }
+        public static BlockExpression GetInvariants(this IList<Expression> expressions, params ParameterExpression[] variables)
+        {
+            var invariants = new List<Expression>();
+            var invariantVars = new List<ParameterExpression>();
+            var vars = new HashSet<ParameterExpression>(variables);
+            var movedVariables = new List<ParameterExpression>();
+            for (var i = 0; i < expressions.Count; i++)
+            {
+                var ei = expressions[i];
+
+                if (ei is BlockExpression be)
+                {
+                    foreach (var ee in be.Expressions)
+                    {
+
+                        if (ee is BinaryExpression ae && ae.NodeType == ExpressionType.Assign)
+                        {
+                            var left = (ParameterExpression)ae.Left;
+                            if (ae.Right.DependsOn(vars))
+                            {
+                                vars.Add(left);
+                            }
+                            else
+                            {
+                                invariants.Add(ae);
+                                invariantVars.Add(left);
+                                ei = ExpressionReplacer.Replace(ei, ee, Expression.Empty());
+                            }
+                        }
+                        else
+                        {
+                            var ee1 = ee;
+                            var eei = DependencyChecker.FindInvariant(ee1, variables);
+                            while (eei != null)
+                            {
+                                var t = Expression.Parameter(eei.Type);
+                                invariants.Add(Expression.Assign(t, eei));
+                                invariantVars.Add(t);
+                                var ee2 = ExpressionReplacer.Replace(ee1, eei, t);
+                                ei = ExpressionReplacer.Replace(ei, ee1, ee2);
+                                ee1 = ee2;
+                                eei = DependencyChecker.FindInvariant(ee1, variables);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    var eii = DependencyChecker.FindInvariant(ei, variables);
+                    while (eii != null)
+                    {
+                        var t = Expression.Parameter(eii.Type);
+                        invariants.Add(Expression.Assign(t, eii));
+                        invariantVars.Add(t);
+                        ei = ExpressionReplacer.Replace(ei, eii, t);
+                        eii = DependencyChecker.FindInvariant(ei, variables);
+                    }
+                }
+                expressions[i] = ei;
+            }
+            /*                var ei = DependencyChecker.FindInvariant(expressions[i], variables);
+                            while (ei != null)
+                            {
+                                if (ei is BinaryExpression ae && ae.NodeType == ExpressionType.Assign)
+                                {
+                                    invariants.Add(ae);
+                                    invariantVars.Add((ParameterExpression)ae.Left);
+                                    expressions[i] = ExpressionReplacer.Replace(expressions[i], ae, Expression.Empty());
+                                }
+                                else
+                                {
+                                    var t = Expression.Parameter(ei.Type);
+                                    invariants.Add(Expression.Assign(t, ei));
+                                    invariantVars.Add(t);
+                                    expressions[i] = ExpressionReplacer.Replace(expressions[i], ei, t, new CodeComparer());
+                                }
+                            }
+                        */
+
+
+            return Expression.Block(invariantVars, invariants);
+        }
 
         private static Expression MergeBlocks(ParameterExpression parameter, Expression paramInit, Expression expression)
         {
@@ -43,41 +130,6 @@ namespace Linq2d.Expressions
             }
             else
                 return Expression.Block(new[] { parameter }, Expression.Assign(parameter, paramInit), expression);
-        }
-
-        private class ExpressionCounter : ExpressionVisitor
-        {
-            public static Dictionary<Expression, (int usageCount, int cost)> Evaluate(Expression expression)
-            {
-                var c = new ExpressionCounter();
-                c.Visit(expression);
-                return c.Expressions;
-            }
-
-            private ExpressionCounter():base()
-            {
-
-            }
-            private Dictionary<Expression, (int usageCount, int cost)> Expressions { get; } = new Dictionary<Expression, (int usageCount, int cost)>(new CodeComparer());
-            private int _cost = 0;
-            public override Expression Visit(Expression node)
-            {
-                if (node == null)
-                    return node;
-
-                var cost = _cost;
-                base.Visit(node);
-
-                if (!Expressions.ContainsKey(node))
-                    Expressions[node] = (1, _cost-cost); // cost delta covers the cost of all children
-                else
-                {
-                    var (usages, oldCost) = Expressions[node];
-                    Expressions[node] = (usages + 1, oldCost);
-                }
-                _cost += 1; 
-                return node; 
-            }
         }
     }
 }

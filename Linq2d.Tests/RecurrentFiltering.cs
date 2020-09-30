@@ -74,7 +74,7 @@ namespace Linq2d.Tests
         {
             var data = ArrayHelper.InitDiagonal(h, w, b);
             var q = from d in data
-                    from r in Result.SubstBy(0)
+                    from r in Result.InitWith(0)
                     select d + r[-1, 0] + r[0, -1] - r[-1, -1];
             int[,] expected = SimpleIntegrate(data);
             int[,] actual = q.ToArray();
@@ -97,7 +97,7 @@ namespace Linq2d.Tests
 
             var q = from left in dataLeft
                     from right in dataRight
-                    from r in Result.SubstBy(0)
+                    from r in Result.InitWith(0)
                     select left + right + r[-1, 0] + r[0, -1] - r[-1, -1];
             TestHelper.AssertEqual(SimpleIntegrate(sum), q.ToArray());
         }
@@ -107,7 +107,7 @@ namespace Linq2d.Tests
         {
             var sample = new[,] { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } };
             var q = from s in sample
-                    from r in Result.SubstBy(0)
+                    from r in Result.InitWith(0)
                     select s + r[-1, 0];
             Assert.Equal(new[,] { { 1, 2, 3 }, { 5, 7, 9 }, { 12, 15, 18 } }, q.ToArray());
         }

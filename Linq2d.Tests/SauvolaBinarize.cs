@@ -27,8 +27,8 @@ namespace Linq2d.Tests
             var grayImage = ArrayHelper.InitAllRand(h, w, seed);
 
             var integral = from g in grayImage
-                           from ri in Result.SubstBy(0)
-                           from rq in Result.SubstBy(0L)
+                           from ri in Result.InitWith(0)
+                           from rq in Result.InitWith(0L)
                            select ValueTuple.Create(
                                ri[-1, 0] + ri[0, -1] - ri[-1, -1] + g,
                                rq[-1, 0] + rq[0, -1] - rq[-1, -1] + g * g);
@@ -212,8 +212,8 @@ namespace Linq2d.Tests
         {
 
             var integral = from g in grayImage
-                           from ri in Result.SubstBy(0)
-                           from rq in Result.SubstBy(0L)
+                           from ri in Result.InitWith(0)
+                           from rq in Result.InitWith(0L)
                            select ValueTuple.Create(
                                ri[-1, 0] + ri[0, -1] - ri[-1, -1] + g,
                                rq[-1, 0] + rq[0, -1] - rq[-1, -1] + g * g);
@@ -231,7 +231,7 @@ namespace Linq2d.Tests
                     let tlq = q.Offset(-whalf-1, -whalf-1) let trq = q.Offset(-whalf-1, whalf)
                     let blq = q.Offset(whalf, -whalf-1)  let brq = q.Offset(whalf, whalf)
                     let area = (br.X - tl.X) * (br.Y - tl.Y)
-                    let diff = br.Value + tl.Value - tr.Value - bl.Value
+                    let diff = br + tl - tr - bl
                     let sqdiff = brq.Value + tlq.Value - trq.Value - blq.Value
                     let mean = (double)diff / area
                     let std = Math.Sqrt((sqdiff - diff * mean) / (area - 1))
