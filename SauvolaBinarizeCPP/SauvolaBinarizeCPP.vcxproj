@@ -27,7 +27,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <VCTargetsPath Condition="'$(VCTargetsPath)'==''">C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\</VCTargetsPath>
+    <VCTargetsPath Condition="'$(VCTargetsPath)'==''">.\</VCTargetsPath>
     <VCToolsInstallDir Condition="'$(VCToolsInstallDir)'==''">C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\</VCToolsInstallDir>
     <VCTargetsPath Condition="'$(DesignTimeBuild)'!='true' AND $(Configuration.Contains('Wasm'))">./</VCTargetsPath>
     <MSBuildProjectExtensionsPath Condition="'$(DesignTimeBuild)'!='true' AND $(Configuration.Contains('Wasm'))">./</MSBuildProjectExtensionsPath>
