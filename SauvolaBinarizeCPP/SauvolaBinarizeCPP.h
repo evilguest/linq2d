@@ -6,9 +6,9 @@
 // SAUVOLABINARIZECPP_API functions as being imported from a DLL, whereas this DLL sees symbols
 // defined with this macro as being exported.
 #ifdef SAUVOLABINARIZECPP_EXPORTS
-#define SAUVOLABINARIZECPP_API __declspec(dllexport)
+#define SAUVOLABINARIZECPP_API EXPORT
 #else
-#define SAUVOLABINARIZECPP_API __declspec(dllimport)
+#define SAUVOLABINARIZECPP_API IMPORT
 #endif
 
 
