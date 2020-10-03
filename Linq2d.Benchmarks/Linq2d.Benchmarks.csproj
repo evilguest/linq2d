@@ -44,7 +44,8 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="echo copy /Y $(ProjectDir)..\x64\$(ConfigurationName)\SauvolaBinarizeCPP.dll $(targetDir)&#xD;&#xA;copy /Y $(ProjectDir)..\x64\$(ConfigurationName)\SauvolaBinarizeCPP.dll $(targetDir)" />
+    <Exec Condition="'$(OS)' == 'Unix'" Command="cp /Y $(ProjectDir)../x64/$(ConfigurationName)/SauvolaBinarizeCPP.dll $(targetDir)" />
+    <Exec Condition="'$(OS)' == 'Windows_NT'" Command="copy /Y $(ProjectDir)..\x64\$(ConfigurationName)\SauvolaBinarizeCPP.dll $(targetDir)" />
   </Target>
 
 </Project>
