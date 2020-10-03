@@ -9,7 +9,7 @@ on:
 jobs:
   build:
 
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
@@ -24,4 +24,4 @@ jobs:
     - name: Test
       run: dotnet test --no-restore --verbosity normal 
     - name: Benchmark
-      run: dotnet run -p Linq2d.Benchmarks -c Release --runtimes netcoreapp3.1 --filter "*"
+      run: sudo dotnet run -p Linq2d.Benchmarks -c Release --runtimes netcoreapp3.1 --filter "*"
