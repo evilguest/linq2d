@@ -24,4 +24,4 @@ jobs:
     - name: Test
       run: dotnet test --no-restore --verbosity normal 
     - name: Benchmark
-      run: sudo dotnet run -p Linq2d.Benchmarks -c Release --runtimes netcoreapp3.1 --filter "*"
+      run: dotnet run -p Linq2d.Benchmarks -c Release --runtimes netcoreapp3.1 --filter "*"
