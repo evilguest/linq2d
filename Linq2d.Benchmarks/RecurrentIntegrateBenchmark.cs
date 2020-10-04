@@ -9,6 +9,7 @@ using System.Runtime.Intrinsics.X86;
 
 namespace Linq2d.Benchmarks
 {
+    [InProcess]
     public class RecurrentIntegrateBenchmark: ImageBenchmark
     {
 
