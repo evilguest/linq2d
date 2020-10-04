@@ -26,7 +26,7 @@ namespace Linq2d.Benchmarks
             }
         }
 
-        [DllImport("SauvolaBinarizeCPP.dll")]
+        [DllImport("SauvolaBinarizeCPP")]
         private static extern int sauvolaBinarize(int h, int w, byte* input, byte* output, int whalf, double K);
     }
     [InProcess]

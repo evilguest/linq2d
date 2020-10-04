@@ -26,9 +26,10 @@ namespace Linq2d.Benchmarks
             }
         }
 
-        [DllImport("SauvolaBinarizeCPP.dll")]
+        [DllImport("SauvolaBinarizeCPP")]
         private static extern int c4filter(int h, int w, byte* input, int* output);
     }
+
     [InProcess]
     public class C4Benchmark:ImageBenchmark
     {
