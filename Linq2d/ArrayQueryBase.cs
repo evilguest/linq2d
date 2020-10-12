@@ -50,7 +50,7 @@ namespace Linq2d
                 default: throw new ArgumentException($"Unknown source type {source.GetType()}", nameof(source));
             }
             Results.AddRange(GetTypes(Kernel.ReturnType));
-            MethodName = new System.Diagnostics.StackTrace().GetFrame(5).GetMethod().Name;
+            MethodName = Array2d.SaveDynamicCode ? new System.Diagnostics.StackTrace().GetFrame(5).GetMethod().Name : "Blank";
             //(_h, _w) = EnsureSameSize(Sources);
         }
         protected ArrayQueryBase(IArrayQuery source, LambdaExpression kernel, object resultInit) : this(source, kernel) => ResultReplacements.Add(resultInit);
@@ -103,10 +103,10 @@ namespace Linq2d
             // now split kernel into the individual kernels
             var kernels = new Expression[Results.Count];
             if (Results.Count == 1)
-                kernels[0] = Kernel.Body;
+                kernels[0] = simplifiedKernel;
             else
             {
-                if (Kernel.Body is IArgumentProvider ip && ip.ArgumentCount == Results.Count)
+                if (simplifiedKernel is IArgumentProvider ip && ip.ArgumentCount == Results.Count)
                 {
                     for (int с = 0; с < Results.Count; с++)
                         kernels[с] = ip.GetArgument(с);
@@ -122,6 +122,9 @@ namespace Linq2d
 
             var dm = new DynamicMethod<D>(MethodName, saveAssembly: Array2d.SaveDynamicCode);
 
+            // try to move common code out of the loop
+
+            
             dm.GenerateIL(ilg =>
             {
                 #region prolog
@@ -178,6 +181,10 @@ namespace Linq2d
                 ilg.Ldfld(((int, int) s) => s.Item2);
                 ilg.Stloc(w);
 
+                #region Full Invariants
+                if (Array2d.MoveLoopInvariants)
+                    kcs.Visit(kernels.GetInvariants(Kernel.Parameters.ToArray()));
+                #endregion
 
                 var targets = new LocalBuilder[Results.Count];
                 var pTargets = new LocalBuilder[Results.Count];

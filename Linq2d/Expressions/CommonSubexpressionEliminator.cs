@@ -47,25 +47,36 @@ namespace Linq2d.Expressions
                 {
                     foreach (var ee in be.Expressions)
                     {
-
                         if (ee is BinaryExpression ae && ae.NodeType == ExpressionType.Assign)
                         {
                             var left = (ParameterExpression)ae.Left;
-                            if (ae.Right.DependsOn(vars))
-                            {
-                                vars.Add(left);
-                            }
-                            else
+                            var eei = DependencyChecker.FindInvariant(ae.Right, vars);
+                            if (eei == ae.Right)
                             {
                                 invariants.Add(ae);
                                 invariantVars.Add(left);
                                 ei = ExpressionReplacer.Replace(ei, ee, Expression.Empty());
                             }
+                            else 
+                            {
+                                var ee1 = ee;
+                                vars.Add(left);
+                                while (eei != null)
+                                {
+                                    var t = Expression.Parameter(eei.Type);
+                                    invariants.Add(Expression.Assign(t, eei));
+                                    invariantVars.Add(t);
+                                    var ee2 = ExpressionReplacer.Replace(ee1, eei, t);
+                                    ei = ExpressionReplacer.Replace(ei, ee1, ee2);
+                                    ee1 = ee2;
+                                    eei = DependencyChecker.FindInvariant(ee1, vars);
+                                }
+                            }
                         }
                         else
                         {
                             var ee1 = ee;
-                            var eei = DependencyChecker.FindInvariant(ee1, variables);
+                            var eei = DependencyChecker.FindInvariant(ee1, vars);
                             while (eei != null)
                             {
                                 var t = Expression.Parameter(eei.Type);
@@ -74,7 +85,7 @@ namespace Linq2d.Expressions
                                 var ee2 = ExpressionReplacer.Replace(ee1, eei, t);
                                 ei = ExpressionReplacer.Replace(ei, ee1, ee2);
                                 ee1 = ee2;
-                                eei = DependencyChecker.FindInvariant(ee1, variables);
+                                eei = DependencyChecker.FindInvariant(ee1, vars);
                             }
                         }
                     }

@@ -37,14 +37,14 @@ namespace Linq2d.Expressions
                 _depends = true;
                 return node;
             }
-
+            _cost++;
             var cost = _cost;
             var depends = _depends;
             _depends = false;
             base.Visit(node);
             if(!_depends && (_cost-cost)>0)
                 _invariants.Add((_cost-cost, node));
-            _depends = depends;
+            _depends |= depends;
             return node;
         }
         protected override Expression VisitBinary(BinaryExpression node)

@@ -213,6 +213,10 @@ namespace Linq2d.Expressions
                     _variableReplacements[lParam] = newLParam;
                     return node.Update(newLParam, null, right);
                 }
+                else if(node.NodeType == ExpressionType.ArrayIndex)
+                {
+                    return node;
+                }
                 else
                     left = ConvertToVector(left);
             }
