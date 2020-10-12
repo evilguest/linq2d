@@ -107,6 +107,58 @@ namespace Linq2d.CodeGen
             return node;
         }
 
+        private static T[] Repeat<T>(T element, int n)
+        {
+            var r = new T[n];
+            for (var i = 0; i < n; i++) r[i] = element;
+            return r;
+        }
+        private static Dictionary<Type, OpCode> _arrayStoreCodes = new Dictionary<Type, OpCode>()
+        {
+            {typeof(byte),   OpCodes.Stelem_I1},
+            {typeof(sbyte),  OpCodes.Stelem_I1},
+            {typeof(int),    OpCodes.Stelem_I4},
+            {typeof(uint),   OpCodes.Stelem_I4},
+            {typeof(short),  OpCodes.Stelem_I2},
+            {typeof(ushort), OpCodes.Stelem_I2},
+            {typeof(long),   OpCodes.Stelem_I8},
+            {typeof(ulong),  OpCodes.Stelem_I8},
+            {typeof(float),  OpCodes.Stelem_R4},
+            {typeof(double), OpCodes.Stelem_R8}
+        };
+        protected override Expression VisitNewArray(NewArrayExpression node)
+        {
+            switch (node.NodeType)
+            {
+                case ExpressionType.NewArrayBounds:
+                    Visit(node.Expressions);
+                    Generator.Emit(OpCodes.Newobj, node.Type.GetConstructor(Repeat(typeof(int), node.Expressions.Count)));
+                    break;
+
+                case ExpressionType.NewArrayInit:
+                    var elementType = node.Type.GetElementType();
+                    var storeOpCode = _arrayStoreCodes.ContainsKey(elementType)
+                        ? _arrayStoreCodes[elementType]
+                        : (elementType.IsClass ? OpCodes.Stelem_Ref : OpCodes.Stelem);
+
+                    Generator.Emit(OpCodes.Ldc_I4, node.Expressions.Count);
+                    Generator.Emit(OpCodes.Newarr, elementType);
+                    for (var i = 0; i < node.Expressions.Count; i++)
+                    {
+                        Generator.Emit(OpCodes.Dup); // array reference
+                        Generator.Emit(OpCodes.Ldc_I4, i); // index
+                        Visit(node.Expressions[i]); // initializer expression
+                        if (storeOpCode == OpCodes.Stelem)
+                            Generator.Emit(storeOpCode, elementType);
+                        else
+                            Generator.Emit(storeOpCode);
+                    }
+                    break;
+            }
+
+            return node;
+        
+        }
         public void Load2dPointerOffset(Type type, Expression x, Expression y)
         {
             var s = (int)typeof(Unsafe).GetMethod("SizeOf").MakeGenericMethod(type).Invoke(null, null); // Marshal.SizeOf(t);

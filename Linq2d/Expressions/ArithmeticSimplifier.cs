@@ -3,12 +3,15 @@ using Linq2d.CodeGen;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
+
 using static Linq.Expressions.Deconstruct.Expr;
 using static System.Linq.Expressions.Expression;
 
 namespace Linq2d.Expressions
 {
     using System;
+    using System.Collections;
+    using System.Linq;
 
     public static class Arithmetic
     {
@@ -252,6 +255,9 @@ namespace Linq2d.Expressions
                     #endregion
                     #endregion
 
+                    #region Const Array Access
+                    Constant(Array value) when value.Rank == 1 => NewArrayInit(value.GetType().GetElementType(), from object v in (IEnumerable)value select Constant(v)),
+                    #endregion
 
                     _ => expr
                 };

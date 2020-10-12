@@ -46,6 +46,7 @@ namespace Linq2d.CodeGen
         public static void Ldc0(this ILGenerator ilg) => ilg.Emit(OpCodes.Ldc_I4_0);
         public static void Ldc1(this ILGenerator ilg) => ilg.Emit(OpCodes.Ldc_I4_1);
         public static void Ldc(this ILGenerator ilg, int constant) => ilg.Emit(OpCodes.Ldc_I4, constant);
+        public static void Ldc(this ILGenerator ilg, long constant) => ilg.Emit(OpCodes.Ldc_I8, constant);
 
         public static void Increment(this ILGenerator ilg, LocalBuilder var, int constant = 1)
         {

@@ -67,6 +67,7 @@ namespace Linq2d.CodeGen
                 Generator.Emit(OpCodes.Ldstr, (string)node.Value);
                 return node;
             }
+
             throw new InvalidOperationException($"Can't handle a constant of type {node.Type}");
         }
         private IReadOnlyDictionary<Type, OpCode> _convertTable = new Dictionary<Type, OpCode>()
@@ -139,6 +140,7 @@ namespace Linq2d.CodeGen
             {ExpressionType.LessThanOrEqual, OpCodes.Ble },
             {ExpressionType.AndAlso, OpCodes.Brfalse },
             {ExpressionType.OrElse, OpCodes.Brtrue },
+            {ExpressionType.ArrayIndex, OpCodes.Ldelem},
         };
         public static IReadOnlyDictionary<Type, OpCode> LoadTable { get; } = new Dictionary<Type, OpCode>()
         {
@@ -197,6 +199,24 @@ namespace Linq2d.CodeGen
                     ret = base.VisitBinary(node);
                     Generator.Emit(BinaryOpTable[node.NodeType]);
                     break;
+                case ExpressionType.ArrayIndex:
+                    ret = base.VisitBinary(node);
+		    if(node.Type == typeof(byte) || node.Type == typeof(sbyte))
+                        Generator.Emit(OpCodes.Ldelem_I1); 
+                    else if (node.Type == typeof(short) || node.Type == typeof(ushort))
+                        Generator.Emit(OpCodes.Ldelem_I2); 
+                    else if (node.Type == typeof(int) || node.Type == typeof(uint))
+                        Generator.Emit(OpCodes.Ldelem_I4); 
+                    else if (node.Type == typeof(long) || node.Type == typeof(ulong))
+                        Generator.Emit(OpCodes.Ldelem_I8); 
+                    else if (node.Type == typeof(float))
+                        Generator.Emit(OpCodes.Ldelem_R4); 
+                    else if (node.Type == typeof(double))
+                        Generator.Emit(OpCodes.Ldelem_R8); 
+                    else 
+                        Generator.Emit(OpCodes.Ldelem_Ref); 
+                    break;
+
                 case ExpressionType.GreaterThanOrEqual:
                 case ExpressionType.LessThanOrEqual:
                     var trueLabel = Generator.DefineLabel();
