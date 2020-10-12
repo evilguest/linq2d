@@ -215,7 +215,8 @@ namespace Linq2d.Expressions
                 }
                 else if(node.NodeType == ExpressionType.ArrayIndex)
                 {
-                    return node;
+                    // todo: try looking for a SIMD gather operation... 
+                    return Fail(node, $"Failed to find a vector operation for array access {left}[{right}]");
                 }
                 else
                     left = ConvertToVector(left);
