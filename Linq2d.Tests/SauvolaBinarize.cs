@@ -15,6 +15,7 @@ namespace Linq2d.Tests
         public void TestSauvolaSynthetic(int h, int w, byte seed)
         {
             var data = ArrayHelper.InitAllRand(h, w, seed);
+            Array2d.SaveDynamicCode = true;
             TestHelper.AssertEqual(BaseBinarize(data), LinqBinarize(data));
         }
         public static double K { get; private set; } = 0.1;

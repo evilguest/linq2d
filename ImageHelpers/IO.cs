@@ -1,15 +1,22 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+
 
 namespace ImageHelpers
 {
     public class IO
     {
-        public unsafe static byte[,] ReadImage(string fileName)
+        public unsafe static (byte[,], byte[]) ReadImage(string fileName)
         {
-            using (var b = new Bitmap(fileName))
+            using(var s = GetReadStream(fileName))
+            using (var b = new Bitmap(s))
             {
+                var brightness = (from color in b.Palette.Entries select (byte)(color.GetBrightness() * byte.MaxValue)).ToArray();
+
                 BitmapData d = b.LockBits(new Rectangle(0, 0, b.Width, b.Height), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
                 try
                 {
@@ -19,7 +26,7 @@ namespace ImageHelpers
                     {
                         Buffer.MemoryCopy((byte*)d.Scan0, pData, data.LongLength, d.Height * d.Stride);
                     }
-                    return data;
+                    return (data, brightness);
                 }
                 finally
                 {
@@ -27,6 +34,14 @@ namespace ImageHelpers
                 }
             }
         }
+
+        private static Stream GetReadStream(string fileName)
+        {
+            Stream stream = File.OpenRead(fileName);
+            return Path.GetExtension(fileName) != ".gz" ? stream : new GZipStream(stream, CompressionMode.Decompress, false);
+
+        }
+
         public unsafe static void WriteImage(string fileName, byte[,] data)
         {
             using (var b = new Bitmap(data.GetLength(1), data.GetLength(0), PixelFormat.Format8bppIndexed))
