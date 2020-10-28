@@ -1,34 +1,10 @@
 ﻿using BenchmarkDotNet.Attributes;
+using Linq2d.Tests;
 using Mono.Linq.Expressions;
 using System;
-using System.Runtime.InteropServices;
 
 namespace Linq2d.Benchmarks
 {
-    internal static unsafe class UnmanagedSauvola
-    {
-        public static byte[,] Transform(byte[,] data, int wHalf, double k)
-        {
-            var h = data.Height();
-            var w = data.Width();
-            var result = new byte[h, w];
-            fixed (byte* source = &data[0, 0])
-            fixed (byte* target = &result[0, 0])
-            {
-                var r = sauvolaBinarize(h, w, source, target, wHalf, k);
-                switch (r)
-                {
-                    case 0: return result;
-                    case -1: throw new InvalidOperationException("NULL input detected");
-                    case -2: throw new InvalidOperationException("NULL output detected");
-                    default: throw new InvalidOperationException($"Unexpected value {r} has been returned");
-                }
-            }
-        }
-
-        [DllImport("SauvolaBinarizeCPP")]
-        private static extern int sauvolaBinarize(int h, int w, byte* input, byte* output, int whalf, double K);
-    }
     [InProcess]
     public class SauvolaBenchmark : ImageBenchmark
     {
