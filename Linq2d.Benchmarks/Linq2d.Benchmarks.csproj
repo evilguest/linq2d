@@ -19,15 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="p00743.bmp">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-    <Content Include="p02652.bmp">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
   </ItemGroup>
 
