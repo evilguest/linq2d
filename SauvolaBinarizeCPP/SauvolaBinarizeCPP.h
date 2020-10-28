@@ -12,6 +12,5 @@
 #endif
 
 
-extern "C" SAUVOLABINARIZECPP_API int sauvolaBinarize(int h, int w, unsigned char* input, char* output, int whalf, double K);
-extern "C" SAUVOLABINARIZECPP_API int preIntegrate(int height, int width, unsigned char* input, int* linear, long long* square);
-extern "C" SAUVOLABINARIZECPP_API int c4filter(int h, int w, unsigned char* input, int* output);
+extern "C" SAUVOLABINARIZECPP_API int sauvolaBinarize(int h, int w, char* input, char* output, int whalf, double K);
+extern "C" SAUVOLABINARIZECPP_API int c4filter(int h, int w, char* input, int* output);

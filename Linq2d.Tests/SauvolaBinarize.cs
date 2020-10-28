@@ -18,22 +18,6 @@ namespace Linq2d.Tests
             Array2d.SaveDynamicCode = true;
             TestHelper.AssertEqual(BaseBinarize(data), LinqBinarize(data));
         }
-
-        [Theory]
-        [InlineData(50, 50, 42)]
-        [InlineData(100, 100, 42)]
-        [InlineData(1000, 2151, 42)]
-        [InlineData(170, 70, 42)]
-        public unsafe void TestCppSauvolaSynthetic(int h, int w, byte seed)
-        {
-            var data = ArrayHelper.InitAllRand(h, w, seed);
-
-            var cs = DoubleIntegrateSlow(h, w, data);
-
-            TestHelper.AssertEqual(BaseBinarize(data), UnmanagedSauvola.Transform(data, W / 2, K));
-        }
-
-
         public static double K { get; private set; } = 0.1;
         public static byte W { get; private set; } = 10;
 
@@ -45,7 +29,7 @@ namespace Linq2d.Tests
 
             var integral = from g in grayImage
                            from ri in Result.InitWith(0)
-                           from rq in Result.InitWith((square)0)
+                           from rq in Result.InitWith(0L)
                            select ValueTuple.Create(
                                ri[-1, 0] + ri[0, -1] - ri[-1, -1] + g,
                                rq[-1, 0] + rq[0, -1] - rq[-1, -1] + g * g);

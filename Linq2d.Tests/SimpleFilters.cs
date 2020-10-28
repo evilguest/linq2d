@@ -218,20 +218,12 @@ namespace Linq2d.Tests
         }
 
         [Fact]
-        public void TestPrimitiveC4NnCpp()
-        {
-            var sample = new byte[,] { { 4, 4, 4 }, { 4, 4, 4 }, { 4, 4, 4 } };
-            var q = UnmanagedC4.Transform(sample);
-            TestHelper.AssertEqual(new[,] { { 4, 4, 4 }, { 4, 4, 4 }, { 4, 4, 4 } }, q);
-        }
-
-        [Fact]
         public void TestPrimitiveC4Nn()
         {
             var sample = new[,] { { 4, 4, 4 }, { 4, 4, 4 }, { 4, 4, 4 } };
             var q = from s in sample.With(OutOfBoundsStrategy.NearestNeighbour)
                     select (s[-1, 0] + s[1, 0] + s[0, -1] + s[0, 1]) / 4;
-            TestHelper.AssertEqual(sample, q.ToArray());
+            Assert.Equal(sample, q.ToArray());
         }
 
         [Theory]
@@ -246,7 +238,7 @@ namespace Linq2d.Tests
                     select (d[-1, 0] + d[0, -1] + d[1, 0] + d[0, 1]) / 4;
             var p = q.ToArray();
             var r = C4NNUnsafeScalar(data);
-            TestHelper.AssertEqual(r, p);
+            Assert.Equal(r, p);
         }
 
         [Theory]

@@ -276,6 +276,9 @@ namespace Linq2d.CodeGen
                 InitConditional128<long>(Sse41.BlendVariable);
                 InitConditional128<ulong>(Sse41.BlendVariable);
             }
+            if (Avx2.IsSupported)
+            {
+            }
         }
 
     }
@@ -345,7 +348,9 @@ namespace Linq2d.CodeGen
                 InitBinary128Forced<uint, int>(ExpressionType.LeftShift, ShiftLeftLogical);
 
             }
-
+            if (Sse3.IsSupported)
+            {
+            }
             if (Sse41.IsSupported)
             {
                 InitLoadAndConvert<byte, int>(Sse41.ConvertToVector128Int32);
@@ -369,7 +374,10 @@ namespace Linq2d.CodeGen
                 InitConditional128<uint>(Sse41.BlendVariable);
                 InitConditional128<float>(Sse41.BlendVariable);
             }
+            if (Sse42.IsSupported)
+            {
 
+            }
             if (Avx.IsSupported)
             {
                 InitType256<long>();
@@ -418,7 +426,6 @@ namespace Linq2d.CodeGen
                 InitConditional256<double>(Avx.BlendVariable);
                 InitConditional<Vector256<double>, Vector32<byte>>(Vector32.DoubleConditional);
             }
-
             if (Avx2.IsSupported)
             {
                 InitLoadAndConvert<byte, long>(Avx2.ConvertToVector256Int64);
@@ -502,6 +509,9 @@ namespace Linq2d.CodeGen
     {
         public Vector8Info()
         {
+            if (Sse.IsSupported)
+            {
+            }
             if (Sse2.IsSupported)
             {
                 InitType128<short>();

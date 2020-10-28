@@ -19,8 +19,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Linq2d.Benchmarks", "Linq2d
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SauvolaBinarizeCPP", "SauvolaBinarizeCPP\SauvolaBinarizeCPP.vcxproj", "{9D297D64-2DDF-40A2-9910-8C4E613C6C1E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SauvolaBinarize", "SauvolaBinarize\SauvolaBinarize.csproj", "{9E5F36A3-605F-4289-8F22-913E9DE0FC0F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -91,18 +89,6 @@ Global
 		{9D297D64-2DDF-40A2-9910-8C4E613C6C1E}.Release|x64.Build.0 = Release|x64
 		{9D297D64-2DDF-40A2-9910-8C4E613C6C1E}.Release|x86.ActiveCfg = Release|Win32
 		{9D297D64-2DDF-40A2-9910-8C4E613C6C1E}.Release|x86.Build.0 = Release|Win32
-		{9E5F36A3-605F-4289-8F22-913E9DE0FC0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9E5F36A3-605F-4289-8F22-913E9DE0FC0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9E5F36A3-605F-4289-8F22-913E9DE0FC0F}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{9E5F36A3-605F-4289-8F22-913E9DE0FC0F}.Debug|x64.Build.0 = Debug|Any CPU
-		{9E5F36A3-605F-4289-8F22-913E9DE0FC0F}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{9E5F36A3-605F-4289-8F22-913E9DE0FC0F}.Debug|x86.Build.0 = Debug|Any CPU
-		{9E5F36A3-605F-4289-8F22-913E9DE0FC0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9E5F36A3-605F-4289-8F22-913E9DE0FC0F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9E5F36A3-605F-4289-8F22-913E9DE0FC0F}.Release|x64.ActiveCfg = Release|Any CPU
-		{9E5F36A3-605F-4289-8F22-913E9DE0FC0F}.Release|x64.Build.0 = Release|Any CPU
-		{9E5F36A3-605F-4289-8F22-913E9DE0FC0F}.Release|x86.ActiveCfg = Release|Any CPU
-		{9E5F36A3-605F-4289-8F22-913E9DE0FC0F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

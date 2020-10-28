@@ -7,8 +7,8 @@
 #include "SauvolaBinarizeCPP.h"
 
 using namespace std;
-
-SAUVOLABINARIZECPP_API int sauvolaBinarize(int height, int width, unsigned char* input, char* output, int whalf, double K)
+// This is an example of an exported function.
+SAUVOLABINARIZECPP_API int sauvolaBinarize(int height, int width, char* input, char* output, int whalf, double K)
 {
     if (input == NULL)
         return -1; // error: no input
@@ -16,13 +16,13 @@ SAUVOLABINARIZECPP_API int sauvolaBinarize(int height, int width, unsigned char*
         return -2; // error: no output
 
     auto p = new int[height * width];
-    auto sq = new long long[height * width];
+    auto sq = new long[height * width];
 
     for (int i = 0; i < height; i++)
         for (int j = 0; j < width; j++)
         {
             p[i * width + j] = input[i * width + j];
-            sq[i * width + j] = (long)input[i * width + j] * input[i * width + j];
+            sq[i * width + j] = input[i * width + j] * input[i * width + j];
             if (i > 0)
             {
                 p[i * width + j] += p[(i - 1) * width + j];
@@ -78,3 +78,27 @@ SAUVOLABINARIZECPP_API int sauvolaBinarize(int height, int width, unsigned char*
     return 0;
 }
 
+SAUVOLABINARIZECPP_API int c4filter(int h, int w, char* input, int* output)
+{
+    if (input == NULL)
+        return -1; // error: no input
+    if (output == NULL)
+        return -2; // error: no output
+    output[0] = (2 * (int)input[0] + (int)input[1] + (int)input[w]) / 4;
+    for (int j = 1; j < w - 1;j++)
+        output[j] = ((int)input[j - 1] + (int)input[j] + (int)input[j + 1] + (int)input[j + w]) / 4;
+    output[w - 1] = (2 * (int)input[w - 1] + (int)input[w - 2] + (int)input[w + w - 1]) / 4;
+    for (int i = 1; i < h - 1; i++)
+    {
+        output[i * w] = ((int)input[i * w] + (int)input[(i - 1) * w] + (int)input[i * w + 1] + (int)input[(i + 1) * w]) / 4;
+        for (int j = 1; j < w - 1; j++)
+            output[i * w + j] = ((int)input[(i - 1) * w + j] + (int)input[(i + 1) * w + j] + (int)input[i * w + (j - 1)] + (int)input[i * w + (j + 1)]) / 4;
+        output[i*w + w - 1] = (2 * (int)input[i * w + w - 1] + (int)input[i * w + w - 2] + (int)input[(i + 2)*w - 1]) / 4;
+    }
+    output[(h - 1) * w] = (2 * (int)input[(h - 1) * w] + (int)input[(h - 1) * w + 1] + (int)input[h * w]) / 4;
+    for (int j = 1; j < w - 1;j++)
+        output[(h - 1) * w + j] = ((int)input[(h - 1) * w + j - 1] + (int)input[(h - 1) * w + j] + (int)input[(h - 1) * w + j + 1] + (int)input[(h-2) * w + j]) / 4;
+    output[h * w - 1] = (2 * (int)input[h * w - 1] + (int)input[h * w - 2] + (int)input[h * w - w - 1]) / 4;
+
+    return 0;
+}
