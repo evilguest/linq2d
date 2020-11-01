@@ -52,6 +52,24 @@ namespace Linq2d.Tests
     }
     public unsafe class UnmanagedC4
     {
+        public static int[,] TransformAsm(byte[,] data)
+        {
+            var h = data.Height();
+            var w = data.Width();
+            var result = new int[h, w];
+            fixed (byte* source = &data[0, 0])
+            fixed (int* target = &result[0, 0])
+            {
+                var r = c4filterAsm(h, w, source, target);
+                switch (r)
+                {
+                    case 0: return result;
+                    case -1: throw new InvalidOperationException("NULL input detected");
+                    case -2: throw new InvalidOperationException("NULL output detected");
+                    default: throw new InvalidOperationException($"Unexpected value {r} has been returned");
+                }
+            }
+        }
         public static int[,] Transform(byte[,] data)
         {
             var h = data.Height();
@@ -73,6 +91,8 @@ namespace Linq2d.Tests
 
         [DllImport("SauvolaBinarizeCPP")]
         private static extern int c4filter(int h, int w, byte* input, int* output);
+        [DllImport("SauvolaBinarizeCPP")]
+        private static extern int c4filterAsm(int h, int w, byte* input, int* output);
     }
 
 }

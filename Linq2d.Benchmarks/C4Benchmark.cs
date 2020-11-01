@@ -35,6 +35,9 @@ namespace Linq2d.Benchmarks
 
         [Benchmark]
         public int[,] CppC4() => UnmanagedC4.Transform(_data);
+        
+        [Benchmark]
+        public int[,] AsmC4() => UnmanagedC4.TransformAsm(_data);
 
         [Benchmark]
         public int[,] NaturalC4()

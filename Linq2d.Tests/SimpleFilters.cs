@@ -220,11 +220,20 @@ namespace Linq2d.Tests
         [Fact]
         public void TestPrimitiveC4NnCpp()
         {
-            var sample = new byte[,] { { 4, 4, 4 }, { 4, 4, 4 }, { 4, 4, 4 } };
+            var sample = ArrayHelper.InitAllRand(16 * 10, 16 * 10, (byte)42);
             var q = UnmanagedC4.Transform(sample);
-            TestHelper.AssertEqual(new[,] { { 4, 4, 4 }, { 4, 4, 4 }, { 4, 4, 4 } }, q);
+            var p = C4NNUnsafeScalar(sample);
+            TestHelper.AssertEqual(p, q);
         }
 
+        [Fact]
+        public void TestPrimitiveC4NnAsm()
+        {
+            var sample = ArrayHelper.InitAllRand(16*10, 16*10, (byte)42);
+            var q = UnmanagedC4.TransformAsm(sample);
+            var p = C4NNUnsafeScalar(sample);
+            TestHelper.AssertEqual(p, q);
+        }
         [Fact]
         public void TestPrimitiveC4Nn()
         {
