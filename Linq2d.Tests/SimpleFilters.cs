@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Xunit;
 
 namespace Test
@@ -217,26 +218,39 @@ namespace Linq2d.Tests
             Assert.Equal(new[,] { { 2, 3, 2 }, { 3, 4, 3 }, { 2, 3, 2 } }, q.ToArray());
         }
 
-        [Fact]
-        public void TestPrimitiveC4NnCpp()
+        [Theory]
+        [InlineData(160, 160, 42)]
+        [InlineData(160, 133, 42)]
+        [InlineData(133, 160, 42)]
+        public void TestPrimitiveC4NnCpp(int h, int w, byte seed)
         {
-            var sample = ArrayHelper.InitAllRand(16 * 10, 16 * 10, (byte)42);
+            var sample = ArrayHelper.InitAllRand(h, w, seed);
             var q = UnmanagedC4.Transform(sample);
             var p = C4NNUnsafeScalar(sample);
             TestHelper.AssertEqual(p, q);
         }
 
-        [Fact]
-        public void TestPrimitiveC4NnAsm()
+        [Theory]
+        [InlineData(160, 133, 42)]
+        [InlineData(133, 160, 42)]
+        public void TestPrimitiveC4NnAsmUnaligned(int h, int w, byte seed)
         {
-            var sample = ArrayHelper.InitAllRand(16*10, 16*10, (byte)42);
+            var sample = ArrayHelper.InitAllRand(h, w, seed);
+            Assert.Throws<AccessViolationException>(() => UnmanagedC4.TransformAsm(sample));
+        }
+        [Theory]
+        [InlineData(160, 160, 42)]
+        public void TestPrimitiveC4NnAsm(int h, int w, byte seed)
+        {
+            var sample = ArrayHelper.InitAllRand(h, w, seed);
             var q = UnmanagedC4.TransformAsm(sample);
             var p = C4NNUnsafeScalar(sample);
             TestHelper.AssertEqual(p, q);
         }
         [Fact]
-        public void TestPrimitiveC4Nn()
+            public void TestPrimitiveC4Nn()
         {
+            Array2d.SaveDynamicCode = Debugger.IsAttached;
             var sample = new[,] { { 4, 4, 4 }, { 4, 4, 4 }, { 4, 4, 4 } };
             var q = from s in sample.With(OutOfBoundsStrategy.NearestNeighbour)
                     select (s[-1, 0] + s[1, 0] + s[0, -1] + s[0, 1]) / 4;
@@ -250,6 +264,7 @@ namespace Linq2d.Tests
         [InlineData(500, 7, 42)]
         public void TestC4NearestNeighbour(int h, int w, byte v)
         {
+            Array2d.SaveDynamicCode = Debugger.IsAttached;
             var data = ArrayHelper.InitDiagonal(h, w, v);
             var q = from d in data.With(OutOfBoundsStrategy.NearestNeighbour)
                     select (d[-1, 0] + d[0, -1] + d[1, 0] + d[0, 1]) / 4;

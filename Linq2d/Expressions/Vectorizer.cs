@@ -201,7 +201,14 @@ namespace Linq2d.Expressions
 
             // try the operation without promotion:
             if (VectorInfo.BinaryOperations.ContainsKey((node.NodeType, left.Type, right.Type)))
-                return Expression.MakeBinary(node.NodeType, left, right, false, VectorInfo.BinaryOperations[(node.NodeType, left.Type, right.Type)]);
+            {
+                var vectorOp = VectorInfo.BinaryOperations[(node.NodeType, left.Type, right.Type)];
+                var rightType = vectorOp.GetParameters()[1].ParameterType;
+                if (rightType != right.Type)
+                    right = Arithmetic.Simplify(Expression.Convert(right, rightType), Ranges.No);
+
+                return Expression.MakeBinary(node.NodeType, left, right, false, vectorOp);
+            }
 
             // promote both operands as necessary
             if (!IsVector(left.Type))

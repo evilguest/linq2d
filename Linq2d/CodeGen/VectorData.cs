@@ -6,8 +6,6 @@ using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
-using System.Numerics;
-using System.Runtime.InteropServices;
 using Linq2d.CodeGen.Fake;
 
 namespace Linq2d.CodeGen
@@ -171,9 +169,9 @@ namespace Linq2d.CodeGen
         public void InitBinary128<T1, T2>(ExpressionType ex, Func<Vector128<T1>, T2, Vector128<T1>> method)
             where T1 : unmanaged
             => InitBinary(ex, method);
-        public void InitBinary128Forced<T1, T2>(ExpressionType ex, Func<Vector128<T1>, T2, Vector128<T1>> method)
+        public void InitBinary128Forced<T1, T2N, T2A>(ExpressionType ex, Func<Vector128<T1>, T2N, Vector128<T1>> method)
             where T1 : unmanaged
-            => _binaryOperations[(ex, typeof(Vector128<T1>), typeof(T2))] = method.Method;
+            => _binaryOperations[(ex, typeof(Vector128<T1>), typeof(T2A))] = method.Method;
 
         public void InitBinary256<T1, T2, R>(ExpressionType ex, Func<Vector256<T1>, Vector256<T2>, Vector256<R>> method)
             where T1 : unmanaged
@@ -183,9 +181,9 @@ namespace Linq2d.CodeGen
         public void InitBinary256<T>(ExpressionType ex, Func<Vector256<T>, Vector256<T>, Vector256<T>> method)
             where T : unmanaged
             => InitBinary(ex, method);
-        public void InitBinary256Forced<T1, T2>(ExpressionType ex, Func<Vector256<T1>, T2, Vector256<T1>> method)
+        public void InitBinary256Forced<T1, T2N, T2A>(ExpressionType ex, Func<Vector256<T1>, T2N, Vector256<T1>> method)
             where T1 : unmanaged
-            => _binaryOperations[(ex, typeof(Vector256<T1>), typeof(T2))] = method.Method;
+            => _binaryOperations[(ex, typeof(Vector256<T1>), typeof(T2A))] = method.Method;
         #endregion
         #region Custom
         public void InitUnary128<T>(Func<T, T> scalar, Func<Vector128<T>, Vector128<T>> vector)
@@ -257,11 +255,11 @@ namespace Linq2d.CodeGen
                 InitBinary128<long>(ExpressionType.And, Sse2.And);
                 InitBinary128<ulong>(ExpressionType.And, Sse2.And);
 
-                InitBinary128Forced<long, int>(ExpressionType.RightShift, (t, s)=>Sse2.ShiftRightLogical(t, (byte)s));
-                InitBinary128Forced<ulong, int>(ExpressionType.RightShift, (t, s) => Sse2.ShiftRightLogical(t, (byte)s));
+                InitBinary128Forced<long, byte, int>(ExpressionType.RightShift, Sse2.ShiftRightLogical); // ?? should be arithmetic
+                InitBinary128Forced<ulong, byte, int>(ExpressionType.RightShift, Sse2.ShiftRightLogical);
 
-                InitBinary128Forced<long, int>(ExpressionType.LeftShift, (t, s) => Sse2.ShiftRightLogical(t, (byte)s));
-                InitBinary128Forced<ulong, int>(ExpressionType.LeftShift, (t, s) => Sse2.ShiftRightLogical(t, (byte)s));
+                InitBinary128Forced<long, byte, int>(ExpressionType.LeftShift, Sse2.ShiftLeftLogical);
+                InitBinary128Forced<ulong, byte, int>(ExpressionType.LeftShift, Sse2.ShiftLeftLogical);
             }
             if (Sse41.IsSupported)
             {
@@ -287,6 +285,7 @@ namespace Linq2d.CodeGen
     //}
     public unsafe class Vector4Info: VectorInfo
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vector4Info()
         {
             InitType32<byte>();
@@ -338,11 +337,11 @@ namespace Linq2d.CodeGen
                 InitBinary128<int>(ExpressionType.And, Sse2.And);
                 InitBinary128<uint>(ExpressionType.And, Sse2.And);
 
-                InitBinary128Forced<int, int>(ExpressionType.RightShift, ShiftRightLogical);
-                InitBinary128Forced<uint, int>(ExpressionType.RightShift, ShiftRightLogical);
+                InitBinary128Forced<int, byte, int>(ExpressionType.RightShift, Sse2.ShiftRightArithmetic);
+                InitBinary128Forced<uint, byte, int>(ExpressionType.RightShift, Sse2.ShiftRightLogical);
 
-                InitBinary128Forced<int, int>(ExpressionType.LeftShift, ShiftLeftLogical);
-                InitBinary128Forced<uint, int>(ExpressionType.LeftShift, ShiftLeftLogical);
+                InitBinary128Forced<int, byte, int>(ExpressionType.LeftShift, Sse2.ShiftLeftLogical);
+                InitBinary128Forced<uint, byte, int>(ExpressionType.LeftShift, Sse2.ShiftLeftLogical);
 
             }
 
@@ -446,11 +445,11 @@ namespace Linq2d.CodeGen
                 InitBinary256<long>(ExpressionType.And, Avx2.And);
                 InitBinary256<ulong>(ExpressionType.And, Avx2.And);
 
-                InitBinary256Forced<long, int>(ExpressionType.RightShift, ShiftRightLogical);
-                InitBinary256Forced<ulong, int>(ExpressionType.RightShift, ShiftRightLogical);
+                InitBinary256Forced<long, byte, int>(ExpressionType.RightShift, Avx2.ShiftRightLogical); // ?? Should be arithmetic? Puzzled.
+                InitBinary256Forced<ulong, byte, int>(ExpressionType.RightShift, Avx2.ShiftRightLogical);
 
-                InitBinary256Forced<long, int>(ExpressionType.LeftShift, ShiftLeftLogical);
-                InitBinary256Forced<ulong, int>(ExpressionType.LeftShift, ShiftLeftLogical);
+                InitBinary256Forced<long, byte, int>(ExpressionType.LeftShift, Avx2.ShiftLeftLogical);
+                InitBinary256Forced<ulong, byte, int>(ExpressionType.LeftShift, Avx2.ShiftLeftLogical);
 
                 InitConditional256<long>(Avx2.BlendVariable);
                 InitConditional256<ulong>(Avx2.BlendVariable);
@@ -478,20 +477,6 @@ namespace Linq2d.CodeGen
             => Avx.ConvertToVector256Double(Sse41.ConvertToVector128Int32(address));
         public static Vector256<double> ConvertToVector256Double(int* address)
             => Avx.ConvertToVector256Double(Sse2.LoadVector128(address));
-
-        public static Vector256<long> ShiftRightLogical(Vector256<long> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
-        public static Vector256<ulong> ShiftRightLogical(Vector256<ulong> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
-        public static Vector256<short> ShiftRightLogical(Vector256<short> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
-        public static Vector256<ushort> ShiftRightLogical(Vector256<ushort> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
-
-        public static Vector128<long> ShiftRightLogical(Vector128<long> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
-        public static Vector128<ulong> ShiftRightLogical(Vector128<ulong> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
-        public static Vector128<int> ShiftRightLogical(Vector128<int> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
-        public static Vector128<uint> ShiftRightLogical(Vector128<uint> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
-        public static Vector256<long> ShiftLeftLogical(Vector256<long> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
-        public static Vector256<ulong> ShiftLeftLogical(Vector256<ulong> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
-        public static Vector256<short> ShiftLeftLogical(Vector256<short> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
-        public static Vector256<ushort> ShiftLeftLogical(Vector256<ushort> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
 
         public static Vector128<long> ShiftLeftLogical(Vector128<long> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
         public static Vector128<ulong> ShiftLeftLogical(Vector128<ulong> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
@@ -530,10 +515,10 @@ namespace Linq2d.CodeGen
 
                 InitBinary128<short>(ExpressionType.Or, Sse2.Or);
                 InitBinary128<ushort>(ExpressionType.Or, Sse2.Or);
-                InitBinary128Forced<short, int>(ExpressionType.RightShift, ShiftRightLogical);
-                InitBinary128Forced<ushort, int>(ExpressionType.RightShift, ShiftRightLogical);
-                InitBinary128Forced<short, int>(ExpressionType.LeftShift, ShiftLeftLogical);
-                InitBinary128Forced<ushort, int>(ExpressionType.LeftShift, ShiftLeftLogical);
+                InitBinary128Forced<short, byte, int>(ExpressionType.RightShift, Sse2.ShiftRightArithmetic);
+                InitBinary128Forced<ushort, byte, int>(ExpressionType.RightShift, Sse2.ShiftRightLogical);
+                InitBinary128Forced<short, byte, int>(ExpressionType.LeftShift, Sse2.ShiftLeftLogical);
+                InitBinary128Forced<ushort, byte, int>(ExpressionType.LeftShift, Sse2.ShiftLeftLogical);
             }
             if (Sse3.IsSupported)
             {
@@ -571,11 +556,11 @@ namespace Linq2d.CodeGen
                 InitBinary256<float>(ExpressionType.Multiply, Avx.Multiply);
                 InitBinary256<float>(ExpressionType.Divide, Avx.Divide);
 
-                InitBinary256Forced<int, int>(ExpressionType.RightShift, ShiftRightLogical);
-                InitBinary256Forced<uint, int>(ExpressionType.RightShift, ShiftRightLogical);
+                InitBinary256Forced<int, byte, int>(ExpressionType.RightShift, Avx2.ShiftRightArithmetic);
+                InitBinary256Forced<uint, byte, int>(ExpressionType.RightShift, Avx2.ShiftRightLogical);
 
-                InitBinary256Forced<int, int>(ExpressionType.LeftShift, ShiftLeftLogical);
-                InitBinary256Forced<uint, int>(ExpressionType.LeftShift, ShiftLeftLogical);
+                InitBinary256Forced<int, byte, int>(ExpressionType.LeftShift, Avx2.ShiftLeftLogical);
+                InitBinary256Forced<uint, byte, int>(ExpressionType.LeftShift, Avx2.ShiftLeftLogical);
             }
             if (Avx2.IsSupported)
             {
@@ -596,14 +581,6 @@ namespace Linq2d.CodeGen
                 InitBinary256<uint>(ExpressionType.Multiply, Avx2.MultiplyLow);
             }
         }
-        public static Vector256<int> ShiftRightLogical(Vector256<int> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
-        public static Vector256<uint> ShiftRightLogical(Vector256<uint> t, int s) => Avx2.ShiftRightLogical(t, (byte)s);
-        public static Vector256<int> ShiftLeftLogical(Vector256<int> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
-        public static Vector256<uint> ShiftLeftLogical(Vector256<uint> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
-        public static Vector128<short> ShiftRightLogical(Vector128<short> t, int s) => Sse2.ShiftRightLogical(t, (byte)s);
-        public static Vector128<ushort> ShiftRightLogical(Vector128<ushort> t, int s) => Sse2.ShiftRightLogical(t, (byte)s);
-        public static Vector128<short> ShiftLeftLogical(Vector128<short> t, int s) => Sse2.ShiftLeftLogical(t, (byte)s);
-        public static Vector128<ushort> ShiftLeftLogical(Vector128<ushort> t, int s) => Sse2.ShiftLeftLogical(t, (byte)s);
     }
     public unsafe class Vector16Info : VectorInfo
     {
@@ -724,6 +701,7 @@ namespace Linq2d.CodeGen
             => throw new NotImplementedException();
 
     }
+
     namespace Fake
     {
         public struct Vector32<T> where T : struct
