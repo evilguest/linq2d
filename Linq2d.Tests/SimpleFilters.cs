@@ -229,7 +229,7 @@ namespace Linq2d.Tests
             var p = C4NNUnsafeScalar(sample);
             TestHelper.AssertEqual(p, q);
         }
-
+        /*
         [Theory]
         [InlineData(160, 133, 42)]
         [InlineData(133, 160, 42)]
@@ -238,6 +238,8 @@ namespace Linq2d.Tests
             var sample = ArrayHelper.InitAllRand(h, w, seed);
             Assert.Throws<AccessViolationException>(() => UnmanagedC4.TransformAsm(sample));
         }
+        */
+
         [Theory]
         [InlineData(160, 160, 42)]
         public void TestPrimitiveC4NnAsm(int h, int w, byte seed)
