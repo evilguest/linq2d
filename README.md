@@ -2,6 +2,11 @@
 Linq2d is a C# library designed to provide a convenient way to express various arithmetic filters over 2d arrays with a decent performance.
 It relies upon the Linq concepts for writing the array transforms and dynamic code generation for performing the actual computation.
 I have created it mostly for fun, out of joy of being able to work with the Lambdas, Expressions, MSIL, and Intel Intrinsics. C# is an awesome language, .Net Core is an awesome platform, and I wanted to probe the boundaries of possible with this. 
+## Video
+You can watch the presentation of the Linq2d I've made for https://2020.DotFest.ru:
+|Russian|English|
+|--|--|
+|[![Linq2d presentation in Russian](https://img.youtube.com/vi/IidqxJ2Mb0s/0.jpg)](https://www.youtube.com/watch?v=IidqxJ2Mb0s)|[![Linq2d presentation in English](https://img.youtube.com/vi/r1xMhJ8nu5g/0.jpg)](https://www.youtube.com/watch?v=r1xMhJ8nu5g)|
 ## Intro
 Let's do a simple array transform:
 ```csharp
