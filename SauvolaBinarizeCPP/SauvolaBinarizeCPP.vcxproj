@@ -321,6 +321,11 @@
     <ClCompile Include="PreIntegrate.cpp" />
     <ClCompile Include="SauvolaBinarizeCPP.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <NASM Include="c4a2.asm">
+      <FileType>Document</FileType>
+    </NASM>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" Condition="'$(VCTargetsPath)' != '.' AND '$(VCTargetsPath)' != '.\' AND '$(VCTargetsPath)' != './'" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project=".\nasm.targets" />
