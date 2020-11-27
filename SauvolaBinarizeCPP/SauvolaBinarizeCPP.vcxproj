@@ -272,7 +272,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalOptions>-w="$(VCToolsPath)|$(IntDir)c4a2.o"</AdditionalOptions>
+      <AdditionalOptions>-w='$(VCTargetsPath)'| "$(IntDir)/dllmain.o" "$(IntDir)/pch.o" "$(IntDir)/PreIntegrate.o" "$(IntDir)/SauvolaBinarizeCPP.o" "$(IntDir)/c4asm.o" "$(IntDir)/C4.o" "$(IntDir)/c4a2.o"</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='GCC|x64'">
