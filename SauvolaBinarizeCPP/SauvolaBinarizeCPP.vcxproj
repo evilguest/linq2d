@@ -272,7 +272,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalOptions>-w='$(VCTargetsPath)'| "$(IntDir)/dllmain.o" "$(IntDir)/pch.o" "$(IntDir)/PreIntegrate.o" "$(IntDir)/SauvolaBinarizeCPP.o" "$(IntDir)/c4asm.o" "$(IntDir)/C4.o" "$(IntDir)/c4a2.o"</AdditionalOptions>
+      <AdditionalOptions>-fuck="$(OS)" "$(IntDir)dllmain.o" "$(IntDir)pch.o" "$(IntDir)PreIntegrate.o" "$(IntDir)SauvolaBinarizeCPP.o" "$(IntDir)c4asm.o" "$(IntDir)C4.o" "$(IntDir)c4a2.o"</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='GCC|x64'">
@@ -298,7 +298,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="c4a2.asm" />
+    <!--<None Include="c4a2.asm" />-->
     <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
@@ -308,6 +308,7 @@
     <ClInclude Include="SauvolaBinarizeCPP.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="c4a2.asm" />
     <ClCompile Include="C4.cpp" />
     <ClCompile Include="c4asm.cpp" />
     <ClCompile Include="dllmain.cpp" />
