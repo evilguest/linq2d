@@ -13,7 +13,8 @@
       <ObjectFileName>$(IntDir)%(FileName).obj</ObjectFileName>
       <CommandLineTemplate Condition="'$(Platform)' == 'Win32'">"$(NasmPath)"nasm.exe -Xvc -f win32 [AllOptions] [AdditionalOptions] "%(FullPath)"</CommandLineTemplate>
       <CommandLineTemplate Condition="'$(Platform)' == 'x64'">"$(NasmPath)"nasm.exe -Xvc -f win64 [AllOptions] [AdditionalOptions] "%(FullPath)"</CommandLineTemplate>
-      <CommandLineTemplate Condition="'$(VCTargetsPath)'=='.\'">"$(NasmPath)"nasm -Xvc -felf64 [AllOptions] [AdditionalOptions] "%(FullPath)"</CommandLineTemplate>
+      <CommandLineTemplate Condition="'$(VCTargetsPath)'=='.\' or '$(VCTargetsPath)'==''">echo "hello geeks"
+"$(NasmPath)"nasm -Xvc -felf64 [AllOptions] [AdditionalOptions] "%(FullPath)"</CommandLineTemplate>
       <ExecutionDescription>%(Identity)</ExecutionDescription>
     </NASM>
   </ItemDefinitionGroup>
