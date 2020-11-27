@@ -17,9 +17,16 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.402
+    - name: Setup NASM
+      uses: ilammy/setup-nasm@v1
     - name: Build
       run: msbuild /p:configuration=Release -restore
     - name: Test
       run: dotnet test --no-restore --verbosity normal 
+    - name: Publish coverage report to coveralls.io
+      uses: coverallsapp/github-action@v1.0.1
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: ./Atropos.Tests/TestResults/coverage.info
     - name: Benchmark
       run: cd Linq2d.Benchmarks; sudo dotnet run -c Release --no-build --filter "*";
