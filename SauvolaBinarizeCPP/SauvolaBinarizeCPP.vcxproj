@@ -132,10 +132,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>SauvolaBinarizeCPP</TargetName>
+    <CustomBuildBeforeTargets>BuildLink</CustomBuildBeforeTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <TargetName>SauvolaBinarizeCPP</TargetName>
+    <CustomBuildBeforeTargets>BuildLink</CustomBuildBeforeTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='GCC|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -144,14 +146,17 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='GCC|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <TargetName>SauvolaBinarizeCPP</TargetName>
+    <CustomBuildBeforeTargets>BuildLink</CustomBuildBeforeTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>SauvolaBinarizeCPP</TargetName>
+    <CustomBuildBeforeTargets>BuildLink</CustomBuildBeforeTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <TargetName>SauvolaBinarizeCPP</TargetName>
+    <CustomBuildBeforeTargets>BuildLink</CustomBuildBeforeTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='GCC|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -160,7 +165,15 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='GCC|x64'">
     <LinkIncremental>false</LinkIncremental>
     <TargetName>SauvolaBinarizeCPP</TargetName>
+    <CustomBuildBeforeTargets>BuildLink</CustomBuildBeforeTargets>
   </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(OS)'=='Unix'">
+    <CustomBuildStep>
+      <Command>nasm c4a2.asm -f elf64 -o "$(IntDir)c4a2.o"</Command>
+      <Outputs>$(IntDir)c4a2.o</Outputs>
+      <Inputs>c4a2.asm</Inputs>
+    </CustomBuildStep>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -250,6 +263,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <AdditionalOptions Condition="'$(OS)'=='Unix'">"$(IntDir)dllmain.o" "$(IntDir)pch.o" "$(IntDir)PreIntegrate.o" "$(IntDir)SauvolaBinarizeCPP.o" "$(IntDir)c4asm.o" "$(IntDir)C4.o" "$(IntDir)c4a2.o"</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -272,7 +286,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalOptions>-fuck="$(OS)" "$(IntDir)dllmain.o" "$(IntDir)pch.o" "$(IntDir)PreIntegrate.o" "$(IntDir)SauvolaBinarizeCPP.o" "$(IntDir)c4asm.o" "$(IntDir)C4.o" "$(IntDir)c4a2.o"</AdditionalOptions>
+      <AdditionalOptions Condition="'$(OS)'=='Unix'">"$(IntDir)dllmain.o" "$(IntDir)pch.o" "$(IntDir)PreIntegrate.o" "$(IntDir)SauvolaBinarizeCPP.o" "$(IntDir)c4asm.o" "$(IntDir)C4.o" "$(IntDir)c4a2.o"</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='GCC|x64'">
