@@ -196,7 +196,8 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>AsmDep/c4a2.obj</AdditionalDependencies>
+      <AdditionalOptions Condition="'$(OS)'=='Windows_NT'">"./AsmDep/c4a2.obj"</AdditionalOptions>
+      <AdditionalOptions Condition="'$(OS)'=='Unix'">"./AsmDep/c4a2.o"</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -217,7 +218,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>AsmDep/c4a2.obj</AdditionalDependencies>
+      <AdditionalOptions Condition="'$(OS)'=='Windows_NT'">"./AsmDep/c4a2.obj"</AdditionalOptions>
+      <AdditionalOptions Condition="'$(OS)'=='Unix'">"./AsmDep/c4a2.o"</AdditionalOptions>
     </Link>
     <PreLinkEvent>
       <Command>
@@ -267,7 +269,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>AsmDep/c4a2.obj</AdditionalDependencies>
+      <AdditionalOptions Condition="'$(OS)'=='Windows_NT'">"./AsmDep/c4a2.obj"</AdditionalOptions>
+      <AdditionalOptions Condition="'$(OS)'=='Unix'">"./AsmDep/c4a2.o"</AdditionalOptions>
     </Link>
     <PreLinkEvent>
       <Command>
@@ -291,7 +294,8 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>AsmDep/c4a2.obj</AdditionalDependencies>
+      <AdditionalOptions Condition="'$(OS)'=='Windows_NT'">"./AsmDep/c4a2.obj"</AdditionalOptions>
+      <AdditionalOptions Condition="'$(OS)'=='Unix'">"./AsmDep/c4a2.o"</AdditionalOptions>
     </Link>
     <PreLinkEvent>
       <Command>
@@ -322,7 +326,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>AsmDep/c4a2.obj</AdditionalDependencies>
+      <AdditionalOptions Condition="'$(OS)'=='Windows_NT'">"./AsmDep/c4a2.obj"</AdditionalOptions>
+      <AdditionalOptions Condition="'$(OS)'=='Unix'">"./AsmDep/c4a2.o"</AdditionalOptions>
     </Link>
     <PreLinkEvent>
       <Command>
@@ -353,7 +358,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>AsmDep/c4a2.obj</AdditionalDependencies>
+      <AdditionalOptions Condition="'$(OS)'=='Windows_NT'">"./AsmDep/c4a2.obj"</AdditionalOptions>
+      <AdditionalOptions Condition="'$(OS)'=='Unix'">"./AsmDep/c4a2.o"</AdditionalOptions>
     </Link>
     <PreLinkEvent>
       <Command>
