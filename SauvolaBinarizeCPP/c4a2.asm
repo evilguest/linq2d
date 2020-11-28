@@ -8,10 +8,8 @@ c4_avx2:
 	mov rdi,r8
 	mov rsi,rcx
 	sub rsi, rdx
-	align (16)
 @l2:
 	mov r10,rdx
-	align (16)	
 @l1:
 	
 	vpmovzxbw ymm1,  [rcx-1]
@@ -26,8 +24,8 @@ c4_avx2:
 	vperm2i128 ymm2,ymm3,ymm3,1
 	vpmovzxwd ymm3,xmm2	
 	PREFETCHWT1 [rdi]
-	vmovaps [rdi],ymm1
-	vmovaps [rdi+32],ymm3
+	vmovups [rdi],ymm1
+	vmovups [rdi+32],ymm3
 	add rcx,16
 	add rdi,64
 	add rsi,16
