@@ -175,10 +175,12 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <PreLinkEvent>
-      <Command>nasm c4a2.asm -f elf64 -o "$(IntDir)c4a2.o"</Command>
+      <Command>
+      </Command>
     </PreLinkEvent>
     <PreLinkEvent>
-      <Message>NASM-Manual</Message>
+      <Message>
+      </Message>
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -194,6 +196,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>AsmDep/c4a2.obj</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -214,12 +217,15 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>AsmDep/c4a2.obj</AdditionalDependencies>
     </Link>
     <PreLinkEvent>
-      <Command>nasm c4a2.asm -f elf64 -o "$(IntDir)c4a2.o"</Command>
+      <Command>
+      </Command>
     </PreLinkEvent>
     <PreLinkEvent>
-      <Message>NASM</Message>
+      <Message>
+      </Message>
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='GCC|Win32'">
@@ -261,12 +267,15 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>AsmDep/c4a2.obj</AdditionalDependencies>
     </Link>
     <PreLinkEvent>
-      <Command>nasm c4a2.asm -f elf64 -o "$(IntDir)c4a2.o"</Command>
+      <Command>
+      </Command>
     </PreLinkEvent>
     <PreLinkEvent>
-      <Message>NASM</Message>
+      <Message>
+      </Message>
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -283,12 +292,15 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalOptions Condition="'$(OS)'=='Unix'">"$(IntDir)dllmain.o" "$(IntDir)pch.o" "$(IntDir)PreIntegrate.o" "$(IntDir)SauvolaBinarizeCPP.o" "$(IntDir)c4asm.o" "$(IntDir)C4.o" "$(IntDir)c4a2.o"</AdditionalOptions>
+      <AdditionalDependencies>AsmDep/c4a2.obj</AdditionalDependencies>
     </Link>
     <PreLinkEvent>
-      <Command>nasm c4a2.asm -f elf64 -o "$(IntDir)c4a2.o"</Command>
+      <Command>
+      </Command>
     </PreLinkEvent>
     <PreLinkEvent>
-      <Message>NASM</Message>
+      <Message>
+      </Message>
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -312,12 +324,15 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalOptions Condition="'$(OS)'=='Unix'">"$(IntDir)dllmain.o" "$(IntDir)pch.o" "$(IntDir)PreIntegrate.o" "$(IntDir)SauvolaBinarizeCPP.o" "$(IntDir)c4asm.o" "$(IntDir)C4.o" "$(IntDir)c4a2.o"</AdditionalOptions>
+      <AdditionalDependencies>AsmDep/c4a2.obj</AdditionalDependencies>
     </Link>
     <PreLinkEvent>
-      <Command>nasm c4a2.asm -f elf64 -o "$(IntDir)c4a2.o"</Command>
+      <Command>
+      </Command>
     </PreLinkEvent>
     <PreLinkEvent>
-      <Message>NASM</Message>
+      <Message>
+      </Message>
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='GCC|x64'">
@@ -340,16 +355,18 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>AsmDep/c4a2.obj</AdditionalDependencies>
     </Link>
     <PreLinkEvent>
-      <Command>nasm c4a2.asm -f elf64 -o "$(IntDir)c4a2.o"</Command>
+      <Command>
+      </Command>
     </PreLinkEvent>
     <PreLinkEvent>
-      <Message>NASM</Message>
+      <Message>
+      </Message>
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="c4a2.asm" />
     <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
@@ -369,9 +386,7 @@
     <ClCompile Include="SauvolaBinarizeCPP.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <NASM Include="c4a2.asm">
-      <FileType>Document</FileType>
-    </NASM>
+    <Object Include="AsmDep\c4a2.obj" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" Condition="'$(VCTargetsPath)' != '.' AND '$(VCTargetsPath)' != '.\' AND '$(VCTargetsPath)' != './'" />
   <ImportGroup Label="ExtensionTargets">
