@@ -291,7 +291,6 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalOptions Condition="'$(OS)'=='Unix'">"$(IntDir)dllmain.o" "$(IntDir)pch.o" "$(IntDir)PreIntegrate.o" "$(IntDir)SauvolaBinarizeCPP.o" "$(IntDir)c4asm.o" "$(IntDir)C4.o" "$(IntDir)c4a2.o"</AdditionalOptions>
       <AdditionalDependencies>AsmDep/c4a2.obj</AdditionalDependencies>
     </Link>
     <PreLinkEvent>
