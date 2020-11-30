@@ -4,10 +4,10 @@ using square = System.Int64;
 
 namespace Linq2d.Tests
 {
-/*    public class SauvolaBinarize
+    public class SauvolaBinarize
     {
 
-        [Theory]
+/*        [Theory]
         [InlineData(50, 50, 2)]
         [InlineData(100, 100, 5)]
         [InlineData(1000, 2151, 5)]
@@ -32,11 +32,11 @@ namespace Linq2d.Tests
 
             TestHelper.AssertEqual(BaseBinarize(data), UnmanagedSauvola.Transform(data, W / 2, K));
         }
-
+*/
 
         public static double K { get; private set; } = 0.1;
         public static byte W { get; private set; } = 10;
-
+/*
         [Theory]
         [InlineData(17, 17, 5)]
         public void TestSteps(int h, int w, byte seed)
@@ -100,7 +100,7 @@ namespace Linq2d.Tests
                          select m * (1 + K * ((s / 128) - 1));
             TestHelper.AssertEqual(CalculateThreshold(mean.ToArray(), std.ToArray()), thresh.ToArray());
 
-        }
+        }*/
 
         private double[,] CalculateThreshold(double[,] mean, double[,] std)
         {
@@ -304,5 +304,5 @@ namespace Linq2d.Tests
             return result;
         }
 
-    }*/
+    }
 }
