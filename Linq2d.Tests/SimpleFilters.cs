@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.Intrinsics.X86;
 using Xunit;
 
 namespace Test
@@ -247,13 +248,20 @@ namespace Linq2d.Tests
             try
             {
                 var sample = ArrayHelper.InitAllRand(h, w, seed);
-                Console.WriteLine("Starting the C4 ASM...");
-                Console.Out.Flush();
-                var q = UnmanagedC4.TransformAsm(sample);
-                Console.WriteLine("Done C4 ASM!");
-                Console.Out.Flush();
-                var p = C4NNUnsafeScalar(sample);
-                TestHelper.AssertEqual(p, q);
+                if (Avx2.IsSupported)
+                {
+                    Console.WriteLine("Starting the C4 ASM...");
+                    Console.Out.Flush();
+                    var q = UnmanagedC4.TransformAsm(sample);
+                    Console.WriteLine("Done C4 ASM!");
+                    Console.Out.Flush();
+                    var p = C4NNUnsafeScalar(sample);
+                    TestHelper.AssertEqual(p, q);
+                }
+                else
+                {
+                    Console.WriteLine("Avx2 support is not found, skipping the test");
+                }
             } catch (Exception e)
             {
                 Console.Error.WriteLine($"Caught exception:\n\t{e.Message}\nat\n{e.StackTrace}");
