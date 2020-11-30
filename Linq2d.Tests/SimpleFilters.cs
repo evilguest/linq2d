@@ -244,10 +244,17 @@ namespace Linq2d.Tests
         [InlineData(160, 160, 42)]
         public void TestPrimitiveC4NnAsm(int h, int w, byte seed)
         {
-            var sample = ArrayHelper.InitAllRand(h, w, seed);
-            var q = UnmanagedC4.TransformAsm(sample);
-            var p = C4NNUnsafeScalar(sample);
-            TestHelper.AssertEqual(p, q);
+            try
+            {
+                var sample = ArrayHelper.InitAllRand(h, w, seed);
+                var q = UnmanagedC4.TransformAsm(sample);
+                var p = C4NNUnsafeScalar(sample);
+                TestHelper.AssertEqual(p, q);
+            } catch (Exception e)
+            {
+                Console.Error.WriteLine($"Caught exception:\n\t{e.Message}\nat\n{e.StackTrace}");
+                throw e;
+            }
         }
         /*
         [Fact]
