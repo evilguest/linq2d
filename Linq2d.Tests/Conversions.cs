@@ -2,6 +2,7 @@ using Xunit;
 
 namespace Linq2d.Tests
 {
+    /*
     public class Conversions
     {
         [Theory]
@@ -26,5 +27,5 @@ namespace Linq2d.Tests
             Assert.Equal(ArrayHelper.InitDiagonal(size, 1), q.ToArray());
         }
 
-    }
+    }*/
 }

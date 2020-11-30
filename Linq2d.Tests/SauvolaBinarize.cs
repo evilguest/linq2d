@@ -4,7 +4,7 @@ using square = System.Int64;
 
 namespace Linq2d.Tests
 {
-    public class SauvolaBinarize
+/*    public class SauvolaBinarize
     {
 
         [Theory]
@@ -304,5 +304,5 @@ namespace Linq2d.Tests
             return result;
         }
 
-    }
+    }*/
 }

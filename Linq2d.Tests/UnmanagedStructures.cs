@@ -3,6 +3,7 @@ using Xunit;
 
 namespace Linq2d.Tests
 {
+    /*
     public class UnmanagedStructures
     {
         [Theory]
@@ -80,18 +81,18 @@ namespace Linq2d.Tests
                     }
             return (a, b);
         }
-/*        void Test()
-        {
-            var q1 = from t in new Test<int>()
-                     from (a,b) in TestHelper1.Sbst("Hello", 42)
-                     select (k.Item1, k.Item2);
-            var q2 = from p in new Test<string>() select "world";
-            var q3 = from t in new Test<int>() select "world";
-            var q4 = from p in new Test<string>() select (1, 2);
+        //void Test()
+        //{
+        //    var q1 = from t in new Test<int>()
+        //             from (a,b) in TestHelper1.Sbst("Hello", 42)
+        //             select (k.Item1, k.Item2);
+        //    var q2 = from p in new Test<string>() select "world";
+        //    var q3 = from t in new Test<int>() select "world";
+        //    var q4 = from p in new Test<string>() select (1, 2);
 
 
-        }*/
-    }
+        //}
+    }*/
 /*    public struct Test<T> { }
     public static class TestHelper1
     {

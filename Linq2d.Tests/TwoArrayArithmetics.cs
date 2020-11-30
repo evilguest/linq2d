@@ -2,6 +2,7 @@
 
 namespace Linq2d.Tests
 {
+    /*
     public class TwoArrayArithmetics
     {
         [Theory]
@@ -49,5 +50,5 @@ namespace Linq2d.Tests
             Assert.Equal(abData, q.ToArray());
         }
 
-    }
+    }*/
 }

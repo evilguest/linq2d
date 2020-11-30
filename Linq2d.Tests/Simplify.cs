@@ -5,6 +5,7 @@ using Xunit;
 
 namespace Linq2d.Tests
 {
+    /*
     public class Simplify
     {
         [Fact]
@@ -28,17 +29,19 @@ namespace Linq2d.Tests
             var t = Arithmetic.Simplify(func.Body, Ranges.No.Add(func.Parameters[0], null, Expression.Subtract(func.Parameters[1], Expression.Constant(3))));
             Assert.True(t is ConstantExpression ce && ce.Value.Equals(true));
         }
+    
 
-/*        [Fact]
-        public void TestDualFiltering()
-        {
-            var arr = new[] { "a", "b", "c", "d", "e" };
-            var q = from p in arr where p.i % 2 == 0 select p;
+        //[Fact]
+        //public void TestDualFiltering()
+        //{
+        //    var arr = new[] { "a", "b", "c", "d", "e" };
+        //    var q = from p in arr where p.i % 2 == 0 select p;
 
-            var q2 = from (int, int) p in arr select p.i;
+        //    var q2 = from (int, int) p in arr select p.i;
 
-        }*/
-    }
+        //}
+
+    }*/
 
 /*    public static class Enu
     {

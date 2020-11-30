@@ -2,7 +2,7 @@
 
 namespace Linq2d.Tests
 {
-    public class ManagedElements
+    /*public class ManagedElements
     {
         [Theory]
         [InlineData(10, 234, "Hello, ", "world!")]
@@ -33,5 +33,5 @@ namespace Linq2d.Tests
             Assert.Equal(s, q.ToArray());
         }
 
-    }
+    }*/
 }

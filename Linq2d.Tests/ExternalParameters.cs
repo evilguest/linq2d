@@ -2,6 +2,7 @@
 
 namespace Linq2d.Tests
 {
+    /*
     public class ExternalParameters
     {
         [Fact]
@@ -32,5 +33,5 @@ namespace Linq2d.Tests
                     select d[param[0], 0]+param[1];
             Assert.Equal(ArrayHelper.InitAll(10, 52), q.ToArray());
         }
-    }
+    }*/
 }

@@ -5,7 +5,8 @@ using Xunit;
 
 namespace Linq2d.Tests
 {
-    public class Vectorization
+ /*
+  * public class Vectorization
     {
         [Fact]
         public void SimpleOperation()
@@ -34,4 +35,5 @@ namespace Linq2d.Tests
             return (from s in source select Math.Sqrt(s)).ToArray();
         }
     }
+ */
 }
