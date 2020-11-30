@@ -247,12 +247,17 @@ namespace Linq2d.Tests
             try
             {
                 var sample = ArrayHelper.InitAllRand(h, w, seed);
+                Console.WriteLine("Starting the C4 ASM...");
+                Console.Out.Flush();
                 var q = UnmanagedC4.TransformAsm(sample);
+                Console.WriteLine("Done C4 ASM!");
+                Console.Out.Flush();
                 var p = C4NNUnsafeScalar(sample);
                 TestHelper.AssertEqual(p, q);
             } catch (Exception e)
             {
                 Console.Error.WriteLine($"Caught exception:\n\t{e.Message}\nat\n{e.StackTrace}");
+                Console.Error.Flush();
                 throw e;
             }
         }
