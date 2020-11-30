@@ -2,7 +2,6 @@
 
 namespace Linq2d.Tests
 {
-    /*
     public class ScalarArithmetics
     {
         [Theory]
@@ -46,5 +45,5 @@ namespace Linq2d.Tests
             var q = from s in sample select s + 1;
             Assert.Equal(new[,] { { 2, 3 }, { 4, 5 } }, q.ToArray());
         }
-    }*/
+    }
 }

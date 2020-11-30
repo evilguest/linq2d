@@ -187,7 +187,6 @@ namespace Linq2d.Tests
             }
         }
         
-        /*
         [Theory]
         //[InlineData(1, 2, 4)] -- known to fail; will review this corner case later.
         [InlineData(3, 3, 43)]
@@ -218,7 +217,6 @@ namespace Linq2d.Tests
                     select (s[-1, 0] + s[1, 0] + s[0, -1] + s[0, 1]) / 4;
             Assert.Equal(new[,] { { 2, 3, 2 }, { 3, 4, 3 }, { 2, 3, 2 } }, q.ToArray());
         }
-        */
         [Theory]
         [InlineData(160, 160, 42)]
         [InlineData(160, 133, 42)]
@@ -230,7 +228,7 @@ namespace Linq2d.Tests
             var p = C4NNUnsafeScalar(sample);
             TestHelper.AssertEqual(p, q);
         }
-        /*
+        
         //[Theory]
         //[InlineData(160, 133, 42)]
         //[InlineData(133, 160, 42)]
@@ -240,7 +238,7 @@ namespace Linq2d.Tests
         //    Assert.Throws<AccessViolationException>(() => UnmanagedC4.TransformAsm(sample));
         //}
         
-        */
+        
         [Theory]
         [InlineData(160, 160, 42)]
         public void TestPrimitiveC4NnAsm(int h, int w, byte seed)
@@ -269,7 +267,6 @@ namespace Linq2d.Tests
                 throw e;
             }
         }
-        /*
         [Fact]
             public void TestPrimitiveC4Nn()
         {
@@ -337,6 +334,6 @@ namespace Linq2d.Tests
 
             var r = t.ToArray();
             Assert.NotNull(r);
-        }*/
+        }
     }
 }

@@ -6,7 +6,6 @@ using Xunit;
 
 namespace Linq2d.Tests
 {
-    /*
     public class ComplexTest
     {
         [Fact]
@@ -27,5 +26,5 @@ namespace Linq2d.Tests
             var mv = ComplexAvx.Multiply(av, bv);
             Assert.Equal(m, mv[0]);
         }
-    }*/
+    }
 }

@@ -2,7 +2,6 @@
 
 namespace Linq2d.Tests
 {
-    /*
     public class RecurrentFiltering
     {
         private static int[,] SimpleIntegrate(byte[,] _data)
@@ -112,5 +111,5 @@ namespace Linq2d.Tests
                     select s + r[-1, 0];
             Assert.Equal(new[,] { { 1, 2, 3 }, { 5, 7, 9 }, { 12, 15, 18 } }, q.ToArray());
         }
-    }*/
+    }
 }

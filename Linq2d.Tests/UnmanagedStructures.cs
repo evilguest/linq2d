@@ -3,7 +3,6 @@ using Xunit;
 
 namespace Linq2d.Tests
 {
-    /*
     public class UnmanagedStructures
     {
         [Theory]
@@ -92,7 +91,7 @@ namespace Linq2d.Tests
 
 
         //}
-    }*/
+    }
 /*    public struct Test<T> { }
     public static class TestHelper1
     {

@@ -5,7 +5,6 @@ using Xunit;
 
 namespace Linq2d.Tests
 {
-    /*
     public class MultipleResults
     {
         [Theory]
@@ -150,5 +149,5 @@ namespace Linq2d.Tests
             TestHelper.AssertEqual(xex.ToArray(), x);
             TestHelper.AssertEqual(yex.ToArray(), y);
         }
-    }*/
+    }
 }

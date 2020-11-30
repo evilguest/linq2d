@@ -2,7 +2,6 @@
 
 namespace Linq2d.Tests
 {
-    /*
     public class ThreeArrayArithmetics
     {
         [Theory]
@@ -20,5 +19,4 @@ namespace Linq2d.Tests
             Assert.Equal(s, q.ToArray());
         }
     }
-    */
 }

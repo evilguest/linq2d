@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 namespace Linq2d.Tests
 {
+
+    /// <summary>
+    ///  This is not an XUnit test - it is supposed to verify the compile-time support for the expressions. 
+    /// </summary>
     class StrongTyping
     {
         public void Test3ArraySelect()

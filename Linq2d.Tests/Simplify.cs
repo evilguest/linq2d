@@ -5,7 +5,6 @@ using Xunit;
 
 namespace Linq2d.Tests
 {
-    /*
     public class Simplify
     {
         [Fact]
@@ -41,7 +40,7 @@ namespace Linq2d.Tests
 
         //}
 
-    }*/
+    }
 
 /*    public static class Enu
     {
