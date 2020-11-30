@@ -3,7 +3,13 @@
 #include <algorithm>
 #include "SauvolaBinarizeCPP.h"
 
-extern "C" void c4_avx2(unsigned char* input, int width, int* output, int height);
+#ifdef __GNUC__
+#define MS_C extern "C" __attribute__((ms_abi))
+#else
+#define MS_C extern "C"
+#endif
+
+MS_C void c4_avx2(unsigned char* input, int width, int* output, int height);
 
 
 //input aligned at least to 8, output to 16
