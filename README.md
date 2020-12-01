@@ -1,3 +1,4 @@
+![Build Status](https://github.com/evilguest/linq2d/workflows/.NET%20Core/badge.svg?branch=master) [![Coverage Status](https://coveralls.io/repos/github/evilguest/linq2d/badge.svg?branch=master)](https://coveralls.io/github/evilguest/linq2d?branch=master)
 # Linq2d
 Linq2d is a C# library designed to provide a convenient way to express various arithmetic filters over 2d arrays with a decent performance.
 It relies upon the Linq concepts for writing the array transforms and dynamic code generation for performing the actual computation.
