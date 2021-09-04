@@ -32,16 +32,21 @@ Now we're adding the contents of two arrays to each other. Unlike the traditiona
 Having an access only to the "current" values of the processed arrays would be boring and too restrictive. Linq2d range variables can do more than that. Let's compute a simple filter known as "C4" - arithmetic mean of the array element neighbours:
 ```csharp
 var sample = new[,] { { 4, 4, 4}, { 4, 4, 4 } , { 4, 4, 4 }};
-var q = from s in sample select (s[-1, 0] + s[1, 0] + s[0, -1] + s[0,1]) / 4; // ouch!
+var q = from s in sample select (s[-1, 0] + s[1, 0] + s[0, -1] + s[0, 1]) / 4; // ouch!
 ```
-Have we tried to write such a code in a traditional imperative way, it would immediately produce an `IndexOutOfBounds` exception. That's would Linq2d do as well. In order to make this query work, we need to specify a strategy for handling the out-of-bounds access attempts. One such strategy is "replace", and we can specify it for accessing the sample array via the `.With()` extension method that accepts the substitution value:
+Have we tried to write such a code in a traditional imperative way, it would immediately produce an `IndexOutOfBounds` exception. That's what Linq2d would do as well. In order to make this query work, we need to specify a strategy for handling the out-of-bounds access attempts. One such strategy is "replace the missing values with a constant", and we can specify it for accessing the sample array via the `.With()` extension method that accepts the substitution value:
 ```csharp
 var sample = new[,] { { 4, 4, 4 }, { 4, 4, 4 }, { 4, 4, 4 } };
 var q = from s in sample.With(initValue: 0)
         select (s[-1, 0] + s[1, 0] + s[0, -1] + s[0, 1]) / 4;
 Assert.Equal(new[,] { { 2, 3, 2 }, { 3, 4, 3 }, { 2, 3, 2 } }, q.ToArray());
 ```
-This code does compile and run fine, and automatically takes care of the corner and border cells that require special handling. However, for our particular case this strategy does not work much good - a "dark halo" appears at the borders. The boundary cells average only three neighbours, and the corner cells get only two. As the divisor is always 4, we're getting an undesired result. Linq2d offers a better strategy to handle such cases - called "nearest neighbour". It moves the out-of-bound cell requests to the closest cells that are within the array boundaries:
+This code does compile and run fine, and automatically takes care of the corner and border cell values calculation. 
+However, for our particular case this strategy does not do much good - a "dark halo" appears at the borders. 
+The reason for it is the boundary and the corner cells get only three or two neigbours to add before dividing by 4. 
+That's why their values tend to be lower than the values of the mainland cells. 
+Linq2d does offer a better strategy for handling such cases. It is named "nearest neighbour". 
+This strategy "moves"" the out-of-bound cell requests to the closest cells that are within the array boundaries:
 ![Nearest neighbour](NearestNeighbour.png)
 
 
@@ -57,7 +62,7 @@ In both cases above, Linq2d would verify the size of the input array to fit the 
 ### Multiple Results
 Sometimes the same source data is used to create multiple resulting arrays:
 ```csharp
-var left = new [,] { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 }};
+var left  = new [,] { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 }};
 var right = new [,] { { 9, 8, 7 }, { 6, 5, 4 }, { 3, 2, 1 }};
 
 var sum = from l in left
@@ -69,10 +74,10 @@ var diff = from l in left
            select l - r;
 
 Assert.Equal(new [,] { { 10, 10, 10 }, { 10, 10, 10 }, { 10, 10, 10 }}, sum.ToArray());
-Assert.Equal(new [,] { { -8, -6, -4 }, { -2, 0, 2 }, { 4, 6, 8 }}, diff.ToArray());
+Assert.Equal(new [,] { { -8, -6, -4 }, { -2,  0,  2 }, {  4,  6,  8 }}, diff.ToArray());
 ```
 
-Iterating only once can offer a better performance than repetitive iterations. This can be done by selecting a ValueTuple in the linq2d expression:
+Iterating through the source array just once might gain a better performance than repetitive iterations. This can be done by selecting a ValueTuple in the linq2d expression:
 ```csharp
 var left = new [,] { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 }};
 var right = new [,] { { 9, 8, 7 }, { 6, 5, 4 }, { 3, 2, 1 }};
