@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -259,12 +260,22 @@ namespace Linq2d.Expressions
             if(arguments.Any(a=>IsVector(a.Type)))
             {
                 if (VectorInfo.MethodTable.ContainsKey(node.Method))
-                    return Expression.Call(obj, VectorInfo.MethodTable[node.Method], arguments);
+                    return Expression.Call(obj, VectorInfo.MethodTable[node.Method], VectorizeParameters(VectorInfo.MethodTable[node.Method], arguments));
                 else
                     return Fail(node, $"Failed to find a vector analog of {node.Method} operation");
             }
             return base.VisitMethodCall(node);
         }
+
+        private ReadOnlyCollection<Expression> VectorizeParameters(MethodInfo methodInfo, ReadOnlyCollection<Expression> arguments)
+        {
+            var parameters = methodInfo.GetParameters();
+            var expressions = new Expression[parameters.Length];
+            for (var i=0; i<parameters.Length;i++)
+                expressions[i] = IsVector(parameters[i].ParameterType) && !IsVector(arguments[i].Type) ? ConvertToVector(arguments[i]) : arguments[i];
+            return new ReadOnlyCollection<Expression>(expressions);
+        }
+
         private MethodInfo GetLoadSubstitute(Type t, Type r) 
             => typeof(VectorData).GetMethod(nameof(VectorData.Load)).MakeGenericMethod(t, VectorInfo.Vector[r]);
 
