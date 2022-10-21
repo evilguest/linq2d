@@ -174,4 +174,3 @@ The methods compared are as follows:
 - **LinqC4**: a fair Linq2d query execution. Incurs the penalties for the dynamic compilation upon every call
 - **LinqC4Cached**: prepares the Transform delegate built by Linq2d in advance, and reuses it on every iteration. Illustrates the significance of the dynamic compilation penalties.
 The bottom line is that for this type of filter direct linq2d wins 20% to 30% of the execution time against the "manually optimized" code; caching wins ~10% more. 
-

@@ -23,10 +23,11 @@ jobs:
     - name: Test
       run: dotnet test --verbosity normal /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
     - name: Publish coverage report to coveralls.io
-      uses: coverallsapp/github-action@v1.0.1
+      uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         path-to-lcov: ./Linq2d.Tests/TestResults/coverage.info
+      continue-on-error: true
     - name: Perform the Release Build
       run: msbuild /p:configuration=Release -restore
     - name: Benchmark
