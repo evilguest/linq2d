@@ -29,6 +29,6 @@ jobs:
         path-to-lcov: ./Linq2d.Tests/TestResults/coverage.info
       continue-on-error: true
     - name: Perform the Release Build
-      run: msbuild /p:configuration=Release -restore
+      run: dotnet build -c Release
     - name: Benchmark
       run: cd Linq2d.Benchmarks; sudo dotnet run -c Release --no-build --filter "*";

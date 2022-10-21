@@ -478,10 +478,6 @@ namespace Linq2d.CodeGen
         public static Vector256<double> ConvertToVector256Double(int* address)
             => Avx.ConvertToVector256Double(Sse2.LoadVector128(address));
 
-        public static Vector128<long> ShiftLeftLogical(Vector128<long> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
-        public static Vector128<ulong> ShiftLeftLogical(Vector128<ulong> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
-        public static Vector128<int> ShiftLeftLogical(Vector128<int> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
-        public static Vector128<uint> ShiftLeftLogical(Vector128<uint> t, int s) => Avx2.ShiftLeftLogical(t, (byte)s);
     }
     public unsafe class Vector8Info : VectorInfo
     {
