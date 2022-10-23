@@ -120,12 +120,11 @@ namespace Linq2d
 
             var baseRanges = GetBaseRanges(hVar, wVar, maxX - minX, maxY - minY);
 
-            var dm = new DynamicMethod<D>(MethodName, saveAssembly: Array2d.SaveDynamicCode);
+            var dm = MethodBuilder<D>.Create(saveAssembly: Array2d.SaveDynamicCode, MethodName);
 
             // try to move common code out of the loop
 
-            
-            dm.GenerateIL(ilg =>
+            var ilg = dm.GetIlGenerator();
             {
                 #region prolog
                 var kcs = new KernelCompilerScalar(ilg, wVar);
@@ -439,7 +438,7 @@ namespace Linq2d
                     ilg.Emit(OpCodes.Newobj, cc[0]);
                 }
                 ilg.Ret();
-            });
+            };
             return dm.CreateDelegate();
         }
 

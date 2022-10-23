@@ -1,25 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Intrinsics.X86;
 using Xunit;
 
-namespace Test
-{
-    using System.Linq;
-    public class Sample
-    {
-        public static void Fail()
-        {
-            var source = new[,] { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } };
-            var result = (from int s in source
-                          select s + 42).ToArray();
-        }
-    }
-}
 namespace Linq2d.Tests
 {
     public class SimpleFilters
     {
+        [ExcludeFromCodeCoverage]
         public static unsafe int[,] C4UnsafeScalar(byte[,] data)
         {
             int w = data.Width();
@@ -264,7 +253,7 @@ namespace Linq2d.Tests
             {
                 Console.Error.WriteLine($"Caught exception:\n\t{e.Message}\nat\n{e.StackTrace}");
                 Console.Error.Flush();
-                throw e;
+                throw;
             }
         }
         [Fact]
