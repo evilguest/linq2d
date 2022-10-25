@@ -51,5 +51,10 @@ namespace Linq2d.CodeGen
             }
             return false;
         }
+        public static bool IsInstanceOfSameGeneric(this Type type, Type genericType)
+        {
+            genericType = genericType.IsGenericType ? genericType.GetGenericTypeDefinition() : genericType;
+            return type.IsGenericType && type.GetGenericTypeDefinition() == genericType;
+        }
     }
 }

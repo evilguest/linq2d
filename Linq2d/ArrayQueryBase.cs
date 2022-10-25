@@ -93,9 +93,8 @@ namespace Linq2d
             var hVar = Variable(typeof(int), "h");
             var wVar = Variable(typeof(int), "w");
 
+
             var simplifiedKernel = Arithmetic.Simplify(Kernel.Body, GetBaseRanges(hVar, wVar));
-            var km = new KernelMeasurer();
-            km.Visit(simplifiedKernel);
 
             // now split kernel into the individual kernels
             var kernels = new Expression[Results.Count];
@@ -111,6 +110,10 @@ namespace Linq2d
                 else throw new InvalidOperationException($"Cannot recognize the selector function. Expect a ValueTuple construction call with the number of components equal to {Results.Count}");
                   
             }
+
+            
+            var km = new KernelMeasurer();
+            km.Visit(simplifiedKernel);
 
 
             (int minX, int maxX, int minY, int maxY) = km.MergedAccesses;
@@ -312,7 +315,7 @@ namespace Linq2d
                             if (Array2d.MoveLoopInvariants)
                             {
                                 BlockExpression loopInvariants = vectorKernels.GetInvariants(iVar, jVar);
-                                kcs.Visit(loopInvariants);
+                                kcs.Compile(loopInvariants);
                             }
                             var loopJVectorStart = ilg.DefineLabel();
                             ilg.Br(loopJVectorStart);
@@ -327,7 +330,7 @@ namespace Linq2d
                                         {
                                             ilg.Ldloc(pTrgs[c]);
                                             kcs.Load2dPointerOffset(Results[c], iVar, jVar);
-                                            kcs.Visit(vectorKernels[c]);
+                                            kcs.Compile(vectorKernels[c]);
                                             ilg.Call(VectorData.VectorInfo[stepSizes[c]].StoreOperations[Results[c]]);
                                         }
                                     }
@@ -448,7 +451,7 @@ namespace Linq2d
             ilg.Ldloc(pTarget);
             kcs.Load2dPointerOffset(resultType, i, j);
             var inlinedKernel = InlineKernel(kernel, i, j, hVar, wVar, ranges, resultVars, sourceArgs, ref _variablePool);
-            kcs.Visit(inlinedKernel);
+            kcs.Compile(inlinedKernel);
             ilg.Store(resultType);
         }
 

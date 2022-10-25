@@ -121,6 +121,8 @@ namespace Linq2d
             return sb.ToString();
         }
     }
+
+    /*
     public class ArrayComparer<T> : IEqualityComparer<T[,]>
     {
 
@@ -154,5 +156,5 @@ namespace Linq2d
                     hc = unchecked(hc * 314159 + Comparer.GetHashCode(array[i, j]));
             return hc;
         }
-    }
+    }*/
 }

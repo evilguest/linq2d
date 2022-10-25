@@ -1,0 +1,49 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\Zlygo\\source\\repos\\linq2d\\SauvolaBinarizeCPP\\SauvolaBinarizeCPP.vcxproj": {}
+  },
+  "projects": {
+    "C:\\Users\\Zlygo\\source\\repos\\linq2d\\SauvolaBinarizeCPP\\SauvolaBinarizeCPP.vcxproj": {
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Zlygo\\source\\repos\\linq2d\\SauvolaBinarizeCPP\\SauvolaBinarizeCPP.vcxproj",
+        "projectName": "SauvolaBinarizeCPP",
+        "projectPath": "C:\\Users\\Zlygo\\source\\repos\\linq2d\\SauvolaBinarizeCPP\\SauvolaBinarizeCPP.vcxproj",
+        "projectJsonPath": "C:\\Users\\Zlygo\\source\\repos\\linq2d\\SauvolaBinarizeCPP\\project.json",
+        "packagesPath": "C:\\Users\\Zlygo\\.nuget\\packages\\",
+        "projectStyle": "ProjectJson",
+        "validateRuntimeAssets": true,
+        "configFilePaths": [
+          "C:\\Users\\Zlygo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net40": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "dependencies": {
+        "GCCBuildTargets": "[1.*, )"
+      },
+      "frameworks": {
+        "net40": {}
+      },
+      "runtimes": {
+        "win": {
+          "#import": []
+        },
+        "win-x64": {
+          "#import": []
+        },
+        "win-x86": {
+          "#import": []
+        }
+      }
+    }
+  }
+}

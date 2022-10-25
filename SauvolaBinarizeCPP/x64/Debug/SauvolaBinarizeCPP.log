@@ -1,0 +1,10 @@
+﻿  pch.cpp
+  C4.cpp
+  c4asm.cpp
+  dllmain.cpp
+  PreIntegrate.cpp
+  SauvolaBinarizeCPP.cpp
+  Generating Code...
+AsmDep\c4a2.obj : warning LNK4042: object specified more than once; extras ignored
+     Creating library C:\Users\Zlygo\source\repos\linq2d\x64\Debug\SauvolaBinarizeCPP.lib and object C:\Users\Zlygo\source\repos\linq2d\x64\Debug\SauvolaBinarizeCPP.exp
+  SauvolaBinarizeCPP.vcxproj -> C:\Users\Zlygo\source\repos\linq2d\x64\Debug\SauvolaBinarizeCPP.dll

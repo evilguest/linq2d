@@ -24,12 +24,12 @@ namespace Linq2d.Expressions
                 return node;
 
             var cost = _cost;
-            base.Visit(node);
 
-            if (!Expressions.ContainsKey(node))
+            if (!Expressions.ContainsKey(node)) {
+                base.Visit(node);
                 Expressions[node] = (1, _cost - cost); // cost delta covers the cost of all children
-            else
-            {
+            }
+            else {
                 var (usages, oldCost) = Expressions[node];
                 Expressions[node] = (usages + 1, oldCost);
             }

@@ -24,6 +24,7 @@ namespace Linq2d.CodeGen
 
         public IDictionary<ParameterExpression, LocalBuilder> VariableMap { get; } = new Dictionary<ParameterExpression, LocalBuilder>();
 
+        public void Compile(Expression expr) => Visit(expr);
         public override Expression Visit(Expression node)
         {
             if (node == null)

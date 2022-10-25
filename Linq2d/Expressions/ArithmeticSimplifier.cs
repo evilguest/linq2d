@@ -90,6 +90,10 @@ namespace Linq2d.Expressions
                     Negate(Subtract(var e1, var e2)) => Subtract(e2, e1),           // -(a-b)=>b-a;
 
                     LessThan(var e1, var e2) when e1.Equals(e2) => Constant(false),
+                    LessThan(Add(var e1, var e2), Add(var e3, var e4)) when e1.Equals(e3) => LessThan(e2, e4),
+                    LessThan(Add(var e1, var e2), Add(var e3, var e4)) when e1.Equals(e4) => LessThan(e2, e3),
+                    LessThan(Add(var e1, var e2), Add(var e3, var e4)) when e2.Equals(e3) => LessThan(e1, e4),
+                    LessThan(Add(var e1, var e2), Add(var e3, var e4)) when e2.Equals(e4) => LessThan(e2, e3),
                     LessThanOrEqual(var e1, var e2) when e1.Equals(e2) => Constant(true),
 
                     GreaterThanOrEqual(var e1, var e2) => LessThanOrEqual(e2, e1),

@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "i7vEQPFYJI9zZXZyAQsYMc+8z/rpBnS05nJOX3qcaYoZY+ONqoqsGwp1VBLbE1wKkVCIppD3P2VFh3osKqRG0A==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Zlygo\\source\\repos\\linq2d\\SauvolaBinarizeCPP\\project.json",
+  "expectedPackageFiles": [
+    "C:\\Users\\Zlygo\\.nuget\\packages\\gccbuildtargets\\1.22.77.8\\gccbuildtargets.1.22.77.8.nupkg.sha512"
+  ],
+  "logs": []
+}
