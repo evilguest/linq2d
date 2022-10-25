@@ -3,6 +3,7 @@ using Linq2d.Expressions;
 using Mono.Linq.Expressions;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -83,13 +84,9 @@ namespace Linq2d
         private D BuildUnsafeTransform<D>()
             where D : Delegate
         {
-            var resultVars = new ParameterExpression[Results.Count];
-            for (int i = 0; i < Results.Count; i++)
-                resultVars[i] = Variable(Results[i].MakeArrayType(2), "result" + (i + 1));
+            var resultVars = Results.Select((r, i) => Variable(r.MakeArrayType(2), "result" + (i + 1))).ToImmutableArray();
 
-            var sourceArgs = new ParameterExpression[Sources.Count];
-            for (int i = 0; i < Sources.Count; i++)
-                sourceArgs[i] = Parameter(Sources[i].Type.MakeArrayType(2), "source" + (i + 1));
+            var sourceArgs = Sources.Select((s, i) => Parameter(s.Type.MakeArrayType(2), "source" + (i + 1))).ToImmutableArray();
 
             var iVar = Variable(typeof(int), "i");
             var jVar = Variable(typeof(int), "j");
@@ -444,7 +441,7 @@ namespace Linq2d
 
 
         private IEnumerable<ParameterExpression> _variablePool;
-        private void HandleSingleResultElement(ILGenerator ilg, Expression kernel, Type resultType, ParameterExpression[] resultVars, ParameterExpression[] sourceArgs, ParameterExpression hVar, ParameterExpression wVar, IReadOnlyDictionary<Expression, (Expression minVal, Expression maxVal)> ranges, KernelCompilerScalar kcs, LocalBuilder pTarget, Expression i, Expression j)
+        private void HandleSingleResultElement(ILGenerator ilg, Expression kernel, Type resultType, IReadOnlyList<ParameterExpression> resultVars, IReadOnlyList<ParameterExpression> sourceArgs, ParameterExpression hVar, ParameterExpression wVar, IReadOnlyDictionary<Expression, (Expression minVal, Expression maxVal)> ranges, KernelCompilerScalar kcs, LocalBuilder pTarget, Expression i, Expression j)
         {
             if (!Array2d.PoolCSEVariables)
                 _variablePool = null;
@@ -515,7 +512,7 @@ namespace Linq2d
             return nne.Compile();
         }
 
-        private Expression InlineKernel(Expression kernel, Expression i, Expression j, Expression h, Expression w, IReadOnlyDictionary<Expression, (Expression minVal, Expression maxVal)> variableRanges, ParameterExpression[] resultVars, ParameterExpression[] sourceArgs, ref IEnumerable<ParameterExpression> variablePool)
+        private Expression InlineKernel(Expression kernel, Expression i, Expression j, Expression h, Expression w, IReadOnlyDictionary<Expression, (Expression minVal, Expression maxVal)> variableRanges, IReadOnlyList<ParameterExpression> resultVars, IReadOnlyList<ParameterExpression> sourceArgs, ref IEnumerable<ParameterExpression> variablePool)
         {
             var inlinedKernel = GetKernelInliner(i, j, h, w, resultVars, sourceArgs).Visit(kernel);
 
@@ -525,12 +522,12 @@ namespace Linq2d
             return inlinedKernel;
         }
 
-        protected CellAccessInliner GetKernelInliner(Expression i, Expression j, Expression h, Expression w, ParameterExpression[] resultVars, ParameterExpression[] sourceArgs)
+        protected CellAccessInliner GetKernelInliner(Expression i, Expression j, Expression h, Expression w, IReadOnlyList<ParameterExpression> resultVars, IReadOnlyList<ParameterExpression> sourceArgs)
         {
-            var replacements = new (Expression from, Expression to, OutOfBoundsStrategy strategy)[sourceArgs.Length+ResultReplacements.Count];
+            var replacements = new (Expression from, Expression to, OutOfBoundsStrategy strategy)[sourceArgs.Count + ResultReplacements.Count];
 
-            int sourceCount = sourceArgs.Length;
-            for (int c = 0; c < sourceArgs.Length; c++)
+            int sourceCount = sourceArgs.Count;
+            for (int c = 0; c < sourceArgs.Count; c++)
                 replacements[c] = (Kernel.Parameters[c], sourceArgs[c], Sources[c].OutOfBounds);
             for (int c = 0; c < ResultReplacements.Count; c++)
                 replacements[sourceCount + c] = (Kernel.Parameters[sourceCount + c], resultVars[c], OutOfBoundsStrategy.Substitute(ResultReplacements[c]));

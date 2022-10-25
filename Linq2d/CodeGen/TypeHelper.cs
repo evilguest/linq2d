@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace Linq2d.CodeGen
 {
-    static class TypeHelper
+    public static class TypeHelper
     {
         private static ConcurrentDictionary<Type, bool> cachedTypes = new ConcurrentDictionary<Type, bool>();
         public static bool IsUnmanaged(this Type t)
@@ -29,8 +27,8 @@ namespace Linq2d.CodeGen
 
         public static bool IsNumeric(this Type type)
         {
-            if (type == null)
-                return false;
+            //if (type == null)
+            //    return false;
 
             switch (Type.GetTypeCode(type))
             {

@@ -13,7 +13,7 @@ namespace Linq2d.Expressions
     class Vectorizer: ExpressionVisitor
     {
         
-        public static VectorizationResult Vectorize(int vectorSize, Expression expression, ParameterExpression[] resultVars, ParameterExpression[] sourceArgs)
+        public static VectorizationResult Vectorize(int vectorSize, Expression expression, IReadOnlyList<ParameterExpression> resultVars, IReadOnlyList<ParameterExpression> sourceArgs)
         {
             var v = new Vectorizer(vectorSize, resultVars, sourceArgs);
             if (expression is ConstantExpression ce)
@@ -28,7 +28,7 @@ namespace Linq2d.Expressions
             return new VectorizationResult(v._success, vectorizedExpression, v._blockedBy, v._reason);
         }
 
-        private Vectorizer(int vectorSize, ParameterExpression[] resultVars, ParameterExpression[] sourceArgs)
+        private Vectorizer(int vectorSize, IReadOnlyList<ParameterExpression> resultVars, IReadOnlyList<ParameterExpression> sourceArgs)
         {
             _vectorSize = vectorSize;
             _resultVars = new HashSet<ParameterExpression>(resultVars ?? throw new ArgumentNullException(nameof(resultVars)));
@@ -290,18 +290,5 @@ namespace Linq2d.Expressions
         //private VectorInfo VectorInfo { get; private set; }
         private static PropertyInfo ArrayItem(Type t) => t.MakeArrayType(2).GetProperty("Item");
     }
-    public class VectorizationResult
-    {
-        public bool Success { get; }
-        public Expression Expression { get; }
-        public Expression BlockedBy { get; }
-        public string Reason { get; }
-        public VectorizationResult(bool success, Expression expression, Expression blockedBy, string reason)
-        {
-            Success = success;
-            Expression = expression;
-            BlockedBy = blockedBy;
-            Reason = reason;
-        }
-    }
+    public record class VectorizationResult(bool Success, Expression Expression, Expression BlockedBy, string Reason);
 }

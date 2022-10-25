@@ -455,8 +455,8 @@ namespace Linq2d.CodeGen
                 InitConditional256<ulong>(Avx2.BlendVariable);
             }
         }
-        public static Vector256<double> CreateVector256Double(byte value)
-            => Vector256.Create((double)value);
+        //public static Vector256<double> CreateVector256Double(byte value)
+        //    => Vector256.Create((double)value);
         public static Vector256<double> LessThan(Vector256<double> l, Vector256<double> r)
             => Avx.Compare(l, r, FloatComparisonMode.OrderedLessThanSignaling);
         public static Vector256<double> GreaterThan(Vector256<double> l, Vector256<double> r)
@@ -676,8 +676,7 @@ namespace Linq2d.CodeGen
 
         public static IReadOnlyDictionary<int, IVectorInfo> VectorInfo { get => _vectorInfo; }
 
-        private static readonly Dictionary<MethodInfo, MethodInfo> _methodTable = new Dictionary<MethodInfo, MethodInfo>();
-        public static IReadOnlyDictionary<MethodInfo, MethodInfo> MethodTable { get => _methodTable; }
+        public static IReadOnlyDictionary<MethodInfo, MethodInfo> MethodTable { get; } = new Dictionary<MethodInfo, MethodInfo>();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector256<short> Negate(Vector256<short> a) => Avx2.MultiplyLow(a, Vector256.Create((short)-1));

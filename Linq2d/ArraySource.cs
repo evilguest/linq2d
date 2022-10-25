@@ -10,9 +10,9 @@ namespace Linq2d
         public Type Type { get; }
         public OutOfBoundsStrategy OutOfBounds { get; }
 
-        public int Height => Array.GetLength(0);
+        //public int Height => Array.GetLength(0);
 
-        public int Width => Array.GetLength(1);
+        //public int Width => Array.GetLength(1);
 
         protected ArraySource(Array array, OutOfBoundsStrategy outOfBounds)
         {
