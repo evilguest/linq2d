@@ -1137,6 +1137,12 @@ namespace Linq2d
             Source1 = source1 ?? throw new ArgumentNullException(nameof(source1));
             Source2 = source2 ?? throw new ArgumentNullException(nameof(source2));
         }
+        public ArrayQuery2(IArraySource<T1, T2> sources, LambdaExpression kernel) : base(sources, kernel)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = sources.Source1;
+            Source2 = sources.Source2;
+        }
         public ArrayQuery2(IArraySource<T1, T2> sources, Result<R1> result, LambdaExpression kernel) : base(sources, kernel, result.InitValue)
         {
             MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;

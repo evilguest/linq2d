@@ -19,6 +19,16 @@ namespace Linq2d.Tests
             TestHelper.AssertEqual(divex, div);
             TestHelper.AssertEqual(modex, mod);
 
+            (div, mod) = (from d in ArrayHelper.InitAllRand(h, w, seed).With(0)
+                              select ValueTuple.Create(d / divisor, d % divisor)).ToArrays();
+            TestHelper.AssertEqual(divex, div);
+            TestHelper.AssertEqual(modex, mod);
+
+            (div, mod) = (from d in ArrayHelper.InitAllRand(h, w, seed)
+                          let d1 = d+0
+                          select ValueTuple.Create(d1 / divisor, d % divisor)).ToArrays();
+            TestHelper.AssertEqual(divex, div);
+            TestHelper.AssertEqual(modex, mod);
         }
 
         [Theory]
@@ -36,6 +46,13 @@ namespace Linq2d.Tests
                     select ValueTuple.Create(d + r[-1, 0], d + 0);
 
             var (x, y) = q.ToArrays();
+            TestHelper.AssertEqual(xex.ToArray(), x);
+
+            q = from d in ArrayHelper.InitAllRand(h, w, seed).With(42)
+                from r in Result.InitWith(0)
+                select ValueTuple.Create(d + r[-1, 0], d + 0);
+
+            (x, y) = q.ToArrays();
             TestHelper.AssertEqual(xex.ToArray(), x);
         }
 
@@ -63,6 +80,52 @@ namespace Linq2d.Tests
 
             TestHelper.AssertEqual(xex.ToArray(), x);
             TestHelper.AssertEqual(yex.ToArray(), y);
+        }
+
+        [Theory]
+        [InlineData(1, 200, 42)]
+        [InlineData(1000, 20, 42)]
+        public void Test2Arrays2Results(int h, int w, int seed)
+        {
+            var xex = ArrayHelper.InitAllRand(h, w, seed);
+            var q = from d1 in xex
+                    from d2 in xex
+                    select ValueTuple.Create(d1 + 0, d2 - 0);
+
+
+            var (x, y) = q.ToArrays();
+
+            TestHelper.AssertEqual(xex, x);
+            TestHelper.AssertEqual(xex, y);
+
+            q = from d1 in xex.With(0)
+                from d2 in xex
+                select ValueTuple.Create(d1 + 0, d2 - 0);
+
+
+            (x, y) = q.ToArrays();
+
+            TestHelper.AssertEqual(xex, x);
+            TestHelper.AssertEqual(xex, y);
+
+            q = from d1 in xex
+                from d2 in xex.With(0)
+                select ValueTuple.Create(d1 + 0, d2 - 0);
+
+
+            (x, y) = q.ToArrays();
+
+            TestHelper.AssertEqual(xex, x);
+            TestHelper.AssertEqual(xex, y);
+            q = from d1 in xex.With(0)
+                from d2 in xex.With(0)
+                select ValueTuple.Create(d1 + 0, d2 - 0);
+
+
+            (x, y) = q.ToArrays();
+
+            TestHelper.AssertEqual(xex, x);
+            TestHelper.AssertEqual(xex, y);
         }
 
         [Theory]
@@ -120,6 +183,16 @@ namespace Linq2d.Tests
                     select ValueTuple.Create(d + r1[0, -1], d + r2[-1, 0]);
 
             var (x, y) = q.ToArrays();
+
+            TestHelper.AssertEqual(xex.ToArray(), x);
+            TestHelper.AssertEqual(yex.ToArray(), y);
+
+            q = from d in ArrayHelper.InitAllRand(h, w, seed).With(0)
+                    from r1 in Result.InitWith(0)
+                    from r2 in Result.InitWith(0)
+                    select ValueTuple.Create(d + r1[0, -1], d + r2[-1, 0]);
+
+            (x, y) = q.ToArrays();
 
             TestHelper.AssertEqual(xex.ToArray(), x);
             TestHelper.AssertEqual(yex.ToArray(), y);

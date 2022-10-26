@@ -29,6 +29,21 @@ namespace Linq2d.Tests
                     from b in bData
                     select a + b;
             Assert.Equal(abData, q.ToArray());
+
+            q = from a in aData.With(0)
+                from b in bData
+                select a + b;
+            Assert.Equal(abData, q.ToArray());
+
+            q = from a in aData
+                from b in bData.With(0)
+                select a + b;
+            Assert.Equal(abData, q.ToArray());
+
+            q = from a in aData.With(0)
+                from b in bData.With(0)
+                select a + b;
+            Assert.Equal(abData, q.ToArray());
         }
 
         [Theory]

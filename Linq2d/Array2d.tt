@@ -6,11 +6,11 @@ using System.Linq.Expressions;
 
 namespace Linq2d
 {
-    public static class Array2d<T>
-    {
-        public static IArrayQuery<T, R> Cast<R>(T[,] source) 
-            => new ArrayQuery<T, R>(source.Wrap(), (t)=>(R)(object)t.Value);
-    }
+//    public static class Array2d<T>
+//    {
+//        public static IArrayQuery<T, R> Cast<R>(T[,] source) 
+//            => new ArrayQuery<T, R>(source.Wrap(), (t)=>(R)(object)t.Value);
+//    }
     public static class Array2d
     {
         #region control
@@ -22,9 +22,9 @@ namespace Linq2d
         #endregion
 
         #region window functions
-        public static (Cell<T> tl, Cell<T> tr, Cell<T> bl, Cell<T> br) Window<T>(this Cell<T> cell, int size)
-            =>(cell, cell, cell, cell);
-        public static int Area<T>(this (Cell<T> tl, Cell<T> tr, Cell<T> bl, Cell<T> br) window)=>(window.br.X - window.tl.X) * (window.br.Y - window.tl.Y);
+//        public static (Cell<T> tl, Cell<T> tr, Cell<T> bl, Cell<T> br) Window<T>(this Cell<T> cell, int size)
+//            =>(cell, cell, cell, cell);
+//        public static int Area<T>(this (Cell<T> tl, Cell<T> tr, Cell<T> bl, Cell<T> br) window)=>(window.br.X - window.tl.X) * (window.br.Y - window.tl.Y);
         
         #endregion
 
@@ -107,6 +107,7 @@ namespace Linq2d
         #endregion
 
         #region Two arrays
+        #region Two arrays one result
         public static IArrayQuery<T1, T2, R> SelectMany<T1, T2, R>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, R>> resultSelector)
             => new ArrayQuery<T1, T2, R>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
         public static IArrayQuery<T1, T2, R> SelectMany<T1, T2, R>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, R>> resultSelector)
@@ -120,6 +121,22 @@ namespace Linq2d
             => new ArrayQuery<T1, T2, R>(source, resultSelector);
         public static IArrayTransform<T1, T2, R> SelectMany<T1, T2, _, R>(this IArrayQuery<T1, T2, _> source, Func<object, Result<R>> secondSelector, Expression<Func<_, RelativeCell<R>, R>> resultSelector)
             => new ArrayQuery<T1, T2, R>(source, secondSelector(default), resultSelector);
+        #endregion
+        #region Two arrays two results
+        public static IArrayQuery2<T1, T2, R1, R2> SelectMany<T1, T2, R1, R2>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, R1, R2>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, R1, R2> SelectMany<T1, T2, R1, R2>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, R1, R2>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery2<T1, T2, R1, R2> SelectMany<T1, T2, R1, R2>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery2<T1, T2, R1, R2>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, R1, R2> SelectMany<T1, T2, R1, R2>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, R1, R2>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery2<T1, T2, R1, R2> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, R1, R2>(source, resultSelector);
+//        public static IArrayTransform2<T1, T2, R1, R2> SelectMany<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Func<object, Result<R1>> secondSelector, Expression<Func<_, RelativeCell<R1>, (R1, R2)>> resultSelector)
+//            => new ArrayQuery2<T1, T2, R1, R2>(source, secondSelector(default), resultSelector);
+        #endregion
         #endregion
 <#
 for(int n=3; n<=maxArg; n++)

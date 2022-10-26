@@ -83,8 +83,8 @@ namespace Linq2d.Expressions
         private static readonly PropertyInfo CellY = typeof(Cell).GetProperty(nameof(Cell.Y));
         private static readonly PropertyInfo CellH = typeof(Cell).GetProperty(nameof(Cell.H));
         private static readonly PropertyInfo CellW = typeof(Cell).GetProperty(nameof(Cell.W));
-        private static readonly MethodInfo Window = typeof(Array2d).GetMethod(nameof(Array2d.Window));
-        private static readonly MethodInfo Area = typeof(Array2d).GetMethod(nameof(Array2d.Area));
+        //private static readonly MethodInfo Window = typeof(Array2d).GetMethod(nameof(Array2d.Window));
+        //private static readonly MethodInfo Area = typeof(Array2d).GetMethod(nameof(Array2d.Area));
 
         private static PropertyInfo ArrayItem(Type t) => t.MakeArrayType(2).GetProperty("Item");
         private static MethodInfo ArrayLength(Type t) => t.MakeArrayType(2).GetMethod(nameof(Array.GetLength));

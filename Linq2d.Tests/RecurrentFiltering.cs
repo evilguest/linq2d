@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System.Diagnostics;
+using Xunit;
 
 namespace Linq2d.Tests
 {
@@ -106,10 +107,16 @@ namespace Linq2d.Tests
         public void TestPrimitiveRecursion()
         {
             var sample = new[,] { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } };
+            var expect = new[,] { { 1, 2, 3 }, { 5, 7, 9 }, { 12, 15, 18 } };
             var q = from s in sample
                     from r in Result.InitWith(0)
                     select s + r[-1, 0];
-            Assert.Equal(new[,] { { 1, 2, 3 }, { 5, 7, 9 }, { 12, 15, 18 } }, q.ToArray());
+            Assert.Equal(expect, q.ToArray());
+            q = from s in sample.With(0)
+                from r in Result.InitWith(0)
+                select s + r[-1, 0];
+            Assert.Equal(expect, q.ToArray());
+
         }
     }
 }

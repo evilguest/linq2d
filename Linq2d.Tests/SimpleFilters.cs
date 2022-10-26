@@ -8,7 +8,7 @@ namespace Linq2d.Tests
 {
     public class SimpleFilters
     {
-        [ExcludeFromCodeCoverage]
+     //   [ExcludeFromCodeCoverage]
         public static unsafe int[,] C4UnsafeScalar(byte[,] data)
         {
             int w = data.Width();
@@ -324,5 +324,14 @@ namespace Linq2d.Tests
             var r = t.ToArray();
             Assert.NotNull(r);
         }
+        //[Theory]
+        //[InlineData(11, 17)]
+        //public void TestCast(int h, int w)
+        //{
+        //    var arr = ArrayHelper.InitAll(h, w, 42);
+        //    var res = ArrayHelper.InitAll(h, w, "42");
+        //    var q = from string a in arr select a;
+
+        //}
     }
 }
