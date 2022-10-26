@@ -21,7 +21,7 @@ namespace Linq2d.Expressions
 
         private HashSet<(int cost, Expression expr)> _invariants = new HashSet<(int cost, Expression expr)>();
         private HashSet<Expression> _parameters;
-        private static CodeComparer _comparer = new CodeComparer();
+        //private static CodeComparer _comparer = new CodeComparer();
         private bool _depends = false;
         private int _cost = 0;
         public DependencyChecker(IEnumerable<Expression> parameters)

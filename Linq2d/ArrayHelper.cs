@@ -76,6 +76,15 @@ namespace Linq2d
                     result[i, j] = r.Next();
             return result;
         }
+        public static T[,] InitAllRand<T>(int h, int w, int seed, Func<int, T> selector)
+        {
+            var r = new Random(seed);
+            var result = new T[h, w];
+            for (var i = 0; i < h; i++)
+                for (var j = 0; j < w; j++)
+                    result[i, j] = selector(r.Next());
+            return result;
+        }
 
         public static byte[,] InitAllRand(int h, int w, byte seed)
         {

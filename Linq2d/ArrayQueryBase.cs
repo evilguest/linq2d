@@ -475,19 +475,41 @@ namespace Linq2d
             var j_var = Variable(typeof(int), "j");
             var h_var = Variable(typeof(int), "h");
             var w_var = Variable(typeof(int), "w");
-   
-            var inlinedKernel = InlineKernel(Kernel.Body, i_var, j_var, h_var, w_var, GetBaseRanges(h_var, w_var), resultVars, sourceArgs, ref _variablePool);
-            var ne = inlinedKernel as NewExpression;
+
+            var simplifiedKernel = Arithmetic.Simplify(Kernel.Body, GetBaseRanges(h_var, w_var));
+            var kernels = new Expression[Results.Count];
+            if (Results.Count == 1)
+                kernels[0] = simplifiedKernel;
+            else
+            {
+                if (simplifiedKernel is IArgumentProvider ip && ip.ArgumentCount == Results.Count)
+                {
+                    for (int c = 0; c < Results.Count; c++)
+                        kernels[c] = ip.GetArgument(c);
+                }
+                else throw new InvalidOperationException($"Cannot recognize the selector function. Expect a ValueTuple construction call with the number of components equal to {Results.Count}");
+            }
+            for (int c = 0; c < Results.Count; c++)
+                kernels[c] = InlineKernel(kernels[c], i_var, j_var, h_var, w_var, GetBaseRanges(h_var, w_var), resultVars, sourceArgs, ref _variablePool);
             var block = new List<Expression>();
             block.Add(Assign(h_var, Call(sourceArgs[0], sourceArgs[0].Type.GetMethod("GetLength", new[] { typeof(int) }), Constant(0))));
             block.Add(Assign(w_var, Call(sourceArgs[0], sourceArgs[0].Type.GetMethod("GetLength", new[] { typeof(int) }), Constant(1))));
             for (int c = 0; c < Results.Count; c++)
                 block.Add(Assign(resultVars[c], NewArrayBounds(Results[c], h_var, w_var)));
 
-            var loopBody = new List<Expression>();
+            var loopStatements = new List<Expression>();
             for (int c = 0; c < Results.Count; c++)
-                loopBody.Add(Assign(MakeIndex(resultVars[c], Results[c].MakeArrayType(2).GetProperty("Item", new Type[] { typeof(int), typeof(int) }), new[] { i_var, j_var }), Results.Count>1?ne.Arguments[c]:inlinedKernel));
+                loopStatements.Add(Assign(MakeIndex(resultVars[c], Results[c].MakeArrayType(2).GetProperty("Item", new Type[] { typeof(int), typeof(int) }), new[] { i_var, j_var }), kernels[c]));
 
+            if (Array2d.MoveLoopInvariants)
+            {
+                BlockExpression loopInvariants = loopStatements.GetInvariants(i_var, j_var);
+                block.Add(loopInvariants);
+            }
+
+            Expression loopBody = Block(loopStatements);
+            if (Array2d.EliminateCommonSubexpressions)
+                loopBody = loopBody.EliminateCommonSubexpressions(ref _variablePool);
             block.Add(ExpressionHelper.For(i_var,
                     Constant(0),
                     LessThan(i_var, h_var),

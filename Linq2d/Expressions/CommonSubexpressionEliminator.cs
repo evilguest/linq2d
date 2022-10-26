@@ -29,10 +29,10 @@ namespace Linq2d.Expressions
             variablePool = pool.Variables;
             return expression;
         }
-        public static bool DependsOn(this Expression expression, IEnumerable<ParameterExpression> variables)
-        {
-            return DependencyChecker.FindInvariant(expression, variables) == null;
-        }
+        //public static bool DependsOn(this Expression expression, IEnumerable<ParameterExpression> variables)
+        //{
+        //    return DependencyChecker.FindInvariant(expression, variables) == null;
+        //}
         public static BlockExpression GetInvariants(this IList<Expression> expressions, params ParameterExpression[] variables)
         {
             var invariants = new List<Expression>();
@@ -51,26 +51,24 @@ namespace Linq2d.Expressions
                         {
                             var left = (ParameterExpression)ae.Left;
                             var eei = DependencyChecker.FindInvariant(ae.Right, vars);
-                            if (eei == ae.Right)
+                            //if (eei == ae.Right)
+                            //{
+                            //    invariants.Add(ae);
+                            //    invariantVars.Add(left);
+                            //    ei = ExpressionReplacer.Replace(ei, ee, Expression.Empty());
+                            //}
+                            //else 
+                            var ee1 = ee;
+                            vars.Add(left);
+                            while (eei != null)
                             {
-                                invariants.Add(ae);
-                                invariantVars.Add(left);
-                                ei = ExpressionReplacer.Replace(ei, ee, Expression.Empty());
-                            }
-                            else 
-                            {
-                                var ee1 = ee;
-                                vars.Add(left);
-                                while (eei != null)
-                                {
-                                    var t = Expression.Parameter(eei.Type);
-                                    invariants.Add(Expression.Assign(t, eei));
-                                    invariantVars.Add(t);
-                                    var ee2 = ExpressionReplacer.Replace(ee1, eei, t);
-                                    ei = ExpressionReplacer.Replace(ei, ee1, ee2);
-                                    ee1 = ee2;
-                                    eei = DependencyChecker.FindInvariant(ee1, vars);
-                                }
+                                var t = Expression.Parameter(eei.Type);
+                                invariants.Add(Expression.Assign(t, eei));
+                                invariantVars.Add(t);
+                                var ee2 = ExpressionReplacer.Replace(ee1, eei, t);
+                                ei = ExpressionReplacer.Replace(ei, ee1, ee2);
+                                ee1 = ee2;
+                                eei = DependencyChecker.FindInvariant(ee1, vars);
                             }
                         }
                         else
@@ -127,7 +125,7 @@ namespace Linq2d.Expressions
             return Expression.Block(invariantVars, invariants);
         }
 
-        private static Expression MergeBlocks(ParameterExpression parameter, Expression paramInit, Expression expression)
+        private static BlockExpression MergeBlocks(ParameterExpression parameter, Expression paramInit, Expression expression)
         {
             if (expression is BlockExpression tail)
             {

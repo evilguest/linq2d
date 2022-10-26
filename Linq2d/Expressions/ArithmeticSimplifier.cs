@@ -118,13 +118,13 @@ namespace Linq2d.Expressions
                     #endregion
 
                     #region arithmetics
-                    Multiply(Constant(Type t, var o) zero, _) when t.IsNumeric() && o.Equals(Convert.ChangeType(0, t)) => zero,          // 0 * e => 0
-                    Multiply(Constant(Type t, var o), var e) when t.IsNumeric() && o.Equals(Convert.ChangeType(1, t)) => e,              // 1 * e => e
-                    Multiply(Constant(Type t, var o), var e) when t.IsNumeric() && o.Equals(Convert.ChangeType(-1, t)) => Negate(e),     // -1 * e => -e
-                    Divide(Constant(Type t, var o) zero, _) when t.IsNumeric() && o.Equals(Convert.ChangeType(0, t)) => zero,            // 0 / e => 0
-                    Divide(var e, Constant(Type t, var o)) when t.IsNumeric() && o.Equals(Convert.ChangeType(1, t)) => e,                // e / 1 => e
-                    Divide(Constant(Type t, var o), var e) when t.IsNumeric() && o.Equals(Convert.ChangeType(-1, t)) => Negate(e),       // e / -1 => -e
-                    Add(Constant(var t, var o), var e) when t.IsNumeric() && o.Equals(Convert.ChangeType(0, t)) => e,                    // 0 + e => e
+                    Multiply(Constant(Type t, var v) zero, _) when t.IsNumeric() && v.Equals(Convert.ChangeType(0, t)) => zero,          // 0 * e => 0
+                    Multiply(Constant(Type t, var v), var e) when t.IsNumeric() && v.Equals(Convert.ChangeType(1, t)) => e,              // 1 * e => e
+                    Multiply(Constant(Type t, var v), var e) when t.IsNumeric() && v.Equals(Convert.ChangeType(-1, t)) => Negate(e),     // -1 * e => -e
+                    Divide(Constant(Type t, var v) zero, _) when t.IsNumeric() && v.Equals(Convert.ChangeType(0, t)) => zero,            // 0 / e => 0
+                    Divide(var e, Constant(Type t, var v)) when t.IsNumeric() && v.Equals(Convert.ChangeType(1, t)) => e,                // e / 1 => e
+                    Divide(Constant(Type t, var v), var e) when t.IsNumeric() && v.Equals(Convert.ChangeType(-1, t)) => Negate(e),       // e / -1 => -e
+                    Add(Constant(var t, var v), var e) when t.IsNumeric() && v.Equals(Convert.ChangeType(0, t)) => e,                    // 0 + e => e
 
                     #region Divisions by 2^N
                     Divide(var e, Constant(1 << 1)) => RightShift(e, Constant(1)),

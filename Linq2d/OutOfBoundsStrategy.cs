@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Reflection;
-
+using Linq2d.Expressions;
 using static System.Linq.Expressions.Expression;
 using static Linq2d.Expressions.ExpressionHelper;
 
@@ -36,7 +36,8 @@ namespace Linq2d
         public OutOfBoundsPolicy YAbove{ get; }
 
         public static T Throw<T>(Exception e) => throw e;
-        public static Expression Throws(Type t) => Call(typeof(OutOfBoundsStrategy).GetMethod(nameof(Throw), BindingFlags.Public | BindingFlags.Static).MakeGenericMethod(t), New((string s) => new IndexOutOfRangeException(s), Constant("Index was out of range")));
+//        public static Expression Throws(Type t) => Call(typeof(OutOfBoundsStrategy).GetMethod(nameof(Throw), BindingFlags.Public | BindingFlags.Static).MakeGenericMethod(t), New((string s) => new IndexOutOfRangeException(s), Constant("Index was out of range")));
+        public static Expression Throws<T>() => ExpressionHelper.Call<Func<Exception, T>>((Exception e)=>Throw<T>(e), New((string s) => new IndexOutOfRangeException(s), Constant("Index was out of range")));
         public static GetCoordinate Keep { get; } = (coordinate, upperBoundExclusive) => coordinate;
         public static GetCoordinate LimitHigh { get; } = (coordinate, upperBoundExclusive) => Subtract(upperBoundExclusive, Constant(1));
         public static GetCoordinate LimitLow { get; } = (coordinate, upperBoundExclusive) => Constant(0);
@@ -48,7 +49,7 @@ namespace Linq2d
         public static OutOfBoundsStrategy<T> Substitute<T>(T value)
             => new OutOfBoundsStrategy<T>(new OutOfBoundsPolicy(Constant(value), Keep));
         public static OutOfBoundsStrategy<T> Default<T>()
-            => new OutOfBoundsStrategy<T>(new OutOfBoundsPolicy(Throws(typeof(T)), Keep));
+            => new OutOfBoundsStrategy<T>(new OutOfBoundsPolicy(Throws<T>(), Keep));
         public static OutOfBoundsStrategyUntyped NearestNeighbour { get; } 
             = new OutOfBoundsStrategyUntyped(
                 new OutOfBoundsPolicy(null, LimitLow), 
