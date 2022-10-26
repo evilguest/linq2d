@@ -17,7 +17,19 @@ namespace Linq2d.Tests
             var data = ArrayHelper.InitAllRand(h, w, seed);
             Array2d.SaveDynamicCode = true;
             TestHelper.AssertEqual(BaseBinarize(data), LinqBinarize(data));
+            Array2d.SaveDynamicCode = false;
         }
+
+        [Theory]
+        [InlineData(50, 50, 2)]
+        public void TestSauvolaWithoutVariablePooling(int h, int w, byte seed)
+        {
+            var data = ArrayHelper.InitAllRand(h, w, seed);
+            Array2d.PoolCSEVariables = false;
+            TestHelper.AssertEqual(BaseBinarize(data), LinqBinarize(data));
+            Array2d.PoolCSEVariables = true;
+        }
+
 
         [Theory]
         [InlineData(50, 50, 42)]

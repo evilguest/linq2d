@@ -4,6 +4,7 @@ using Mono.Linq.Expressions;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -32,54 +33,49 @@ namespace Linq2d
             => typeof(ITuple).IsAssignableFrom(t) ? t.GetGenericArguments() : (new[] { t });
         protected ArrayQueryBase(IArrayQuery source, LambdaExpression kernel)
         {
-            switch (source)
-            {
-                case ArrayQueryBase aqb:
-                    Sources.AddRange(aqb.Sources);
-                    ResultReplacements.AddRange(aqb.ResultReplacements);
-                    ParameterExpression outerArg = kernel.Parameters[0];
-                    if (outerArg.Type != aqb.Kernel.ReturnType)
-                        throw new InvalidCastException($"Outer lambda expects to consume type {outerArg.Type}, inner produces {aqb.Kernel.ReturnType}");
+            var aqb = source as ArrayQueryBase;
+            Debug.Assert(aqb!=null, $"Unknown source type {source.GetType()}");
+            Sources.AddRange(aqb.Sources);
+            ResultReplacements.AddRange(aqb.ResultReplacements);
+            ParameterExpression outerArg = kernel.Parameters[0];
+            Debug.Assert(outerArg.Type == aqb.Kernel.ReturnType, $"Outer lambda expects to consume type {outerArg.Type}, inner produces {aqb.Kernel.ReturnType}");
 
-                    var newBody = ExpressionReplacer.Replace(kernel.Body, outerArg, aqb.Kernel.Body); 
-                    newBody = new IntermediateAnonymousRemovalVisitor().Visit(newBody);
+            var newBody = ExpressionReplacer.Replace(kernel.Body, outerArg, aqb.Kernel.Body); 
+            newBody = new IntermediateAnonymousRemovalVisitor().Visit(newBody);
 
-                    var newLambda = Lambda(newBody, aqb.Kernel.Parameters.Union(kernel.Parameters.Skip(1)));
-                    Kernel = newLambda;
-                    break;
-
-                default: throw new ArgumentException($"Unknown source type {source.GetType()}", nameof(source));
-            }
+            var newLambda = Lambda(newBody, aqb.Kernel.Parameters.Union(kernel.Parameters.Skip(1)));
+            Kernel = newLambda;
             Results.AddRange(GetTypes(Kernel.ReturnType));
-            MethodName = Array2d.SaveDynamicCode ? new System.Diagnostics.StackTrace().GetFrame(5).GetMethod().Name : "Blank";
-            //(_h, _w) = EnsureSameSize(Sources);
+            MethodName = Array2d.SaveDynamicCode ? new StackTrace().GetFrame(5).GetMethod().Name : "Blank";
         }
         protected ArrayQueryBase(IArrayQuery source, LambdaExpression kernel, object resultInit) : this(source, kernel) => ResultReplacements.Add(resultInit);
 
         protected ArrayQueryBase(ArraySource left, ArraySource right, LambdaExpression kernel) : this(left, kernel) => Sources.Add(right);
-        protected ArrayQueryBase(ArraySource left, ArraySource right, LambdaExpression kernel, object resultInit) : this(left, kernel, resultInit) => Sources.Add(right);
+        //protected ArrayQueryBase(ArraySource left, ArraySource right, LambdaExpression kernel, object resultInit) : this(left, kernel, resultInit) => Sources.Add(right);
 
         protected ArrayQueryBase(IArrayQuery left, ArraySource right, LambdaExpression kernel) : this(left, kernel) => Sources.Add(right);
-        protected ArrayQueryBase(IArrayQuery left, ArraySource right, LambdaExpression kernel, object resultInit) : this(left, kernel)
-        {
-            Sources.Add(right);
-            ResultReplacements.Add(resultInit);
-        }
+        //protected ArrayQueryBase(IArrayQuery left, ArraySource right, LambdaExpression kernel, object resultInit) : this(left, kernel)
+        //{
+        //    Sources.Add(right);
+        //    ResultReplacements.Add(resultInit);
+        //}
         public bool Vectorized { get; private set; } = false;
         public VectorizationResult VectorizationResult { get; private set; } = null;
 
         protected D BuildTransform<D>()
             where D : Delegate
         {
-            MethodInfo invoke = typeof(D).GetMethod("Invoke");
-            var paramTypes = from p in invoke.GetParameters() select p.ParameterType;
-            paramTypes = paramTypes.Union(GetTypes(invoke.ReturnType));
+            var paramTypes = GetParamTypes<D>();
+            paramTypes = paramTypes.Union(GetTypes(GetReturnType<D>()));
 
             if ((from t in paramTypes select t.GetElementType()).All(TypeHelper.IsUnmanaged))
                 return BuildUnsafeTransform<D>();
             return BuildSafeTransform<D>();
         }
 
+        private static IEnumerable<Type> GetParamTypes<D>() where D : Delegate => from p in GetInvoke<D>().GetParameters() select p.ParameterType;
+        private static Type GetReturnType<D>() where D : Delegate => GetInvoke<D>().ReturnType;
+        private static MethodInfo GetInvoke<D>() where D : Delegate => typeof(D).GetMethod("Invoke");
 
         private D BuildUnsafeTransform<D>()
             where D : Delegate
@@ -520,15 +516,10 @@ namespace Linq2d
                         Constant(1),
                         Block(loopBody)
                 )));
-            if(Results.Count==1)
-            {
-                block.Add(resultVars[0]);
-            }
-            else
-            {
-                var r = typeof(D).GetMethod("Invoke").ReturnType;
-                block.Add(New(r.GetConstructors()[0], resultVars)); 
-            }
+            block.Add(
+                Results.Count == 1
+                ? resultVars[0]
+                : New(GetReturnType<D>().GetConstructors()[0], resultVars));
 
             var fe = Block(resultVars.Append(h_var).Append(w_var), block);
             var nne = Lambda<D>(fe, sourceArgs);
@@ -536,6 +527,7 @@ namespace Linq2d
             //Console.WriteLine(s);
             return nne.Compile();
         }
+
 
         private Expression InlineKernel(Expression kernel, Expression i, Expression j, Expression h, Expression w, IReadOnlyDictionary<Expression, (Expression minVal, Expression maxVal)> variableRanges, IReadOnlyList<ParameterExpression> resultVars, IReadOnlyList<ParameterExpression> sourceArgs, ref IEnumerable<ParameterExpression> variablePool)
         {
