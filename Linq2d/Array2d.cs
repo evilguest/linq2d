@@ -148,6 +148,79 @@ namespace Linq2d
 
         public static IArrayTransform<T1, T2, T3, R> SelectMany<T1, T2, T3, _, R>(this IArrayQuery<T1, T2, T3, _> source, Func<object, Result<R>> secondSelector, Expression<Func<_, RelativeCell<R>, R>> resultSelector)
             => new ArrayQuery<T1, T2, T3, R>(source, secondSelector(default), resultSelector);
+
+        #region 3 arrays, 2 results
+
+        public static IArrayQuery2<T1, T2, T3, R1, R2> Select<T1, T2, T3, _, R1, R2>(this IArrayQuery<T1, T2, T3, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, R1, R2>(source, resultSelector);
+        public static IArrayQuery2<T1, T2, T3, R1, R2> SelectMany<T1, T2, T3, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Func<object, T3[,]> getSource, Expression<Func<_, Cell<T3>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, R1, R2>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery2<T1, T2, T3, R1, R2> SelectMany<T1, T2, T3, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Func<object, ArraySource<T3>> getSource, Expression<Func<_, Cell<T3>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, R1, R2>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery2<T1, T2, T3, R1, R2> SelectMany<T1, T2, T3, R1, R2>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, R1, R2>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, R1, R2> SelectMany<T1, T2, T3, R1, R2>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, R1, R2>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, R1, R2> SelectMany<T1, T2, T3, R1, R2>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery2<T1, T2, T3, R1, R2>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, R1, R2> SelectMany<T1, T2, T3, R1, R2>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, R1, R2>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery2<T1, T2, T3, R1, R2> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, R1, R2>(source, resultSelector);
+*/
+        #endregion
+        #region 3 arrays, 3 results
+
+        public static IArrayQuery3<T1, T2, T3, R1, R2, R3> Select<T1, T2, T3, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, _> source, Expression<Func<_, (R1, R2, R3)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, R1, R2, R3>(source, resultSelector);
+        public static IArrayQuery3<T1, T2, T3, R1, R2, R3> SelectMany<T1, T2, T3, _, R1, R2, R3>(this IArrayQuery<T1, T2, _> source, Func<object, T3[,]> getSource, Expression<Func<_, Cell<T3>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, R1, R2, R3>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery3<T1, T2, T3, R1, R2, R3> SelectMany<T1, T2, T3, _, R1, R2, R3>(this IArrayQuery<T1, T2, _> source, Func<object, ArraySource<T3>> getSource, Expression<Func<_, Cell<T3>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, R1, R2, R3>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery3<T1, T2, T3, R1, R2, R3> SelectMany<T1, T2, T3, R1, R2, R3>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, R1, R2, R3>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, R1, R2, R3> SelectMany<T1, T2, T3, R1, R2, R3>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, R1, R2, R3>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, R1, R2, R3> SelectMany<T1, T2, T3, R1, R2, R3>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery3<T1, T2, T3, R1, R2, R3>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, R1, R2, R3> SelectMany<T1, T2, T3, R1, R2, R3>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, R1, R2, R3>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery3<T1, T2, T3, R1, R2, R3> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, R1, R2, R3>(source, resultSelector);
+*/
+        #endregion
+        #region 3 arrays, 4 results
+
+        public static IArrayQuery4<T1, T2, T3, R1, R2, R3, R4> Select<T1, T2, T3, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, _> source, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, R1, R2, R3, R4>(source, resultSelector);
+        public static IArrayQuery4<T1, T2, T3, R1, R2, R3, R4> SelectMany<T1, T2, T3, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, _> source, Func<object, T3[,]> getSource, Expression<Func<_, Cell<T3>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, R1, R2, R3, R4>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery4<T1, T2, T3, R1, R2, R3, R4> SelectMany<T1, T2, T3, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, _> source, Func<object, ArraySource<T3>> getSource, Expression<Func<_, Cell<T3>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, R1, R2, R3, R4>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery4<T1, T2, T3, R1, R2, R3, R4> SelectMany<T1, T2, T3, R1, R2, R3, R4>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, R1, R2, R3, R4>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, R1, R2, R3, R4> SelectMany<T1, T2, T3, R1, R2, R3, R4>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, R1, R2, R3, R4>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, R1, R2, R3, R4> SelectMany<T1, T2, T3, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery4<T1, T2, T3, R1, R2, R3, R4>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, R1, R2, R3, R4> SelectMany<T1, T2, T3, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, R1, R2, R3, R4>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery4<T1, T2, T3, R1, R2, R3, R4> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, R1, R2, R3, R4>(source, resultSelector);
+*/
+        #endregion
         #endregion
 
         #region 4 arrays
@@ -162,6 +235,79 @@ namespace Linq2d
 
         public static IArrayTransform<T1, T2, T3, T4, R> SelectMany<T1, T2, T3, T4, _, R>(this IArrayQuery<T1, T2, T3, T4, _> source, Func<object, Result<R>> secondSelector, Expression<Func<_, RelativeCell<R>, R>> resultSelector)
             => new ArrayQuery<T1, T2, T3, T4, R>(source, secondSelector(default), resultSelector);
+
+        #region 4 arrays, 2 results
+
+        public static IArrayQuery2<T1, T2, T3, T4, R1, R2> Select<T1, T2, T3, T4, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, R1, R2>(source, resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, R1, R2> SelectMany<T1, T2, T3, T4, _, R1, R2>(this IArrayQuery<T1, T2, T3, _> source, Func<object, T4[,]> getSource, Expression<Func<_, Cell<T4>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, T4, R1, R2>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery2<T1, T2, T3, T4, R1, R2> SelectMany<T1, T2, T3, T4, _, R1, R2>(this IArrayQuery<T1, T2, T3, _> source, Func<object, ArraySource<T4>> getSource, Expression<Func<_, Cell<T4>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, T4, R1, R2>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery2<T1, T2, T3, T4, R1, R2> SelectMany<T1, T2, T3, T4, R1, R2>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, R1, R2>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, R1, R2> SelectMany<T1, T2, T3, T4, R1, R2>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, R1, R2>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, R1, R2> SelectMany<T1, T2, T3, T4, R1, R2>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery2<T1, T2, T3, T4, R1, R2>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, R1, R2> SelectMany<T1, T2, T3, T4, R1, R2>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, R1, R2>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery2<T1, T2, T3, T4, R1, R2> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, R1, R2>(source, resultSelector);
+*/
+        #endregion
+        #region 4 arrays, 3 results
+
+        public static IArrayQuery3<T1, T2, T3, T4, R1, R2, R3> Select<T1, T2, T3, T4, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, _> source, Expression<Func<_, (R1, R2, R3)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, R1, R2, R3>(source, resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, R1, R2, R3> SelectMany<T1, T2, T3, T4, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, _> source, Func<object, T4[,]> getSource, Expression<Func<_, Cell<T4>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, T4, R1, R2, R3>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery3<T1, T2, T3, T4, R1, R2, R3> SelectMany<T1, T2, T3, T4, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, _> source, Func<object, ArraySource<T4>> getSource, Expression<Func<_, Cell<T4>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, T4, R1, R2, R3>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery3<T1, T2, T3, T4, R1, R2, R3> SelectMany<T1, T2, T3, T4, R1, R2, R3>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, R1, R2, R3>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, R1, R2, R3> SelectMany<T1, T2, T3, T4, R1, R2, R3>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, R1, R2, R3>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, R1, R2, R3> SelectMany<T1, T2, T3, T4, R1, R2, R3>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery3<T1, T2, T3, T4, R1, R2, R3>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, R1, R2, R3> SelectMany<T1, T2, T3, T4, R1, R2, R3>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, R1, R2, R3>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery3<T1, T2, T3, T4, R1, R2, R3> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, R1, R2, R3>(source, resultSelector);
+*/
+        #endregion
+        #region 4 arrays, 4 results
+
+        public static IArrayQuery4<T1, T2, T3, T4, R1, R2, R3, R4> Select<T1, T2, T3, T4, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, _> source, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, R1, R2, R3, R4>(source, resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, _> source, Func<object, T4[,]> getSource, Expression<Func<_, Cell<T4>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, T4, R1, R2, R3, R4>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery4<T1, T2, T3, T4, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, _> source, Func<object, ArraySource<T4>> getSource, Expression<Func<_, Cell<T4>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, T4, R1, R2, R3, R4>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery4<T1, T2, T3, T4, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, R1, R2, R3, R4>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, R1, R2, R3, R4>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, R1, R2, R3, R4>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, R1, R2, R3, R4>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery4<T1, T2, T3, T4, R1, R2, R3, R4>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, R1, R2, R3, R4>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery4<T1, T2, T3, T4, R1, R2, R3, R4> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, R1, R2, R3, R4>(source, resultSelector);
+*/
+        #endregion
         #endregion
 
         #region 5 arrays
@@ -176,6 +322,79 @@ namespace Linq2d
 
         public static IArrayTransform<T1, T2, T3, T4, T5, R> SelectMany<T1, T2, T3, T4, T5, _, R>(this IArrayQuery<T1, T2, T3, T4, T5, _> source, Func<object, Result<R>> secondSelector, Expression<Func<_, RelativeCell<R>, R>> resultSelector)
             => new ArrayQuery<T1, T2, T3, T4, T5, R>(source, secondSelector(default), resultSelector);
+
+        #region 5 arrays, 2 results
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, R1, R2> Select<T1, T2, T3, T4, T5, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, R1, R2>(source, resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, R1, R2> SelectMany<T1, T2, T3, T4, T5, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, _> source, Func<object, T5[,]> getSource, Expression<Func<_, Cell<T5>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, R1, R2>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, R1, R2> SelectMany<T1, T2, T3, T4, T5, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, _> source, Func<object, ArraySource<T5>> getSource, Expression<Func<_, Cell<T5>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, R1, R2>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery2<T1, T2, T3, T4, T5, R1, R2> SelectMany<T1, T2, T3, T4, T5, R1, R2>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, R1, R2>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, R1, R2> SelectMany<T1, T2, T3, T4, T5, R1, R2>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, R1, R2>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, R1, R2> SelectMany<T1, T2, T3, T4, T5, R1, R2>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery2<T1, T2, T3, T4, T5, R1, R2>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, R1, R2> SelectMany<T1, T2, T3, T4, T5, R1, R2>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, R1, R2>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, R1, R2> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, R1, R2>(source, resultSelector);
+*/
+        #endregion
+        #region 5 arrays, 3 results
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, R1, R2, R3> Select<T1, T2, T3, T4, T5, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, _> source, Expression<Func<_, (R1, R2, R3)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, R1, R2, R3>(source, resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, _> source, Func<object, T5[,]> getSource, Expression<Func<_, Cell<T5>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, R1, R2, R3>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, _> source, Func<object, ArraySource<T5>> getSource, Expression<Func<_, Cell<T5>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, R1, R2, R3>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery3<T1, T2, T3, T4, T5, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, R1, R2, R3>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, R1, R2, R3>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, R1, R2, R3>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, R1, R2, R3>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, R1, R2, R3>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery3<T1, T2, T3, T4, T5, R1, R2, R3>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, R1, R2, R3>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, R1, R2, R3>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, R1, R2, R3> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, R1, R2, R3>(source, resultSelector);
+*/
+        #endregion
+        #region 5 arrays, 4 results
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, R1, R2, R3, R4> Select<T1, T2, T3, T4, T5, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, _> source, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, R1, R2, R3, R4>(source, resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, _> source, Func<object, T5[,]> getSource, Expression<Func<_, Cell<T5>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, R1, R2, R3, R4>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, _> source, Func<object, ArraySource<T5>> getSource, Expression<Func<_, Cell<T5>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, R1, R2, R3, R4>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery4<T1, T2, T3, T4, T5, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, R1, R2, R3, R4>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, R1, R2, R3, R4>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, R1, R2, R3, R4>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, R1, R2, R3, R4>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery4<T1, T2, T3, T4, T5, R1, R2, R3, R4>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, R1, R2, R3, R4>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, R1, R2, R3, R4> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, R1, R2, R3, R4>(source, resultSelector);
+*/
+        #endregion
         #endregion
 
         #region 6 arrays
@@ -190,6 +409,79 @@ namespace Linq2d
 
         public static IArrayTransform<T1, T2, T3, T4, T5, T6, R> SelectMany<T1, T2, T3, T4, T5, T6, _, R>(this IArrayQuery<T1, T2, T3, T4, T5, T6, _> source, Func<object, Result<R>> secondSelector, Expression<Func<_, RelativeCell<R>, R>> resultSelector)
             => new ArrayQuery<T1, T2, T3, T4, T5, T6, R>(source, secondSelector(default), resultSelector);
+
+        #region 6 arrays, 2 results
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, R1, R2> Select<T1, T2, T3, T4, T5, T6, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, R1, R2>(source, resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, _> source, Func<object, T6[,]> getSource, Expression<Func<_, Cell<T6>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, R1, R2>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, _> source, Func<object, ArraySource<T6>> getSource, Expression<Func<_, Cell<T6>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, R1, R2>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, R1, R2>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, R1, R2>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, R1, R2>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, R1, R2>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, R1, R2>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, R1, R2>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, R1, R2>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, R1, R2>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, R1, R2> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, R1, R2>(source, resultSelector);
+*/
+        #endregion
+        #region 6 arrays, 3 results
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, R1, R2, R3> Select<T1, T2, T3, T4, T5, T6, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, _> source, Expression<Func<_, (R1, R2, R3)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, R1, R2, R3>(source, resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, _> source, Func<object, T6[,]> getSource, Expression<Func<_, Cell<T6>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, R1, R2, R3>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, _> source, Func<object, ArraySource<T6>> getSource, Expression<Func<_, Cell<T6>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, R1, R2, R3>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, R1, R2, R3>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, R1, R2, R3>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, R1, R2, R3>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, R1, R2, R3>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, R1, R2, R3>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, R1, R2, R3>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, R1, R2, R3>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, R1, R2, R3>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, R1, R2, R3> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, R1, R2, R3>(source, resultSelector);
+*/
+        #endregion
+        #region 6 arrays, 4 results
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, R1, R2, R3, R4> Select<T1, T2, T3, T4, T5, T6, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, _> source, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, R1, R2, R3, R4>(source, resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, _> source, Func<object, T6[,]> getSource, Expression<Func<_, Cell<T6>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, R1, R2, R3, R4>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, _> source, Func<object, ArraySource<T6>> getSource, Expression<Func<_, Cell<T6>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, R1, R2, R3, R4>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, R1, R2, R3, R4>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, R1, R2, R3, R4>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, R1, R2, R3, R4>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, R1, R2, R3, R4>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, R1, R2, R3, R4>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, R1, R2, R3, R4>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, R1, R2, R3, R4> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, R1, R2, R3, R4>(source, resultSelector);
+*/
+        #endregion
         #endregion
 
         #region 7 arrays
@@ -204,6 +496,79 @@ namespace Linq2d
 
         public static IArrayTransform<T1, T2, T3, T4, T5, T6, T7, R> SelectMany<T1, T2, T3, T4, T5, T6, T7, _, R>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, _> source, Func<object, Result<R>> secondSelector, Expression<Func<_, RelativeCell<R>, R>> resultSelector)
             => new ArrayQuery<T1, T2, T3, T4, T5, T6, T7, R>(source, secondSelector(default), resultSelector);
+
+        #region 7 arrays, 2 results
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, R1, R2> Select<T1, T2, T3, T4, T5, T6, T7, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, R1, R2>(source, resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, _> source, Func<object, T7[,]> getSource, Expression<Func<_, Cell<T7>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, R1, R2>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, _> source, Func<object, ArraySource<T7>> getSource, Expression<Func<_, Cell<T7>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, R1, R2>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, R1, R2>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, R1, R2>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, R1, R2>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, R1, R2>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, R1, R2>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, R1, R2>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, R1, R2>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, R1, R2>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, R1, R2> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, R1, R2>(source, resultSelector);
+*/
+        #endregion
+        #region 7 arrays, 3 results
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3> Select<T1, T2, T3, T4, T5, T6, T7, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, _> source, Expression<Func<_, (R1, R2, R3)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3>(source, resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, _> source, Func<object, T7[,]> getSource, Expression<Func<_, Cell<T7>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, _> source, Func<object, ArraySource<T7>> getSource, Expression<Func<_, Cell<T7>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3>(source, resultSelector);
+*/
+        #endregion
+        #region 7 arrays, 4 results
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3, R4> Select<T1, T2, T3, T4, T5, T6, T7, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, _> source, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3, R4>(source, resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, _> source, Func<object, T7[,]> getSource, Expression<Func<_, Cell<T7>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3, R4>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, _> source, Func<object, ArraySource<T7>> getSource, Expression<Func<_, Cell<T7>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3, R4>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3, R4>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3, R4>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3, R4>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3, R4>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3, R4>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3, R4>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3, R4> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3, R4>(source, resultSelector);
+*/
+        #endregion
         #endregion
 
         #region 8 arrays
@@ -218,6 +583,79 @@ namespace Linq2d
 
         public static IArrayTransform<T1, T2, T3, T4, T5, T6, T7, T8, R> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, _, R>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, _> source, Func<object, Result<R>> secondSelector, Expression<Func<_, RelativeCell<R>, R>> resultSelector)
             => new ArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, R>(source, secondSelector(default), resultSelector);
+
+        #region 8 arrays, 2 results
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2> Select<T1, T2, T3, T4, T5, T6, T7, T8, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2>(source, resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, _> source, Func<object, T8[,]> getSource, Expression<Func<_, Cell<T8>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, _> source, Func<object, ArraySource<T8>> getSource, Expression<Func<_, Cell<T8>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2>(source, resultSelector);
+*/
+        #endregion
+        #region 8 arrays, 3 results
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3> Select<T1, T2, T3, T4, T5, T6, T7, T8, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, _> source, Expression<Func<_, (R1, R2, R3)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3>(source, resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, _> source, Func<object, T8[,]> getSource, Expression<Func<_, Cell<T8>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, _> source, Func<object, ArraySource<T8>> getSource, Expression<Func<_, Cell<T8>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3>(source, resultSelector);
+*/
+        #endregion
+        #region 8 arrays, 4 results
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3, R4> Select<T1, T2, T3, T4, T5, T6, T7, T8, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, _> source, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3, R4>(source, resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, _> source, Func<object, T8[,]> getSource, Expression<Func<_, Cell<T8>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3, R4>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, _> source, Func<object, ArraySource<T8>> getSource, Expression<Func<_, Cell<T8>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3, R4>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3, R4>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3, R4>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3, R4>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3, R4>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3, R4>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3, R4>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3, R4> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, R1, R2, R3, R4>(source, resultSelector);
+*/
+        #endregion
         #endregion
 
         #region 9 arrays
@@ -232,6 +670,79 @@ namespace Linq2d
 
         public static IArrayTransform<T1, T2, T3, T4, T5, T6, T7, T8, T9, R> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, _, R>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, _> source, Func<object, Result<R>> secondSelector, Expression<Func<_, RelativeCell<R>, R>> resultSelector)
             => new ArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, R>(source, secondSelector(default), resultSelector);
+
+        #region 9 arrays, 2 results
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2> Select<T1, T2, T3, T4, T5, T6, T7, T8, T9, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2>(source, resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, _> source, Func<object, T9[,]> getSource, Expression<Func<_, Cell<T9>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, _> source, Func<object, ArraySource<T9>> getSource, Expression<Func<_, Cell<T9>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2>(source, resultSelector);
+*/
+        #endregion
+        #region 9 arrays, 3 results
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3> Select<T1, T2, T3, T4, T5, T6, T7, T8, T9, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, _> source, Expression<Func<_, (R1, R2, R3)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3>(source, resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, _> source, Func<object, T9[,]> getSource, Expression<Func<_, Cell<T9>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, _> source, Func<object, ArraySource<T9>> getSource, Expression<Func<_, Cell<T9>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3>(source, resultSelector);
+*/
+        #endregion
+        #region 9 arrays, 4 results
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3, R4> Select<T1, T2, T3, T4, T5, T6, T7, T8, T9, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, _> source, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3, R4>(source, resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, _> source, Func<object, T9[,]> getSource, Expression<Func<_, Cell<T9>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3, R4>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, _> source, Func<object, ArraySource<T9>> getSource, Expression<Func<_, Cell<T9>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3, R4>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3, R4>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3, R4>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3, R4>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3, R4>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3, R4>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3, R4>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3, R4> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, R1, R2, R3, R4>(source, resultSelector);
+*/
+        #endregion
         #endregion
 
         #region 10 arrays
@@ -246,6 +757,79 @@ namespace Linq2d
 
         public static IArrayTransform<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, _, R>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, _> source, Func<object, Result<R>> secondSelector, Expression<Func<_, RelativeCell<R>, R>> resultSelector)
             => new ArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R>(source, secondSelector(default), resultSelector);
+
+        #region 10 arrays, 2 results
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2> Select<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2>(source, resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, _> source, Func<object, T10[,]> getSource, Expression<Func<_, Cell<T10>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, _> source, Func<object, ArraySource<T10>> getSource, Expression<Func<_, Cell<T10>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2>(source, resultSelector);
+*/
+        #endregion
+        #region 10 arrays, 3 results
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3> Select<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, _> source, Expression<Func<_, (R1, R2, R3)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3>(source, resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, _> source, Func<object, T10[,]> getSource, Expression<Func<_, Cell<T10>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, _> source, Func<object, ArraySource<T10>> getSource, Expression<Func<_, Cell<T10>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3>(source, resultSelector);
+*/
+        #endregion
+        #region 10 arrays, 4 results
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3, R4> Select<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, _> source, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3, R4>(source, resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, _> source, Func<object, T10[,]> getSource, Expression<Func<_, Cell<T10>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3, R4>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, _> source, Func<object, ArraySource<T10>> getSource, Expression<Func<_, Cell<T10>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3, R4>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3, R4>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3, R4>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3, R4>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3, R4>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3, R4>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3, R4>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3, R4> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R1, R2, R3, R4>(source, resultSelector);
+*/
+        #endregion
         #endregion
 
         #region 11 arrays
@@ -260,6 +844,79 @@ namespace Linq2d
 
         public static IArrayTransform<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, _, R>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, _> source, Func<object, Result<R>> secondSelector, Expression<Func<_, RelativeCell<R>, R>> resultSelector)
             => new ArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R>(source, secondSelector(default), resultSelector);
+
+        #region 11 arrays, 2 results
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2> Select<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2>(source, resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, _> source, Func<object, T11[,]> getSource, Expression<Func<_, Cell<T11>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, _> source, Func<object, ArraySource<T11>> getSource, Expression<Func<_, Cell<T11>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2>(source, resultSelector);
+*/
+        #endregion
+        #region 11 arrays, 3 results
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3> Select<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, _> source, Expression<Func<_, (R1, R2, R3)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3>(source, resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, _> source, Func<object, T11[,]> getSource, Expression<Func<_, Cell<T11>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, _> source, Func<object, ArraySource<T11>> getSource, Expression<Func<_, Cell<T11>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3>(source, resultSelector);
+*/
+        #endregion
+        #region 11 arrays, 4 results
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3, R4> Select<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, _> source, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3, R4>(source, resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, _> source, Func<object, T11[,]> getSource, Expression<Func<_, Cell<T11>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3, R4>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, _> source, Func<object, ArraySource<T11>> getSource, Expression<Func<_, Cell<T11>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3, R4>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3, R4>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3, R4>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3, R4>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3, R4>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3, R4>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3, R4>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3, R4> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R1, R2, R3, R4>(source, resultSelector);
+*/
+        #endregion
         #endregion
 
         #region 12 arrays
@@ -274,6 +931,79 @@ namespace Linq2d
 
         public static IArrayTransform<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, _, R>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, _> source, Func<object, Result<R>> secondSelector, Expression<Func<_, RelativeCell<R>, R>> resultSelector)
             => new ArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R>(source, secondSelector(default), resultSelector);
+
+        #region 12 arrays, 2 results
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2> Select<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2>(source, resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, _> source, Func<object, T12[,]> getSource, Expression<Func<_, Cell<T12>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, _> source, Func<object, ArraySource<T12>> getSource, Expression<Func<_, Cell<T12>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2>(source, resultSelector);
+*/
+        #endregion
+        #region 12 arrays, 3 results
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3> Select<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, _> source, Expression<Func<_, (R1, R2, R3)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3>(source, resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, _> source, Func<object, T12[,]> getSource, Expression<Func<_, Cell<T12>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, _> source, Func<object, ArraySource<T12>> getSource, Expression<Func<_, Cell<T12>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3>(source, resultSelector);
+*/
+        #endregion
+        #region 12 arrays, 4 results
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3, R4> Select<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, _> source, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3, R4>(source, resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, _> source, Func<object, T12[,]> getSource, Expression<Func<_, Cell<T12>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3, R4>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, _> source, Func<object, ArraySource<T12>> getSource, Expression<Func<_, Cell<T12>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3, R4>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3, R4>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3, R4>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3, R4>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3, R4>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3, R4>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3, R4>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3, R4> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R1, R2, R3, R4>(source, resultSelector);
+*/
+        #endregion
         #endregion
 
         #region 13 arrays
@@ -288,6 +1018,79 @@ namespace Linq2d
 
         public static IArrayTransform<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, _, R>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, _> source, Func<object, Result<R>> secondSelector, Expression<Func<_, RelativeCell<R>, R>> resultSelector)
             => new ArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R>(source, secondSelector(default), resultSelector);
+
+        #region 13 arrays, 2 results
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2> Select<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2>(source, resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, _> source, Func<object, T13[,]> getSource, Expression<Func<_, Cell<T13>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, _> source, Func<object, ArraySource<T13>> getSource, Expression<Func<_, Cell<T13>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2>(source, resultSelector);
+*/
+        #endregion
+        #region 13 arrays, 3 results
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3> Select<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, _> source, Expression<Func<_, (R1, R2, R3)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3>(source, resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, _> source, Func<object, T13[,]> getSource, Expression<Func<_, Cell<T13>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, _> source, Func<object, ArraySource<T13>> getSource, Expression<Func<_, Cell<T13>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3>(source, resultSelector);
+*/
+        #endregion
+        #region 13 arrays, 4 results
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3, R4> Select<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, _> source, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3, R4>(source, resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, _> source, Func<object, T13[,]> getSource, Expression<Func<_, Cell<T13>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3, R4>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, _> source, Func<object, ArraySource<T13>> getSource, Expression<Func<_, Cell<T13>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3, R4>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3, R4>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3, R4>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3, R4>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3, R4>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3, R4>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3, R4>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3, R4> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R1, R2, R3, R4>(source, resultSelector);
+*/
+        #endregion
         #endregion
 
         #region 14 arrays
@@ -302,6 +1105,79 @@ namespace Linq2d
 
         public static IArrayTransform<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, _, R>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, _> source, Func<object, Result<R>> secondSelector, Expression<Func<_, RelativeCell<R>, R>> resultSelector)
             => new ArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R>(source, secondSelector(default), resultSelector);
+
+        #region 14 arrays, 2 results
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2> Select<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2>(source, resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, _> source, Func<object, T14[,]> getSource, Expression<Func<_, Cell<T14>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, _> source, Func<object, ArraySource<T14>> getSource, Expression<Func<_, Cell<T14>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2>(source, resultSelector);
+*/
+        #endregion
+        #region 14 arrays, 3 results
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3> Select<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, _> source, Expression<Func<_, (R1, R2, R3)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3>(source, resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, _> source, Func<object, T14[,]> getSource, Expression<Func<_, Cell<T14>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, _> source, Func<object, ArraySource<T14>> getSource, Expression<Func<_, Cell<T14>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3>(source, resultSelector);
+*/
+        #endregion
+        #region 14 arrays, 4 results
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3, R4> Select<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, _> source, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3, R4>(source, resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, _> source, Func<object, T14[,]> getSource, Expression<Func<_, Cell<T14>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3, R4>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, _> source, Func<object, ArraySource<T14>> getSource, Expression<Func<_, Cell<T14>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3, R4>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3, R4>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3, R4>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3, R4>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3, R4>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3, R4>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3, R4>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3, R4> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R1, R2, R3, R4>(source, resultSelector);
+*/
+        #endregion
         #endregion
 
         #region 15 arrays
@@ -316,6 +1192,79 @@ namespace Linq2d
 
         public static IArrayTransform<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, _, R>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, _> source, Func<object, Result<R>> secondSelector, Expression<Func<_, RelativeCell<R>, R>> resultSelector)
             => new ArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R>(source, secondSelector(default), resultSelector);
+
+        #region 15 arrays, 2 results
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2> Select<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2>(source, resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, _> source, Func<object, T15[,]> getSource, Expression<Func<_, Cell<T15>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, _> source, Func<object, ArraySource<T15>> getSource, Expression<Func<_, Cell<T15>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2>(source, resultSelector);
+*/
+        #endregion
+        #region 15 arrays, 3 results
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3> Select<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, _> source, Expression<Func<_, (R1, R2, R3)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3>(source, resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, _> source, Func<object, T15[,]> getSource, Expression<Func<_, Cell<T15>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, _> source, Func<object, ArraySource<T15>> getSource, Expression<Func<_, Cell<T15>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3>(source, resultSelector);
+*/
+        #endregion
+        #region 15 arrays, 4 results
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3, R4> Select<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, _> source, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3, R4>(source, resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, _> source, Func<object, T15[,]> getSource, Expression<Func<_, Cell<T15>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3, R4>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, _> source, Func<object, ArraySource<T15>> getSource, Expression<Func<_, Cell<T15>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3, R4>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3, R4>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3, R4>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3, R4>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3, R4>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3, R4>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3, R4>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3, R4> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R1, R2, R3, R4>(source, resultSelector);
+*/
+        #endregion
         #endregion
 
         #region 16 arrays
@@ -330,6 +1279,79 @@ namespace Linq2d
 
         public static IArrayTransform<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, _, R>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, _> source, Func<object, Result<R>> secondSelector, Expression<Func<_, RelativeCell<R>, R>> resultSelector)
             => new ArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R>(source, secondSelector(default), resultSelector);
+
+        #region 16 arrays, 2 results
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2> Select<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2>(source, resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, _> source, Func<object, T16[,]> getSource, Expression<Func<_, Cell<T16>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, _, R1, R2>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, _> source, Func<object, ArraySource<T16>> getSource, Expression<Func<_, Cell<T16>, (R1, R2)>> kernel)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2>(source, resultSelector);
+*/
+        #endregion
+        #region 16 arrays, 3 results
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3> Select<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, _> source, Expression<Func<_, (R1, R2, R3)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3>(source, resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, _> source, Func<object, T16[,]> getSource, Expression<Func<_, Cell<T16>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, _, R1, R2, R3>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, _> source, Func<object, ArraySource<T16>> getSource, Expression<Func<_, Cell<T16>, (R1, R2, R3)>> kernel)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3>(source, resultSelector);
+*/
+        #endregion
+        #region 16 arrays, 4 results
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3, R4> Select<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, _> source, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3, R4>(source, resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, _> source, Func<object, T16[,]> getSource, Expression<Func<_, Cell<T16>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3, R4>(source, getSource(default).Wrap(), kernel);
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, _, R1, R2, R3, R4>(this IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, _> source, Func<object, ArraySource<T16>> getSource, Expression<Func<_, Cell<T16>, (R1, R2, R3, R4)>> kernel)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3, R4>(source, getSource(default), kernel);
+
+/*
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3, R4>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3, R4>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3, R4>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3, R4>(source.Wrap(), secondSelector(default), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3, R4>(source, secondSelector(default).Wrap(), resultSelector);
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3, R4>(source, secondSelector(default), resultSelector);
+
+        public static IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3, R4> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
+            => new ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R1, R2, R3, R4>(source, resultSelector);
+*/
+        #endregion
         #endregion
 
         public static ArraySource<T> With<T>(this T[,] source, T initValue) => new ArraySource<T>(source, initValue);
