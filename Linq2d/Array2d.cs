@@ -131,8 +131,8 @@ namespace Linq2d
 
         public static IArrayQuery2<T1, T2, R1, R2> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
             => new ArrayQuery2<T1, T2, R1, R2>(source, resultSelector);
-//        public static IArrayTransform2<T1, T2, R1, R2> SelectMany<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Func<object, Result<R1>> secondSelector, Expression<Func<_, RelativeCell<R1>, (R1, R2)>> resultSelector)
-//            => new ArrayQuery2<T1, T2, R1, R2>(source, secondSelector(default), resultSelector);
+        public static IArrayTransform2<T1, T2, R1, R2> SelectMany<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Func<object, Result<R1>> secondSelector, Expression<Func<_, RelativeCell<R1>, (R1, R2)>> resultSelector)
+            => new ArrayQuery2<T1, T2, R1, R2>(source, secondSelector(default), resultSelector);
         #endregion
         #endregion
 

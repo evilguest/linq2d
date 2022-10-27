@@ -101,8 +101,6 @@ namespace Linq2d.Tests
             q = from d1 in xex.With(0)
                 from d2 in xex
                 select ValueTuple.Create(d1 + 0, d2 - 0);
-
-
             (x, y) = q.ToArrays();
 
             TestHelper.AssertEqual(xex, x);
@@ -111,17 +109,24 @@ namespace Linq2d.Tests
             q = from d1 in xex
                 from d2 in xex.With(0)
                 select ValueTuple.Create(d1 + 0, d2 - 0);
-
-
             (x, y) = q.ToArrays();
 
             TestHelper.AssertEqual(xex, x);
             TestHelper.AssertEqual(xex, y);
+
             q = from d1 in xex.With(0)
                 from d2 in xex.With(0)
                 select ValueTuple.Create(d1 + 0, d2 - 0);
+            (x, y) = q.ToArrays();
 
+            TestHelper.AssertEqual(xex, x);
+            TestHelper.AssertEqual(xex, y);
 
+            q = from d1 in xex
+                from d2 in xex
+                let a=d1
+                let b=d2
+                select ValueTuple.Create(d1 + 0, d2 - 0);
             (x, y) = q.ToArrays();
 
             TestHelper.AssertEqual(xex, x);
@@ -138,6 +143,19 @@ namespace Linq2d.Tests
             var addex = (from d in ArrayHelper.InitAllRand(h, w, seed) select d + divisor).ToArray();
             var (div, mod, add) = (from d in ArrayHelper.InitAllRand(h, w, seed)
                                    select ValueTuple.Create(d / divisor, d % divisor, d + divisor)).ToArrays();
+            TestHelper.AssertEqual(divex, div);
+            TestHelper.AssertEqual(modex, mod);
+            TestHelper.AssertEqual(addex, add);
+
+            (div, mod, add) = (from d in ArrayHelper.InitAllRand(h, w, seed).With(0)
+                               select ValueTuple.Create(d / divisor, d % divisor, d + divisor)).ToArrays();
+            TestHelper.AssertEqual(divex, div);
+            TestHelper.AssertEqual(modex, mod);
+            TestHelper.AssertEqual(addex, add);
+
+            (div, mod, add) = (from d in ArrayHelper.InitAllRand(h, w, seed)
+                               let t = d+0
+                               select ValueTuple.Create(t / divisor, d % divisor, t + divisor)).ToArrays();
             TestHelper.AssertEqual(divex, div);
             TestHelper.AssertEqual(modex, mod);
             TestHelper.AssertEqual(addex, add);
