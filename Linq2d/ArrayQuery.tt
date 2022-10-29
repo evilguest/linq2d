@@ -27,13 +27,13 @@ namespace Linq2d
             Source = source.Source;
         }
 
-        public ArrayQuery(ArraySource<T> source, object resultInit, LambdaExpression kernel): base(source, kernel, resultInit)
+        public ArrayQuery(ArraySource<T> source, R resultInit, LambdaExpression kernel): base(source, kernel, resultInit)
         {
             MethodName = new System.Diagnostics.StackTrace().GetFrame(3).GetMethod().Name;
             Source = source;
         }
 
-        public ArrayQuery(IArraySource<T> source, object resultInit, LambdaExpression kernel): base(source.Source, kernel, resultInit)
+        public ArrayQuery(IArraySource<T> source, R resultInit, LambdaExpression kernel): base(source.Source, kernel, resultInit)
         {
             MethodName = new System.Diagnostics.StackTrace().GetFrame(3).GetMethod().Name;
             Source = source.Source;
@@ -55,11 +55,11 @@ namespace Linq2d
     public interface IArrayQueryRecurrentHalf { }
     public interface IArrayQueryRecurrentHalf<T, R>: IArrayQueryRecurrentHalf, IArraySource<T> {}
 
-    public interface IArrayQueryRecurrent<T, R, A>: IArrayQueryRecurrentHalf<T, R> {}
+    public interface IArrayQueryRecurrent<T, R>: IArrayQueryRecurrentHalf<T, R> {}
 
-    internal class ArrayQueryRecurrent<T, R, A>: ArrayQuery<T, A>, IArrayQueryRecurrent<T, R, A>
+    internal class ArrayQueryRecurrent<T, R>: ArrayQuery<T, R>, IArrayQueryRecurrent<T, R>
     {
-        public ArrayQueryRecurrent(ArraySource<T> source, Result<R> result, Expression<Func<Cell<T>, RelativeCell<R>, A>> kernel): base(source, result.InitValue, kernel){}
+        public ArrayQueryRecurrent(ArraySource<T> source, R initValue, LambdaExpression kernel): base(source, initValue, kernel){}
     }
     
     #region one result
@@ -79,7 +79,7 @@ namespace Linq2d
             Source2 = source2 ?? throw new ArgumentNullException(nameof(source2));
         }
 
-        public ArrayQuery(IArraySource<T1, T2> sources, Result<R> result, LambdaExpression kernel) : base(sources, kernel, result.InitValue)
+        public ArrayQuery(IArraySource<T1, T2> sources, R initValue, LambdaExpression kernel) : base(sources, kernel, initValue)
         {
             MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
             Source1 = sources.Source1;
@@ -142,7 +142,7 @@ for(int i=1; i<n; i++)
             Source<#= n#> = source<#= n#> ?? throw new ArgumentNullException(nameof(source<#= n#>));
         }
 
-        public ArrayQuery(<#= TypeName("IArraySource", n,0)#> sources, Result<R> result, LambdaExpression kernel) : base(sources, kernel, result.InitValue)
+        public ArrayQuery(<#= TypeName("IArraySource", n,0)#> sources, R initValue, LambdaExpression kernel) : base(sources, kernel, initValue)
         {
             MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
 <#
@@ -202,7 +202,7 @@ for(int k=2; k <= maxRes; k++)
             MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
             Source = source;
         }
-        public ArrayQuery<#= k#>(ArraySource<T> source, Result<R1> result, Expression<Func<Cell<T>, RelativeCell<R1>, <#= ReturnTuple(k)#>>> kernel):base(source, kernel, result.InitValue)
+        public ArrayQuery<#= k#>(ArraySource<T> source, R1 initValue, Expression<Func<Cell<T>, RelativeCell<R1>, <#= ReturnTuple(k)#>>> kernel):base(source, kernel, initValue)
         {
             MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
             Source = source;
@@ -214,13 +214,13 @@ for(int k=2; k <= maxRes; k++)
             Source = source.Source;
         }
 
-        public ArrayQuery<#= k#>(IArraySource<T> source, Result<R1> result, LambdaExpression kernel):base(source, kernel, result.InitValue)
+        public ArrayQuery<#= k#>(IArraySource<T> source, R1 initValue, LambdaExpression kernel):base(source, kernel, initValue)
         {
             MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
             Source = source.Source;
         }
 
-        public ArrayQuery<#= k#>(IArrayQueryRecurrentHalf<T, R1> source, Result<R2> result, LambdaExpression kernel): base(source, kernel, result.InitValue)
+        public ArrayQuery<#= k#>(IArrayQueryRecurrentHalf<T, R1> source, R2 initValue, LambdaExpression kernel): base(source, kernel, initValue)
         {
             MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
             Source = source.Source;
@@ -261,7 +261,7 @@ for(int k=2; k <= maxRes; k++)
             Source1 = sources.Source1;
             Source2 = sources.Source2;
         }
-        public ArrayQuery<#= k#>(IArraySource<T1, T2> sources, Result<R1> result, LambdaExpression kernel) : base(sources, kernel, result.InitValue)
+        public ArrayQuery<#= k#>(IArraySource<T1, T2> sources, R1 initValue, LambdaExpression kernel) : base(sources, kernel, initValue)
         {
             MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
             Source1 = sources.Source1;
@@ -323,7 +323,7 @@ for(int i=1; i<n; i++)
 }
 #>
         }
-        public ArrayQuery<#= k#>(<#= TypeName("IArraySource", n-1,0)#> sources, Result<R1> result, LambdaExpression kernel) : base(sources, kernel, result.InitValue)
+        public ArrayQuery<#= k#>(<#= TypeName("IArraySource", n-1,0)#> sources, R1 initValue, LambdaExpression kernel) : base(sources, kernel, initValue)
         {
             MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
 <#

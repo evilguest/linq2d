@@ -4,7 +4,7 @@ namespace Linq2d
 {
     internal abstract class ArrayQuery<R>: ArrayQueryBase
     {
-        protected ArrayQuery(ArraySource source, LambdaExpression kernel, object initValue) : base(source, kernel, initValue) { }
+        protected ArrayQuery(ArraySource source, LambdaExpression kernel, R initValue) : base(source, kernel, initValue) { }
         protected ArrayQuery(IArrayQuery sources, LambdaExpression kernel, R initValue) : base(sources, kernel, initValue) { }
         protected ArrayQuery(ArraySource source, LambdaExpression kernel) : base(source, kernel) { }
         protected ArrayQuery(IArrayQuery sources, LambdaExpression kernel) : base(sources, kernel) { }
