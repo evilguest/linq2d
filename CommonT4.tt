@@ -1,0 +1,36 @@
+﻿<#+
+    private static int maxArg = 4;
+    private static int maxRes = 4;
+
+    private static string Plural(string word, int c) => word + (c > 1 ? "s" : "");
+    private static string ToArrays(int c) => Plural("ToArray", c);
+
+    private static string TypeName(string prefix, int inputs, int outputs) 
+        => prefix
+            + (outputs > 1 ? outputs.ToString() : "")
+            + TemplateArgs(inputs, outputs);
+    private static string FuncSignature(int inputs, int outputs)
+        => "Func" + TemplateArgsTuple(inputs, outputs);
+    private static string FuncArraySignature(int inputs, int outputs)
+        => "Func" + TemplateArgsTuple(inputs, outputs, "[,]");
+    private static string TemplateArgs(int inputs, int outputs)
+        => "<" + string.Join(", ", RepeatArgs("T", inputs).Concat(RepeatArgs("R", outputs))) + ">";
+    private static string TemplateArrArgs(int inputs, int outputs)
+        => "<" + string.Join(", ", RepeatArgs("T", inputs, "[,]").Concat(RepeatArgs("R", outputs, "[,]"))) + ">";
+    private static string TemplateArgsTuple(int inputs, int outputs, string suffix = "")
+        => "<" + string.Join(", ", RepeatArgs("T", inputs, suffix).Append(ReturnTuple(outputs, suffix))) + ">";
+
+    private static string Tuple(string prefix, int n, string suffix="")
+        => n == 1 ? prefix+suffix : "(" + string.Join(", ", RepeatArgs(prefix, n, suffix)) + ")";
+    private static string ReturnTuple(int n, string suffix = "")
+        => Tuple("R", n, suffix);
+
+    private static string TemplateArgsSkip(int inputs, int outputs)
+        => "<" + string.Join(", ", RepeatArgs("T", inputs).Append("_").Concat(RepeatArgs("R", outputs))) + ">";
+    private static string TemplateArgsSkipOne(int inputs, int outputs)
+        => "<" + string.Join(", ", RepeatArgsZero("T", inputs).Append("_").Concat(RepeatArgs("R", outputs))) + ">";
+    private static IEnumerable<string> RepeatArgs(string name, int count, string suffix = "")
+        => count == 1 ? new string[] { name + suffix } : RepeatArgsZero(name, count, suffix);
+    private static IEnumerable<string> RepeatArgsZero(string name, int count, string suffix = "")
+        => Enumerable.Range(1, count).Select(i => name + i.ToString() + suffix);
+ #>

@@ -1,60 +1,35 @@
 ﻿<#@ template debug="false" hostspecific="false" language="C#" #>
 <#@ output extension=".cs" #>
-<#int maxArg = 16;#>
-<#int maxRes = 4;#>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ include file="..\CommonT4.tt" #>
+
 using System;
 
 namespace Linq2d
 {
-
-    #region Single result
-    public interface IArrayTransform<T, R>: IArray<R>
-    {
-        Func<T[,], R[,]> Transform { get; }
-    }
-
 <#
-for(int n=2; n<=maxArg; n++)
+for(int k=1; k<=maxRes; k++)
 {
 #>
-
-    public interface IArrayTransform<<#for(int i=0; i<n; i++){ #>T<#= i+1 #>, <# } #>R> : IArray<R>
-    {
-        Func<<#for(int i=0; i<n; i++){ #>T<#= i+1 #>[,], <# } #>R[,]> Transform { get; }
-    }
+    #region <#=k#> <#= Plural("result", k)#>
 <#
-}
-#>
-    #endregion
-
-
-<#
-for(int k=2; k<=maxRes; k++)
-{
-#>
-
-    #region <#=k#> results
-
-    public interface IArrayTransform<#=k#><T, R1<#for(int i=1; i<k; i++){ #>, R<#= i+1 #><# } #>>: IArray<R1<#for(int i=1; i<k; i++){ #>, R<#= i+1 #><# } #>>
-    {
-        Func<T[,], (R1[,]<#for(int i=1; i<k; i++){ #>, R<#= i+1 #>[,]<# } #>)> Transform { get; }
-    }
-
-<#
-  for(int n=2; n<=maxArg; n++)
+  for(int n=1; n<=maxArg; n++)
   {
 #>
 
-    public interface IArrayTransform<#=k#><<#for(int i=0; i<n; i++){ #>T<#= i+1 #>, <# } #>R1<#for(int i=1; i<k; i++){ #>, R<#= i+1 #><# } #>>: IArray<R1<#for(int i=1; i<k; i++){ #>, R<#= i+1 #><# } #>>
+    public interface <#= TypeName("IArrayTransform", n, k)#> : IArray<#= TemplateArgs(0, k)#>
     {
-        Func<<#for(int i=0; i<n; i++){ #>T<#= i+1 #>[,], <# } #>(R1[,]<#for(int i=1; i<k; i++){ #>, R<#= i+1 #>[,]<# } #>)> Transform { get; }
+        <#= FuncArraySignature(n, k)#> Transform { get; }
     }
 <#
   }
 #>
     #endregion
+
 <#
 }
 #>
-
 }

@@ -1,21 +1,19 @@
 ﻿<#@ template debug="false" hostspecific="false" language="C#" #>
 <#@ output extension=".cs" #>
-<#int maxRes = 4;#>
-
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Linq" #>
+<#@ include file="..\CommonT4.tt" #>
 namespace Linq2d
 {
-    public interface IArray<R> {
-        R[,] ToArray();
-    };
-
 <#
-for(int n=2; n<=maxRes; n++)
+for(int k=1; k<=maxRes; k++)
 {
 #>
 
-    public interface IArray<R1<#for(int i=1; i<n; i++){ #>, R<#= i+1 #><# } #>>
+    public interface IArray<#= TemplateArgs(0, k)#>
     {
-        (R1<#for(int i=1; i<n; i++){ #>, R<#= i+1 #><# } #>) ToArrays();
+        <#= ReturnTuple(k, "[,]")#> <#= ToArrays(k)#>();
     }
 <#
 }

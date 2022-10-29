@@ -1,10 +1,10 @@
-﻿
-namespace Linq2d
+﻿namespace Linq2d
 {
-    public interface IArray<R> {
-        R[,] ToArray();
-    };
 
+    public interface IArray<R>
+    {
+        R[,] ToArray();
+    }
 
     public interface IArray<R1, R2>
     {

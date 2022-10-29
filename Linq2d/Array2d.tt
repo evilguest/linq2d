@@ -1,20 +1,15 @@
 ﻿<#@ template debug="false" hostspecific="false" language="C#" #>
 <#@ output extension=".cs" #>
 <#@ assembly name="System.Core" #>
-<#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.Linq" #>
-<#int maxRes = 4;#>
-<#int maxArg = 16;#>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ include file="..\CommonT4.tt" #>
 using System;
 using System.Linq.Expressions;
 
 namespace Linq2d
 {
-//    public static class Array2d<T>
-//    {
-//        public static IArrayQuery<T, R> Cast<R>(T[,] source) 
-//            => new ArrayQuery<T, R>(source.Wrap(), (t)=>(R)(object)t.Value);
-//    }
     public static class Array2d
     {
         #region control
@@ -32,40 +27,7 @@ namespace Linq2d
         
         #endregion
 
-        #region One array
-
-        /// <summary>
-        /// Plain select from the single 2d-array
-        /// </summary>
-        /// <typeparam name="T">Type of the source array element</typeparam>
-        /// <typeparam name="R">Type of the return array element</typeparam>
-        /// <param name="source">Source array</param>
-        /// <param name="kernel">filter kernel, expressed in terms of the Cell<typeparamref name="T"/> type, i.e. allowing both direct and relative access to the "current cell" </param>
-        /// <returns>Queryable array that can both be used for obtaining the filter result, and gettign the reusable transform function.</returns>
-        /// <exception cref="IndexOutOfRangeException">Is thrown if the kernel attempts accessing elements outside of the array</exception>
-        public static IArrayQuery<T, R> Select<T, R>(this T[,] source, Expression<Func<Cell<T>, R>> kernel) 
-            => new ArrayQuery<T, R>(source.Wrap(), kernel);
-        /// <summary>
-        /// Plain select from the single 2d-array
-        /// </summary>
-        /// <typeparam name="T">Type of the source array element</typeparam>
-        /// <typeparam name="R">Type of the return array element</typeparam>
-        /// <param name="source">Wrapped source array. Allows to define the replacement value that's used when the kernel accesses an element outside of the source array.</param>
-        /// <param name="kernel">filter kernel, expressed in terms of the Cell<typeparamref name="T"/> type, i.e. allowing both direct and relative access to the "current cell" </param>
-        /// <returns>Queryable array that can both be used for obtaining the filter result, and gettign the reusable transform function.</returns>
-        public static IArrayQuery<T, R> Select<T, R>(this ArraySource<T> source, Expression<Func<Cell<T>, R>> kernel) 
-            => new ArrayQuery<T, R>(source, kernel);
-
-        public static IArrayQuery<T, R> Select<T, _, R>(this IArrayQuery<T, _> source, Expression<Func<_, R>> kernel) 
-            => new ArrayQuery<T, R>(source, kernel);
-
-        #endregion
-
         #region One array recurrent
-        public static IArrayTransform<T, R> SelectMany<T, R>(this T[,] source, Func<object, Result<R>> secondSelector, Expression<Func<Cell<T>, RelativeCell<R>, R>> resultSelector) 
-            => new ArrayQuery<T, R>(source.Wrap(), secondSelector(default).InitValue, resultSelector);
-        public static IArrayTransform<T, R> SelectMany<T, R>(this ArraySource<T> source, Func<object, Result<R>> secondSelector, Expression<Func<Cell<T>, RelativeCell<R>, R>> resultSelector)
-            => new ArrayQuery<T, R>(source, secondSelector(default).InitValue, resultSelector);
         public static IArrayQueryRecurrent<T, R, A> SelectMany<T, R, A>(this T[,] source, Func<object, Result<R>> secondSelector, Expression<Func<Cell<T>, RelativeCell<R>, A>> resultSelector)
         where A: class
         where R: unmanaged
@@ -76,118 +38,78 @@ namespace Linq2d
             => new ArrayQueryRecurrent<T, R, A>(source, secondSelector(default), resultSelector);
         #endregion
 
-        #region One array two results
-        public static IArrayQuery2<T, R1, R2> Select<T, R1, R2>(this T[,] source, Expression<Func<Cell<T>, (R1, R2)>> kernel) 
-            => new ArrayQuery2<T, R1, R2>(source.Wrap(), kernel);
-        public static IArrayQuery2<T, R1, R2> Select<T, R1, R2>(this ArraySource<T> source, Expression<Func<Cell<T>, (R1, R2)>> kernel) 
-            => new ArrayQuery2<T, R1, R2>(source, kernel);
-        public static IArrayQuery2<T, R1, R2> Select<T, _, R1, R2>(this IArrayQuery<T, _> source, Expression<Func<_, (R1, R2)>> kernel) 
-            => new ArrayQuery2<T, R1, R2>(source, kernel);
-        #endregion
-
-        #region One array two results recurrent one
-        public static IArrayTransform2<T, R1, R2> SelectMany<T, R1, R2>(this T[,] source, Func<object, Result<R1>> secondSelector, Expression<Func<Cell<T>, RelativeCell<R1>, (R1, R2)>> resultSelector) 
-            => new ArrayQuery2<T, R1, R2>(source.Wrap(), secondSelector(default), resultSelector);
-        public static IArrayTransform2<T, R1, R2> SelectMany<T, R1, R2>(this ArraySource<T> source, Func<object, Result<R1>> secondSelector, Expression<Func<Cell<T>, RelativeCell<R1>, (R1, R2)>> resultSelector)
-            => new ArrayQuery2<T, R1, R2>(source, secondSelector(default), resultSelector);
-        #endregion
-
         #region One array two results recurrent two
         public static IArrayTransform2<T, R1, R2> SelectMany<T, _, R1, R2>(this IArrayQueryRecurrent<T, R1, _> source, Func<object, Result<R2>> secondSelector, Expression<Func<_, RelativeCell<R2>, (R1, R2)>> resultSelector) 
             => new ArrayQuery2<T, R1, R2>(source, secondSelector(default), resultSelector);
         #endregion
 
-        #region One array three results
-        public static IArrayTransform3<T, R1, R2, R3> Select<T, R1, R2, R3>(this T[,] source, Expression<Func<Cell<T>, (R1, R2, R3)>> kernel) 
-            => new ArrayQuery3<T, R1, R2, R3>(source.Wrap(), kernel);
-        public static IArrayQuery3<T, R1, R2, R3> Select<T, R1, R2, R3>(this ArraySource<T> source, Expression<Func<Cell<T>, (R1, R2, R3)>> kernel) 
-            => new ArrayQuery3<T, R1, R2, R3>(source, kernel);
-        public static IArrayQuery3<T, R1, R2, R3> Select<T, _, R1, R2, R3>(this IArrayQuery<T, _> source, Expression<Func<_, (R1, R2, R3)>> kernel) 
-            => new ArrayQuery3<T, R1, R2, R3>(source, kernel);
-        public static IArrayTransform3<T, R1, R2, R3> SelectMany<T, R1, R2, R3>(this T[,] source, Func<object, Result<R1>> secondSelector, Expression<Func<Cell<T>, RelativeCell<R1>, (R1, R2, R3)>> resultSelector) 
-            => new ArrayQuery3<T, R1, R2, R3>(source.Wrap(), secondSelector(default), resultSelector);
-
-
-        #endregion
-
-        #region Two arrays
-        #region Two arrays one result
-        public static IArrayQuery<T1, T2, R> SelectMany<T1, T2, R>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, R>> resultSelector)
-            => new ArrayQuery<T1, T2, R>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
-        public static IArrayQuery<T1, T2, R> SelectMany<T1, T2, R>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, R>> resultSelector)
-            => new ArrayQuery<T1, T2, R>(source.Wrap(), secondSelector(default), resultSelector);
-        public static IArrayQuery<T1, T2, R> SelectMany<T1, T2, R>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, R>> resultSelector) 
-            => new ArrayQuery<T1, T2, R>(source, secondSelector(default).Wrap(), resultSelector);
-        public static IArrayQuery<T1, T2, R> SelectMany<T1, T2, R>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, R>> resultSelector)
-            => new ArrayQuery<T1, T2, R>(source, secondSelector(default), resultSelector);
-
-        public static IArrayQuery<T1, T2, R> Select<T1, T2, _, R>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, R>> resultSelector)
-            => new ArrayQuery<T1, T2, R>(source, resultSelector);
-        public static IArrayTransform<T1, T2, R> SelectMany<T1, T2, _, R>(this IArrayQuery<T1, T2, _> source, Func<object, Result<R>> secondSelector, Expression<Func<_, RelativeCell<R>, R>> resultSelector)
-            => new ArrayQuery<T1, T2, R>(source, secondSelector(default), resultSelector);
-        #endregion
-        #region Two arrays two results
-        public static IArrayQuery2<#= TemplateArgs(2, 2)#> SelectMany<#= TemplateArgs(2, 2)#>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
-            => new ArrayQuery2<#= TemplateArgs(2, 2)#>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
-        public static IArrayQuery2<#= TemplateArgs(2, 2)#> SelectMany<#= TemplateArgs(2, 2)#>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
-            => new ArrayQuery2<#= TemplateArgs(2, 2)#>(source.Wrap(), secondSelector(default), resultSelector);
-        public static IArrayQuery2<#= TemplateArgs(2, 2)#> SelectMany<#= TemplateArgs(2, 2)#>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
-            => new ArrayQuery2<#= TemplateArgs(2, 2)#>(source, secondSelector(default).Wrap(), resultSelector);
-        public static IArrayQuery2<#= TemplateArgs(2, 2)#> SelectMany<#= TemplateArgs(2, 2)#>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
-            => new ArrayQuery2<#= TemplateArgs(2, 2)#>(source, secondSelector(default), resultSelector);
-
-        public static IArrayQuery2<#= TemplateArgs(2, 2)#> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
-            => new ArrayQuery2<#= TemplateArgs(2, 2)#>(source, resultSelector);
-        public static IArrayTransform2<#= TemplateArgs(2, 2)#> SelectMany<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Func<object, Result<R1>> secondSelector, Expression<Func<_, RelativeCell<R1>, (R1, R2)>> resultSelector)
-            => new ArrayQuery2<#= TemplateArgs(2, 2)#>(source, secondSelector(default), resultSelector);
-        #endregion
-        #endregion
 <#
-for(int n=3; n<=maxArg; n++)
+for(int n=1; n<=maxArg; n++)
 {
 #>
 
-        #region <#= n#> arrays
-        public static IArrayQuery<#= TemplateArgs(n, 1)#> Select<#= TemplateArgsSkip(n, 1)#>(this IArrayQuery<#= TemplateArgsSkip(n, 0)#> source, Expression<Func<_, R>> resultSelector)
-            => new ArrayQuery<#= TemplateArgs(n, 1)#>(source, resultSelector);
-
-        public static IArrayQuery<#= TemplateArgs(n, 1)#> SelectMany<#= TemplateArgsSkip(n, 1)#>(this IArrayQuery<#= TemplateArgsSkip(n-1, 0)#> source, Func<object, T<#= n#>[,]> getSource, Expression<Func<_, Cell<T<#= n#>>, R>> kernel)
-            => new ArrayQuery<#= TemplateArgs(n, 1)#>(source, getSource(default).Wrap(), kernel);
-
-        public static IArrayQuery<#= TemplateArgs(n, 1)#> SelectMany<#= TemplateArgsSkip(n, 1)#>(this IArrayQuery<#= TemplateArgsSkip(n-1, 0)#> source, Func<object, ArraySource<T<#= n#>>> getSource, Expression<Func<_, Cell<T<#= n#>>, R>> kernel)
-            => new ArrayQuery<#= TemplateArgs(n, 1)#>(source, getSource(default), kernel);
-
-        public static IArrayTransform<#= TemplateArgs(n, 1)#> SelectMany<#= TemplateArgsSkip(n, 1)#>(this IArrayQuery<#= TemplateArgsSkip(n, 0)#> source, Func<object, Result<R>> secondSelector, Expression<Func<_, RelativeCell<R>, R>> resultSelector)
-            => new ArrayQuery<#= TemplateArgs(n, 1)#>(source, secondSelector(default), resultSelector);
+        #region <#= n#> <#= Plural("array", n)#>
 
 <#
-for(int k=2; k<=maxRes; k++)
+for(int k=1; k<=maxRes; k++)
 {
 #>
-        #region <#= n#> arrays, <#= k#> results
+        #region <#= n#> <#= Plural("array", n)#>, <#= k#> <#= Plural("result", k)#>
 
-        public static IArrayQuery<#= k#><#= TemplateArgs(n, k)#> Select<#= TemplateArgsSkip(n, k)#>(this IArrayQuery<#= TemplateArgsSkip(n, 0)#> source, Expression<Func<_, <#= ReturnTuple(k)#>>> resultSelector)
-            => new ArrayQuery<#= k#><#= TemplateArgs(n, k)#>(source, resultSelector);
-        public static IArrayQuery<#= k#><#= TemplateArgs(n, k)#> SelectMany<#= TemplateArgsSkip(n, k)#>(this IArrayQuery<#= TemplateArgsSkip(n-1, 0)#> source, Func<object, T<#= n#>[,]> getSource, Expression<Func<_, Cell<T<#= n#>>, <#= ReturnTuple(k)#>>> kernel)
-            => new ArrayQuery<#= k#><#= TemplateArgs(n, k)#>(source, getSource(default).Wrap(), kernel);
+<#
+    if(n==1)
+    {
+#>
+        public static <#= TypeName("IArrayQuery", n, k)#> Select<#= TemplateArgs(n, k)#>(this T[,] source, Expression<Func<Cell<T>, <#= ReturnTuple(k)#>>> resultSelector) 
+            => new <#= TypeName("ArrayQuery", n, k)#>(source.Wrap(), resultSelector);
+        public static <#= TypeName("IArrayQuery", n, k)#> Select<#= TemplateArgs(n, k)#>(this ArraySource<T> source, Expression<Func<Cell<T>, <#= ReturnTuple(k)#>>> resultSelector) 
+            => new <#= TypeName("ArrayQuery", n, k)#>(source, resultSelector);
+        public static <#= TypeName("IArrayTransform", n, k)#> SelectMany<#= TemplateArgs(n, k)#>(this T[,] source, Func<object, Result<R<#= k>1?1:""#>>> recurrentResult1Selector, Expression<Func<Cell<T>, RelativeCell<R<#= k>1?1:""#>>, <#= ReturnTuple(k)#>>> resultSelector) 
+            => new <#= TypeName("ArrayQuery", n, k)#>(source.Wrap(), recurrentResult1Selector(default), resultSelector);
+        public static <#= TypeName("IArrayTransform", n, k)#> SelectMany<#= TemplateArgs(n, k)#>(this ArraySource<T> source, Func<object, Result<R<#= k>1?1:""#>>> recurrentResult1Selector, Expression<Func<Cell<T>, RelativeCell<R<#= k>1?1:""#>>, <#= ReturnTuple(k)#>>> resultSelector) 
+            => new <#= TypeName("ArrayQuery", n, k)#>(source, recurrentResult1Selector(default), resultSelector);
 
-        public static IArrayQuery<#= k#><#= TemplateArgs(n, k)#> SelectMany<#= TemplateArgsSkip(n, k)#>(this IArrayQuery<#= TemplateArgsSkip(n-1, 0)#> source, Func<object, ArraySource<T<#= n#>>> getSource, Expression<Func<_, Cell<T<#= n#>>, <#= ReturnTuple(k)#>>> kernel)
-            => new ArrayQuery<#= k#><#= TemplateArgs(n, k)#>(source, getSource(default), kernel);
+<#
+    }
+#>
+        public static <#= TypeName("IArrayQuery", n, k)#> Select<#= TemplateArgsSkip(n, k)#>(this IArrayQuery<#= TemplateArgsSkip(n, 0)#> source, Expression<Func<_, <#= ReturnTuple(k)#>>> resultSelector)
+            => new <#= TypeName("ArrayQuery", n, k)#>(source, resultSelector);
 
-/*
-        public static IArrayQuery<#= k#><#= TemplateArgs(n, k)#> SelectMany<#= TemplateArgs(n, k)#>(this T1[,] source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
-            => new ArrayQuery<#= k#><#= TemplateArgs(n, k)#>(source.Wrap(), secondSelector(default).Wrap(), resultSelector);
-        public static IArrayQuery<#= k#><#= TemplateArgs(n, k)#> SelectMany<#= TemplateArgs(n, k)#>(this T1[,] source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
-            => new ArrayQuery<#= k#><#= TemplateArgs(n, k)#>(source.Wrap(), secondSelector(default), resultSelector);
-        public static IArrayQuery<#= k#><#= TemplateArgs(n, k)#> SelectMany<#= TemplateArgs(n, k)#>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector) 
-            => new ArrayQuery<#= k#><#= TemplateArgs(n, k)#>(source, secondSelector(default).Wrap(), resultSelector);
-        public static IArrayQuery<#= k#><#= TemplateArgs(n, k)#> SelectMany<#= TemplateArgs(n, k)#>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2)>> resultSelector)
-            => new ArrayQuery<#= k#><#= TemplateArgs(n, k)#>(source, secondSelector(default), resultSelector);
+<#
+    if(n==2)
+    {
+#>
+        public static <#= TypeName("IArrayQuery", n, k)#> SelectMany<#= TemplateArgs(n, k)#>(this T1[,] source, Func<object, T2[,]> source<#= 2#>Selector, Expression<Func<Cell<T1>, Cell<T2>, <#= ReturnTuple(k)#>>> resultSelector)
+            => new <#= TypeName("ArrayQuery", n, k)#>(source.Wrap(), source<#= n#>Selector(default).Wrap(), resultSelector);
+        public static <#= TypeName("IArrayQuery", n, k)#> SelectMany<#= TemplateArgs(n, k)#>(this T1[,] source, Func<object, ArraySource<T2>> source<#= 2#>Selector, Expression<Func<Cell<T1>, Cell<T2>,  <#= ReturnTuple(k)#>>> resultSelector)
+            => new <#= TypeName("ArrayQuery", n, k)#>(source.Wrap(), source<#= n#>Selector(default), resultSelector);
+        public static <#= TypeName("IArrayQuery", n, k)#> SelectMany<#= TemplateArgs(n, k)#>(this ArraySource<T1> source, Func<object, T2[,]> source<#= 2#>Selector, Expression<Func<Cell<T1>, Cell<T2>, <#= ReturnTuple(k)#>>> resultSelector) 
+            => new <#= TypeName("ArrayQuery", n, k)#>(source, source<#= 2#>Selector(default).Wrap(), resultSelector);
+        public static <#= TypeName("IArrayQuery", n, k)#> SelectMany<#= TemplateArgs(n, k)#>(this ArraySource<T1> source, Func<object, ArraySource<T2>> source<#= 2#>Selector, Expression<Func<Cell<T1>, Cell<T2>, <#= ReturnTuple(k)#>>> resultSelector)
+            => new <#= TypeName("ArrayQuery", n, k)#>(source, source<#= 2#>Selector(default), resultSelector);
 
-        public static IArrayQuery<#= k#><#= TemplateArgs(n, k)#> Select<T1, T2, _, R1, R2>(this IArrayQuery<T1, T2, _> source, Expression<Func<_, (R1, R2)>> resultSelector)
-            => new ArrayQuery<#= k#><#= TemplateArgs(n, k)#>(source, resultSelector);
-*/
+<#
+    }
+#>
+
+<#
+    if(n>1)
+    {
+#>
+        public static <#= TypeName("IArrayQuery", n, k)#> SelectMany<#= TemplateArgsSkip(n, k)#>(this IArrayQuery<#= TemplateArgsSkipOne(n-1, 0)#> source, Func<object, T<#= n>1?n:""#>[,]> source<#= n#>Selector, Expression<Func<_, Cell<T<#= n>1?n:""#>>, <#= ReturnTuple(k)#>>> kernel)
+            => new <#= TypeName("ArrayQuery", n, k)#>(source, source<#= n#>Selector(default).Wrap(), kernel);
+
+        public static <#= TypeName("IArrayQuery", n, k)#> SelectMany<#= TemplateArgsSkip(n, k)#>(this IArrayQuery<#= TemplateArgsSkipOne(n-1, 0)#> source, Func<object, ArraySource<T<#= n>1?n:""#>>> source<#= n#>Selector, Expression<Func<_, Cell<T<#= n>1?n:""#>>, <#= ReturnTuple(k)#>>> kernel)
+            => new <#= TypeName("ArrayQuery", n, k)#>(source, source<#= n#>Selector(default), kernel);
+
+<#
+    }
+#>
+        public static <#= TypeName("IArrayTransform", n, k)#> SelectMany<#= TemplateArgsSkip(n, k)#>(this IArrayQuery<#= TemplateArgsSkip(n, 0)#> source, Func<object, Result<R<#= k>1?1:""#>>> recurrentResult1Selector, Expression<Func<_, RelativeCell<R<#= k>1?1:""#>>, <#= ReturnTuple(k)#>>> resultSelector)
+            => new <#= TypeName("ArrayQuery", n, k)#>(source, recurrentResult1Selector(default), resultSelector);
+
         #endregion
+
 <#
 }
 #>
@@ -202,13 +124,3 @@ for(int k=2; k<=maxRes; k++)
     }
 
 }
-<#+
- private string TemplateArgs(int inputs, int outputs)
-   => "<"+string.Join(", ", RepeatArgs("T", inputs).Concat(RepeatArgs("R", outputs)))+">";
- private IEnumerable<string> RepeatArgs(string name, int count)
-   => count == 1 ? new string[]{name} : Enumerable.Range(1, count).Select(i=>name+i.ToString());
- private string TemplateArgsSkip(int inputs, int outputs)
-   => "<"+string.Join(", ", RepeatArgs("T", inputs).Append("_").Concat(RepeatArgs("R", outputs)))+">";
- private string ReturnTuple(int n)
-   => n == 1 ? "R" : "(" + string.Join(", ", RepeatArgs("R", n)) + ")";
-#>

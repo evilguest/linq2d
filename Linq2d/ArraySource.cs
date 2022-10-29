@@ -27,6 +27,8 @@ namespace Linq2d
     {
         public new T[,] Array { get => (T[,])base.Array; }
 
+        public ArraySource<T> Source => this;
+
         public ArraySource(T[,] source, T outOfBoundsValue) : base(source, OutOfBoundsStrategy.Substitute(outOfBoundsValue)) { }
         public ArraySource(T[,] source, OutOfBoundsStrategyUntyped outOfBoundsStrategy) : base(source, outOfBoundsStrategy) { }
 

@@ -3,4 +3,80 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ output extension=".txt" #>
+<#@ output extension=".cs" #>
+<#@ include file="..\CommonT4.tt" #>
+using System;
+using Xunit;
+
+namespace Linq2d.Tests
+{
+	public class Coverage
+	{
+		[Fact]
+		public void CoverageTest1arg1result()
+		{
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x in source
+				select x+0;
+			var r = q.ToArray();
+			TestHelper.AssertEqual(source, r);
+		}
+
+		[Fact]
+		public void CoverageTest1arg2results()
+		{
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x in source
+				select ValueTuple.Create(x+0, x+0);
+			var (r1, r2) = q.ToArrays();
+			TestHelper.AssertEqual(source, r1);
+			TestHelper.AssertEqual(source, r2);
+		}
+<#
+for(int k=1; k<=maxRes; k++)
+{
+#>
+		#region <#=k#> <#= Plural("result", k)#>
+<#
+	for(int n=1; n<=maxArg; n++)
+	{
+#>
+		[Fact]
+		public void Test<#=n#><#=Plural("Arg",n)#><#=k#><#=Plural("Result",k)#>()
+		{
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+<#
+		for(int s=1; s<=n; s++)
+		{
+#>
+				from x<#=s#> in source
+<#
+		}
+#>
+				select <#= ReturnValueTuple(k)#>;
+			var <#= Tuple("r", k)#> = q.<#= ToArrays(k)#>();
+<#
+		for(int s=1; s<=k; s++)
+		{
+#>
+			TestHelper.AssertEqual(ArrayHelper.InitAll(5, 5, <#=s#>), r<#= k > 1 ? s : ""#>);
+<#
+		}
+#>
+		}
+<#
+	}
+#>		#endregion
+
+<#
+}
+#>
+	}
+}
+<#+
+	private static string ReturnValueTuple(int k) => 
+		k == 1 ? "1" : "ValueTuple.Create" + Tuple("", k);
+#>

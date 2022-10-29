@@ -3,9 +3,7 @@
 <#@ assembly name="System.Core" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.Linq" #>
-<#@ include file="CommonT4.tt" #>
-<#int maxArg = 16;#>
-<#int maxRes = 4;#>
+<#@ include file="..\CommonT4.tt" #>
 using System;
 using System.Linq.Expressions;
 
@@ -33,6 +31,12 @@ namespace Linq2d
         {
             MethodName = new System.Diagnostics.StackTrace().GetFrame(3).GetMethod().Name;
             Source = source;
+        }
+
+        public ArrayQuery(IArraySource<T> source, object resultInit, LambdaExpression kernel): base(source.Source, kernel, resultInit)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(3).GetMethod().Name;
+            Source = source.Source;
         }
 
         public Func<T[,], R[,]> Transform
@@ -67,6 +71,14 @@ namespace Linq2d
             Source1 = source1 ?? throw new ArgumentNullException(nameof(source1));
             Source2 = source2 ?? throw new ArgumentNullException(nameof(source2));
         }
+
+        public ArrayQuery(IArraySource<T1> source, ArraySource<T2> source2, LambdaExpression kernel) : base(source.Source, source2, kernel)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = source.Source;
+            Source2 = source2 ?? throw new ArgumentNullException(nameof(source2));
+        }
+
         public ArrayQuery(IArraySource<T1, T2> sources, Result<R> result, LambdaExpression kernel) : base(sources, kernel, result.InitValue)
         {
             MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
@@ -177,7 +189,7 @@ for(int i=1; i<=n; i++)
 for(int k=2; k <= maxRes; k++)
 {
 #>
-    #region <#= k#> results
+    #region <#= k#> <#= Plural("result", k)#>
     internal class <#= TypeName("ArrayQuery", 1, k)#>: <#= TypeName("ArrayQuery", 0, k)#>, <#= TypeName("IArrayQuery", 1, k)#>
     {
         public ArraySource<T> Source { get; }
@@ -197,6 +209,12 @@ for(int k=2; k <= maxRes; k++)
         }
 
         public ArrayQuery<#= k#>(IArraySource<T> source, LambdaExpression kernel): base(source, kernel)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source = source.Source;
+        }
+
+        public ArrayQuery<#= k#>(IArraySource<T> source, Result<R1> result, LambdaExpression kernel):base(source, kernel, result.InitValue)
         {
             MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
             Source = source.Source;
@@ -229,6 +247,12 @@ for(int k=2; k <= maxRes; k++)
         {
             MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
             Source1 = source1 ?? throw new ArgumentNullException(nameof(source1));
+            Source2 = source2 ?? throw new ArgumentNullException(nameof(source2));
+        }
+        public ArrayQuery<#= k#>(IArraySource<T1> source, ArraySource<T2> source2, LambdaExpression kernel) : base(source.Source, source2, kernel)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = source.Source;
             Source2 = source2 ?? throw new ArgumentNullException(nameof(source2));
         }
         public ArrayQuery<#= k#>(IArraySource<T1, T2> sources, LambdaExpression kernel) : base(sources, kernel)
