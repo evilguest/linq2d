@@ -3,6 +3,7 @@
 <#@ assembly name="System.Core" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.Linq" #>
+<#@ include file="CommonT4.tt" #>
 <#int maxArg = 16;#>
 <#int maxRes = 4;#>
 using System;
@@ -10,7 +11,7 @@ using System.Linq.Expressions;
 
 namespace Linq2d
 {
-    internal class ArrayQuery<T, R>: ArrayQuery1<R>, IArrayQuery<T, R>
+    internal class ArrayQuery<T, R>: ArrayQuery<R>, IArrayQuery<T, R>
     {
         public ArraySource<T> Source { get; }
 
@@ -58,7 +59,7 @@ namespace Linq2d
     }
     
     #region one result
-    internal class ArrayQuery<T1, T2, R> : ArrayQuery1<R>, IArrayQuery<T1, T2, R>
+    internal class ArrayQuery<T1, T2, R> : ArrayQuery<R>, IArrayQuery<T1, T2, R>
     {
         public ArrayQuery(ArraySource<T1> source1, ArraySource<T2> source2, Expression<Func<Cell<T1>, Cell<T2>, R>> kernel) : base(source1, source2, kernel)
         {
@@ -102,7 +103,7 @@ for(int n=3; n<=maxArg; n++)
 {
 #>
 
-    internal class ArrayQuery<#= TemplateArgs(n, 1)#> : ArrayQuery1<R>, IArrayQuery<#= TemplateArgs(n, 1)#>
+    internal class <#= TypeName("ArrayQuery", n, 1)#> : ArrayQuery<R>, <#= TypeName("IArrayQuery", n, 1)#>
     {
 <#
 for(int i=0; i<n; i++)
@@ -113,9 +114,9 @@ for(int i=0; i<n; i++)
 }
 #>
 
-        private Func<#= TemplateArrArgs(n,1)#> _transform;
+        private <#= FuncArraySignature(n, 1)#> _transform;
 
-        public ArrayQuery(IArraySource<#= TemplateArgs(n-1,0)#> sources, ArraySource<T<#= n#>> source<#= n#>, LambdaExpression kernel) : base(sources, source<#= n#>, kernel)
+        public ArrayQuery(<#= TypeName("IArraySource", n-1,0)#> sources, ArraySource<T<#= n#>> source<#= n#>, LambdaExpression kernel) : base(sources, source<#= n#>, kernel)
         {
             MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
 <#
@@ -129,7 +130,7 @@ for(int i=1; i<n; i++)
             Source<#= n#> = source<#= n#> ?? throw new ArgumentNullException(nameof(source<#= n#>));
         }
 
-        public ArrayQuery(IArraySource<#= TemplateArgs(n,0)#> sources, Result<R> result, LambdaExpression kernel) : base(sources, kernel, result.InitValue)
+        public ArrayQuery(<#= TypeName("IArraySource", n,0)#> sources, Result<R> result, LambdaExpression kernel) : base(sources, kernel, result.InitValue)
         {
             MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
 <#
@@ -142,7 +143,7 @@ for(int i=1; i<=n; i++)
 #>
         }
 
-        public ArrayQuery(IArraySource<#= TemplateArgs(n,0)#> sources, LambdaExpression kernel) : base(sources, kernel)
+        public ArrayQuery(<#= TypeName("IArraySource", n,0)#> sources, LambdaExpression kernel) : base(sources, kernel)
         {
             MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
 <#
@@ -177,11 +178,11 @@ for(int k=2; k <= maxRes; k++)
 {
 #>
     #region <#= k#> results
-    internal class ArrayQuery<#= k#><#= TemplateArgs(1, k)#>: ArrayQuery<#= k#><#= TemplateArgs(0, k)#>, IArrayQuery<#= k#><#= TemplateArgs(1, k)#>
+    internal class <#= TypeName("ArrayQuery", 1, k)#>: <#= TypeName("ArrayQuery", 0, k)#>, <#= TypeName("IArrayQuery", 1, k)#>
     {
         public ArraySource<T> Source { get; }
 
-        private Func<T[,], <#= ReturnTuple(k, "[,]")#>> _transform;
+        private <#= FuncArraySignature(1, k)#> _transform;
 
 
         public ArrayQuery<#= k#>(ArraySource<T> source, Expression<Func<Cell<T>, <#= ReturnTuple(k)#>>> kernel) : base(source, kernel)
@@ -208,12 +209,12 @@ for(int k=2; k <= maxRes; k++)
         }
 
 
-        public Func<#= TemplateArgsTuple(1, k, "[,]")#> Transform
+        public <#= FuncArraySignature(1, k)#> Transform
         {
             get
             {
                 if (_transform == null)
-                    _transform = BuildTransform<Func<#= TemplateArgsTuple(1, k, "[,]")#>>();
+                    _transform = BuildTransform<<#= FuncArraySignature(1, k)#>>();
                 return _transform;
             }
         }
@@ -222,7 +223,7 @@ for(int k=2; k <= maxRes; k++)
 
     }
 
-    internal class ArrayQuery<#= k#><#= TemplateArgs(2, k)#> : ArrayQuery<#= k#><#= TemplateArgs(0, k)#>, IArrayQuery<#= k#><#= TemplateArgs(2, k)#>
+    internal class <#= TypeName("ArrayQuery", 2, k)#> : <#= TypeName("ArrayQuery", 0, k)#>, <#= TypeName("IArrayQuery", 2, k)#>
     {
         public ArrayQuery<#= k#>(ArraySource<T1> source1, ArraySource<T2> source2, Expression<Func<Cell<T1>, Cell<T2>, <#= ReturnTuple(k)#>>> kernel) : base(source1, source2, kernel)
         {
@@ -244,13 +245,13 @@ for(int k=2; k <= maxRes; k++)
         }
         public ArraySource<T1> Source1 { get; }
         public ArraySource<T2> Source2 { get; }
-        private Func<#= TemplateArgsTuple(2, k, "[,]")#> _transform;
-        public Func<#= TemplateArgsTuple(2, k, "[,]")#> Transform
+        private <#= FuncArraySignature(2, k)#> _transform;
+        public <#= FuncArraySignature(2, k)#> Transform
         {
             get
             {
                 if (_transform == null)
-                    _transform = BuildTransform<Func<#= TemplateArgsTuple(2, k, "[,]")#>>();
+                    _transform = BuildTransform<<#= FuncArraySignature(2, k)#>>();
                 return _transform;
             }
         }
@@ -263,7 +264,7 @@ for(int k=2; k <= maxRes; k++)
 for(int n=3; n<=maxArg; n++)
 {
 #>
-    internal class ArrayQuery<#= k#><#= TemplateArgs(n, k)#> : ArrayQuery<#= k#><#= TemplateArgs(0, k)#>, IArrayQuery<#= k#><#= TemplateArgs(n, k)#>
+    internal class <#= TypeName("ArrayQuery", n, k)#> : <#= TypeName("ArrayQuery", 0, k)#>, <#= TypeName("IArrayQuery", n, k)#>
     {
 <#
 for(int i=0; i<n; i++)
@@ -273,7 +274,7 @@ for(int i=0; i<n; i++)
 <#
 }
 #>
-        public ArrayQuery<#= k#>(IArraySource<#= TemplateArgs(n-1,0)#> sources, ArraySource<T<#= n#>> source<#= n#>, LambdaExpression kernel) : base(sources, source<#= n#>, kernel)
+        public ArrayQuery<#= k#>(<#= TypeName("IArraySource", n-1,0)#> sources, ArraySource<T<#= n#>> source<#= n#>, LambdaExpression kernel) : base(sources, source<#= n#>, kernel)
         {
             MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
 <#
@@ -286,7 +287,7 @@ for(int i=1; i<n; i++)
 #>
             Source<#= n#> = source<#= n#>;
         }
-        public ArrayQuery<#= k#>(IArraySource<#= TemplateArgs(n-1,0)#> sources, LambdaExpression kernel) : base(sources, kernel)
+        public ArrayQuery<#= k#>(<#= TypeName("IArraySource", n-1,0)#> sources, LambdaExpression kernel) : base(sources, kernel)
         {
             MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
 <#
@@ -298,7 +299,7 @@ for(int i=1; i<n; i++)
 }
 #>
         }
-        public ArrayQuery<#= k#>(IArraySource<#= TemplateArgs(n-1,0)#> sources, Result<R1> result, LambdaExpression kernel) : base(sources, kernel, result.InitValue)
+        public ArrayQuery<#= k#>(<#= TypeName("IArraySource", n-1,0)#> sources, Result<R1> result, LambdaExpression kernel) : base(sources, kernel, result.InitValue)
         {
             MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
 <#
@@ -310,13 +311,13 @@ for(int i=1; i<n; i++)
 }
 #>
         }
-        private Func<#= TemplateArgsTuple(n, k, "[,]")#> _transform;
-        public Func<#= TemplateArgsTuple(n, k, "[,]")#> Transform
+        private <#= FuncArraySignature(n, k)#> _transform;
+        public <#= FuncArraySignature(n, k)#> Transform
         {
             get
             {
                 if (_transform == null)
-                    _transform = BuildTransform<Func<#= TemplateArgsTuple(n, k, "[,]")#>>();
+                    _transform = BuildTransform<<#= FuncArraySignature(n, k)#>>();
                 return _transform;
             }
         }
@@ -332,19 +333,3 @@ for(int i=1; i<n; i++)
 } // k - results
 #>
 }
-<#+
- private string TemplateArgs(int inputs, int outputs)
-   => "<"+string.Join(", ", RepeatArgs("T", inputs).Concat(RepeatArgs("R", outputs)))+">";
- private string TemplateArrArgs(int inputs, int outputs)
-   => "<"+string.Join(", ", RepeatArgs("T", inputs, "[,]").Concat(RepeatArgs("R", outputs, "[,]")))+">";
- private string TemplateArgsTuple(int inputs, int outputs, string suffix="")
-   => "<"+string.Join(", ", RepeatArgs("T", inputs, suffix).Append(ReturnTuple(outputs, suffix)))+">";
-
- private string ReturnTuple(int n, string suffix="")
-   => n == 1 ? "R" : "(" + string.Join(", ", RepeatArgs("R", n, suffix)) + ")";
-
- private string TemplateArgsSkip(int inputs, int outputs)
-   => "<"+string.Join(", ", RepeatArgs("T", inputs).Append("_").Concat(RepeatArgs("R", outputs)))+">";
- private IEnumerable<string> RepeatArgs(string name, int count, string suffix="")
-   => count == 1 ? new string[]{name+suffix} : Enumerable.Range(1, count).Select(i=>name+i.ToString()+suffix);
-#>

@@ -30,6 +30,22 @@
     <ProjectReference Include="..\SauvolaBinarizeCPP\SauvolaBinarizeCPP.vcxproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="FullCoverageTest.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>FullCoverageTest.txt</LastGenOutput>
+    </None>
+    <None Update="FullCoverageTest.txt">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>FullCoverageTest.tt</DependentUpon>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Condition="'$(OS)' == 'Unix'" Command="cp $(ProjectDir)../SauvolaBinarizeCPP/x64/$(ConfigurationName)/SauvolaBinarizeCPP.so $(targetDir)" />
     <Exec Condition="'$(OS)' == 'Windows_NT'" Command="copy /Y $(ProjectDir)..\x64\$(ConfigurationName)\SauvolaBinarizeCPP.dll $(targetDir)" />

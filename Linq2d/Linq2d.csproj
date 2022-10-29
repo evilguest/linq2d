@@ -108,6 +108,9 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>ArrayQuery.cs</LastGenOutput>
     </None>
+    <None Update="CommonT4.tt">
+      <Generator></Generator>
+    </None>
     <None Update="IArray.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>IArray.cs</LastGenOutput>

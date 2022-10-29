@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace Linq2d
 {
-    internal class ArrayQuery<T, R>: ArrayQuery1<R>, IArrayQuery<T, R>
+    internal class ArrayQuery<T, R>: ArrayQuery<R>, IArrayQuery<T, R>
     {
         public ArraySource<T> Source { get; }
 
@@ -51,7 +51,7 @@ namespace Linq2d
     }
     
     #region one result
-    internal class ArrayQuery<T1, T2, R> : ArrayQuery1<R>, IArrayQuery<T1, T2, R>
+    internal class ArrayQuery<T1, T2, R> : ArrayQuery<R>, IArrayQuery<T1, T2, R>
     {
         public ArrayQuery(ArraySource<T1> source1, ArraySource<T2> source2, Expression<Func<Cell<T1>, Cell<T2>, R>> kernel) : base(source1, source2, kernel)
         {
@@ -91,7 +91,7 @@ namespace Linq2d
     }
     
 
-    internal class ArrayQuery<T1, T2, T3, R> : ArrayQuery1<R>, IArrayQuery<T1, T2, T3, R>
+    internal class ArrayQuery<T1, T2, T3, R> : ArrayQuery<R>, IArrayQuery<T1, T2, T3, R>
     {
         public ArraySource<T1> Source1{ get; }
         public ArraySource<T2> Source2{ get; }
@@ -136,7 +136,7 @@ namespace Linq2d
         protected override R[,] GetResult() => Transform(Source1.Array, Source2.Array, Source3.Array);
     }
 
-    internal class ArrayQuery<T1, T2, T3, T4, R> : ArrayQuery1<R>, IArrayQuery<T1, T2, T3, T4, R>
+    internal class ArrayQuery<T1, T2, T3, T4, R> : ArrayQuery<R>, IArrayQuery<T1, T2, T3, T4, R>
     {
         public ArraySource<T1> Source1{ get; }
         public ArraySource<T2> Source2{ get; }
@@ -185,7 +185,7 @@ namespace Linq2d
         protected override R[,] GetResult() => Transform(Source1.Array, Source2.Array, Source3.Array, Source4.Array);
     }
 
-    internal class ArrayQuery<T1, T2, T3, T4, T5, R> : ArrayQuery1<R>, IArrayQuery<T1, T2, T3, T4, T5, R>
+    internal class ArrayQuery<T1, T2, T3, T4, T5, R> : ArrayQuery<R>, IArrayQuery<T1, T2, T3, T4, T5, R>
     {
         public ArraySource<T1> Source1{ get; }
         public ArraySource<T2> Source2{ get; }
@@ -238,7 +238,7 @@ namespace Linq2d
         protected override R[,] GetResult() => Transform(Source1.Array, Source2.Array, Source3.Array, Source4.Array, Source5.Array);
     }
 
-    internal class ArrayQuery<T1, T2, T3, T4, T5, T6, R> : ArrayQuery1<R>, IArrayQuery<T1, T2, T3, T4, T5, T6, R>
+    internal class ArrayQuery<T1, T2, T3, T4, T5, T6, R> : ArrayQuery<R>, IArrayQuery<T1, T2, T3, T4, T5, T6, R>
     {
         public ArraySource<T1> Source1{ get; }
         public ArraySource<T2> Source2{ get; }
@@ -295,7 +295,7 @@ namespace Linq2d
         protected override R[,] GetResult() => Transform(Source1.Array, Source2.Array, Source3.Array, Source4.Array, Source5.Array, Source6.Array);
     }
 
-    internal class ArrayQuery<T1, T2, T3, T4, T5, T6, T7, R> : ArrayQuery1<R>, IArrayQuery<T1, T2, T3, T4, T5, T6, T7, R>
+    internal class ArrayQuery<T1, T2, T3, T4, T5, T6, T7, R> : ArrayQuery<R>, IArrayQuery<T1, T2, T3, T4, T5, T6, T7, R>
     {
         public ArraySource<T1> Source1{ get; }
         public ArraySource<T2> Source2{ get; }
@@ -356,7 +356,7 @@ namespace Linq2d
         protected override R[,] GetResult() => Transform(Source1.Array, Source2.Array, Source3.Array, Source4.Array, Source5.Array, Source6.Array, Source7.Array);
     }
 
-    internal class ArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, R> : ArrayQuery1<R>, IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, R>
+    internal class ArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, R> : ArrayQuery<R>, IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, R>
     {
         public ArraySource<T1> Source1{ get; }
         public ArraySource<T2> Source2{ get; }
@@ -421,7 +421,7 @@ namespace Linq2d
         protected override R[,] GetResult() => Transform(Source1.Array, Source2.Array, Source3.Array, Source4.Array, Source5.Array, Source6.Array, Source7.Array, Source8.Array);
     }
 
-    internal class ArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, R> : ArrayQuery1<R>, IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, R>
+    internal class ArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, R> : ArrayQuery<R>, IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, R>
     {
         public ArraySource<T1> Source1{ get; }
         public ArraySource<T2> Source2{ get; }
@@ -490,7 +490,7 @@ namespace Linq2d
         protected override R[,] GetResult() => Transform(Source1.Array, Source2.Array, Source3.Array, Source4.Array, Source5.Array, Source6.Array, Source7.Array, Source8.Array, Source9.Array);
     }
 
-    internal class ArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R> : ArrayQuery1<R>, IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R>
+    internal class ArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R> : ArrayQuery<R>, IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R>
     {
         public ArraySource<T1> Source1{ get; }
         public ArraySource<T2> Source2{ get; }
@@ -563,7 +563,7 @@ namespace Linq2d
         protected override R[,] GetResult() => Transform(Source1.Array, Source2.Array, Source3.Array, Source4.Array, Source5.Array, Source6.Array, Source7.Array, Source8.Array, Source9.Array, Source10.Array);
     }
 
-    internal class ArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R> : ArrayQuery1<R>, IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R>
+    internal class ArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R> : ArrayQuery<R>, IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R>
     {
         public ArraySource<T1> Source1{ get; }
         public ArraySource<T2> Source2{ get; }
@@ -640,7 +640,7 @@ namespace Linq2d
         protected override R[,] GetResult() => Transform(Source1.Array, Source2.Array, Source3.Array, Source4.Array, Source5.Array, Source6.Array, Source7.Array, Source8.Array, Source9.Array, Source10.Array, Source11.Array);
     }
 
-    internal class ArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R> : ArrayQuery1<R>, IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R>
+    internal class ArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R> : ArrayQuery<R>, IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R>
     {
         public ArraySource<T1> Source1{ get; }
         public ArraySource<T2> Source2{ get; }
@@ -721,7 +721,7 @@ namespace Linq2d
         protected override R[,] GetResult() => Transform(Source1.Array, Source2.Array, Source3.Array, Source4.Array, Source5.Array, Source6.Array, Source7.Array, Source8.Array, Source9.Array, Source10.Array, Source11.Array, Source12.Array);
     }
 
-    internal class ArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R> : ArrayQuery1<R>, IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R>
+    internal class ArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R> : ArrayQuery<R>, IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R>
     {
         public ArraySource<T1> Source1{ get; }
         public ArraySource<T2> Source2{ get; }
@@ -806,7 +806,7 @@ namespace Linq2d
         protected override R[,] GetResult() => Transform(Source1.Array, Source2.Array, Source3.Array, Source4.Array, Source5.Array, Source6.Array, Source7.Array, Source8.Array, Source9.Array, Source10.Array, Source11.Array, Source12.Array, Source13.Array);
     }
 
-    internal class ArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R> : ArrayQuery1<R>, IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R>
+    internal class ArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R> : ArrayQuery<R>, IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R>
     {
         public ArraySource<T1> Source1{ get; }
         public ArraySource<T2> Source2{ get; }
@@ -895,7 +895,7 @@ namespace Linq2d
         protected override R[,] GetResult() => Transform(Source1.Array, Source2.Array, Source3.Array, Source4.Array, Source5.Array, Source6.Array, Source7.Array, Source8.Array, Source9.Array, Source10.Array, Source11.Array, Source12.Array, Source13.Array, Source14.Array);
     }
 
-    internal class ArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R> : ArrayQuery1<R>, IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R>
+    internal class ArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R> : ArrayQuery<R>, IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, R>
     {
         public ArraySource<T1> Source1{ get; }
         public ArraySource<T2> Source2{ get; }
@@ -988,7 +988,7 @@ namespace Linq2d
         protected override R[,] GetResult() => Transform(Source1.Array, Source2.Array, Source3.Array, Source4.Array, Source5.Array, Source6.Array, Source7.Array, Source8.Array, Source9.Array, Source10.Array, Source11.Array, Source12.Array, Source13.Array, Source14.Array, Source15.Array);
     }
 
-    internal class ArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R> : ArrayQuery1<R>, IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R>
+    internal class ArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R> : ArrayQuery<R>, IArrayQuery<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, R>
     {
         public ArraySource<T1> Source1{ get; }
         public ArraySource<T2> Source2{ get; }
