@@ -21,7 +21,7 @@ for(int n=1; n<=maxArg; n++)
 {
 #>
 
-    public interface IArrayQueryRecurrent<#=k>1?k:""#><#= TemplateArgsSkip(n, k)#> : /*IArraySource<#= TemplateArgs(n,0)#>, */<#= TypeName("IArrayQuery", n, k) #> {};
+    public interface IArrayQueryRecurrent<#=k>1?k:""#><#= TemplateArgsSkip(n, k)#> : IArraySource<#= TemplateArgs(n,0)#>, <#= TypeName("IArrayTransform", n, k) #> {};
 <#
 }
 #>

@@ -43,11 +43,11 @@ namespace Linq2d.Tests
 				select 0*x1;
 			r = q.ToArray();
 			TestHelper.AssertEqual(expect, r);
-			q = 
+			var q2 = 
 				from x1 in source.With(0)
 				let y = 0*x1
 				select 0*y + 0*x1;
-			r = q.ToArray();
+			r = q2.ToArray();
 			TestHelper.AssertEqual(expect, r);
 
 		}
@@ -84,12 +84,12 @@ namespace Linq2d.Tests
 				select 0*x1 + 0*x2;
 			r = q.ToArray();
 			TestHelper.AssertEqual(expect, r);
-			q = 
+			var q2 = 
 				from x1 in source
 				from x2 in source.With(0)
 				let y = 0*x1 + 0*x2
 				select 0*y + 0*x1 + 0*x2;
-			r = q.ToArray();
+			r = q2.ToArray();
 			TestHelper.AssertEqual(expect, r);
 
 		}
@@ -129,13 +129,13 @@ namespace Linq2d.Tests
 				select 0*x1 + 0*x2 + 0*x3;
 			r = q.ToArray();
 			TestHelper.AssertEqual(expect, r);
-			q = 
+			var q2 = 
 				from x1 in source
 				from x2 in source
 				from x3 in source.With(0)
 				let y = 0*x1 + 0*x2 + 0*x3
 				select 0*y + 0*x1 + 0*x2 + 0*x3;
-			r = q.ToArray();
+			r = q2.ToArray();
 			TestHelper.AssertEqual(expect, r);
 
 		}
@@ -178,14 +178,14 @@ namespace Linq2d.Tests
 				select 0*x1 + 0*x2 + 0*x3 + 0*x4;
 			r = q.ToArray();
 			TestHelper.AssertEqual(expect, r);
-			q = 
+			var q2 = 
 				from x1 in source
 				from x2 in source
 				from x3 in source
 				from x4 in source.With(0)
 				let y = 0*x1 + 0*x2 + 0*x3 + 0*x4
 				select 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4;
-			r = q.ToArray();
+			r = q2.ToArray();
 			TestHelper.AssertEqual(expect, r);
 
 		}
@@ -228,11 +228,11 @@ namespace Linq2d.Tests
 			(r1, r2) = q.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
 			TestHelper.AssertEqual(expect, r2);
-			q = 
+			var q2 = 
 				from x1 in source.With(0)
 				let y = 0*x1
 				select ValueTuple.Create(0*y + 0*x1, 0*y + 0*x1);
-			(r1, r2) = q.ToArrays();
+			(r1, r2) = q2.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
 			TestHelper.AssertEqual(expect, r2);
 
@@ -247,6 +247,22 @@ namespace Linq2d.Tests
 				from x1 in source
 				from z1 in Result.InitWith(0)
 				select ValueTuple.Create(0*z1[-1, -1] + 0*x1, 0*z1[-1, -1] + 0*x1);
+
+			var (r1, r2) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+
+		}
+		[Fact]
+		public void Test1Arg2ResultsWithRecurrence2()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from z1 in Result.InitWith(0)
+				from z2 in Result.InitWith(0)
+				select ValueTuple.Create(0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1);
 
 			var (r1, r2) = q.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
@@ -273,12 +289,12 @@ namespace Linq2d.Tests
 			(r1, r2) = q.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
 			TestHelper.AssertEqual(expect, r2);
-			q = 
+			var q2 = 
 				from x1 in source
 				from x2 in source.With(0)
 				let y = 0*x1 + 0*x2
 				select ValueTuple.Create(0*y + 0*x1 + 0*x2, 0*y + 0*x1 + 0*x2);
-			(r1, r2) = q.ToArrays();
+			(r1, r2) = q2.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
 			TestHelper.AssertEqual(expect, r2);
 
@@ -294,6 +310,23 @@ namespace Linq2d.Tests
 				from x2 in source
 				from z1 in Result.InitWith(0)
 				select ValueTuple.Create(0*z1[-1, -1] + 0*x1 + 0*x2, 0*z1[-1, -1] + 0*x1 + 0*x2);
+
+			var (r1, r2) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+
+		}
+		[Fact]
+		public void Test2Args2ResultsWithRecurrence2()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from z1 in Result.InitWith(0)
+				from z2 in Result.InitWith(0)
+				select ValueTuple.Create(0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1 + 0*x2, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1 + 0*x2);
 
 			var (r1, r2) = q.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
@@ -322,13 +355,13 @@ namespace Linq2d.Tests
 			(r1, r2) = q.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
 			TestHelper.AssertEqual(expect, r2);
-			q = 
+			var q2 = 
 				from x1 in source
 				from x2 in source
 				from x3 in source.With(0)
 				let y = 0*x1 + 0*x2 + 0*x3
 				select ValueTuple.Create(0*y + 0*x1 + 0*x2 + 0*x3, 0*y + 0*x1 + 0*x2 + 0*x3);
-			(r1, r2) = q.ToArrays();
+			(r1, r2) = q2.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
 			TestHelper.AssertEqual(expect, r2);
 
@@ -345,6 +378,24 @@ namespace Linq2d.Tests
 				from x3 in source
 				from z1 in Result.InitWith(0)
 				select ValueTuple.Create(0*z1[-1, -1] + 0*x1 + 0*x2 + 0*x3, 0*z1[-1, -1] + 0*x1 + 0*x2 + 0*x3);
+
+			var (r1, r2) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+
+		}
+		[Fact]
+		public void Test3Args2ResultsWithRecurrence2()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from z1 in Result.InitWith(0)
+				from z2 in Result.InitWith(0)
+				select ValueTuple.Create(0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1 + 0*x2 + 0*x3, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1 + 0*x2 + 0*x3);
 
 			var (r1, r2) = q.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
@@ -375,14 +426,14 @@ namespace Linq2d.Tests
 			(r1, r2) = q.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
 			TestHelper.AssertEqual(expect, r2);
-			q = 
+			var q2 = 
 				from x1 in source
 				from x2 in source
 				from x3 in source
 				from x4 in source.With(0)
 				let y = 0*x1 + 0*x2 + 0*x3 + 0*x4
 				select ValueTuple.Create(0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4);
-			(r1, r2) = q.ToArrays();
+			(r1, r2) = q2.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
 			TestHelper.AssertEqual(expect, r2);
 
@@ -400,6 +451,25 @@ namespace Linq2d.Tests
 				from x4 in source
 				from z1 in Result.InitWith(0)
 				select ValueTuple.Create(0*z1[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4, 0*z1[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4);
+
+			var (r1, r2) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+
+		}
+		[Fact]
+		public void Test4Args2ResultsWithRecurrence2()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from z1 in Result.InitWith(0)
+				from z2 in Result.InitWith(0)
+				select ValueTuple.Create(0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4);
 
 			var (r1, r2) = q.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
@@ -429,11 +499,11 @@ namespace Linq2d.Tests
 			TestHelper.AssertEqual(expect, r1);
 			TestHelper.AssertEqual(expect, r2);
 			TestHelper.AssertEqual(expect, r3);
-			q = 
+			var q2 = 
 				from x1 in source.With(0)
 				let y = 0*x1
 				select ValueTuple.Create(0*y + 0*x1, 0*y + 0*x1, 0*y + 0*x1);
-			(r1, r2, r3) = q.ToArrays();
+			(r1, r2, r3) = q2.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
 			TestHelper.AssertEqual(expect, r2);
 			TestHelper.AssertEqual(expect, r3);
@@ -449,6 +519,41 @@ namespace Linq2d.Tests
 				from x1 in source
 				from z1 in Result.InitWith(0)
 				select ValueTuple.Create(0*z1[-1, -1] + 0*x1, 0*z1[-1, -1] + 0*x1, 0*z1[-1, -1] + 0*x1);
+
+			var (r1, r2, r3) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+
+		}
+		[Fact]
+		public void Test1Arg3ResultsWithRecurrence2()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from z1 in Result.InitWith(0)
+				from z2 in Result.InitWith(0)
+				select ValueTuple.Create(0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1);
+
+			var (r1, r2, r3) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+
+		}
+		[Fact]
+		public void Test1Arg3ResultsWithRecurrence3()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from z1 in Result.InitWith(0)
+				from z2 in Result.InitWith(0)
+				from z3 in Result.InitWith(0)
+				select ValueTuple.Create(0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1);
 
 			var (r1, r2, r3) = q.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
@@ -478,12 +583,12 @@ namespace Linq2d.Tests
 			TestHelper.AssertEqual(expect, r1);
 			TestHelper.AssertEqual(expect, r2);
 			TestHelper.AssertEqual(expect, r3);
-			q = 
+			var q2 = 
 				from x1 in source
 				from x2 in source.With(0)
 				let y = 0*x1 + 0*x2
 				select ValueTuple.Create(0*y + 0*x1 + 0*x2, 0*y + 0*x1 + 0*x2, 0*y + 0*x1 + 0*x2);
-			(r1, r2, r3) = q.ToArrays();
+			(r1, r2, r3) = q2.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
 			TestHelper.AssertEqual(expect, r2);
 			TestHelper.AssertEqual(expect, r3);
@@ -500,6 +605,43 @@ namespace Linq2d.Tests
 				from x2 in source
 				from z1 in Result.InitWith(0)
 				select ValueTuple.Create(0*z1[-1, -1] + 0*x1 + 0*x2, 0*z1[-1, -1] + 0*x1 + 0*x2, 0*z1[-1, -1] + 0*x1 + 0*x2);
+
+			var (r1, r2, r3) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+
+		}
+		[Fact]
+		public void Test2Args3ResultsWithRecurrence2()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from z1 in Result.InitWith(0)
+				from z2 in Result.InitWith(0)
+				select ValueTuple.Create(0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1 + 0*x2, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1 + 0*x2, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1 + 0*x2);
+
+			var (r1, r2, r3) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+
+		}
+		[Fact]
+		public void Test2Args3ResultsWithRecurrence3()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from z1 in Result.InitWith(0)
+				from z2 in Result.InitWith(0)
+				from z3 in Result.InitWith(0)
+				select ValueTuple.Create(0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1 + 0*x2, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1 + 0*x2, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1 + 0*x2);
 
 			var (r1, r2, r3) = q.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
@@ -531,13 +673,13 @@ namespace Linq2d.Tests
 			TestHelper.AssertEqual(expect, r1);
 			TestHelper.AssertEqual(expect, r2);
 			TestHelper.AssertEqual(expect, r3);
-			q = 
+			var q2 = 
 				from x1 in source
 				from x2 in source
 				from x3 in source.With(0)
 				let y = 0*x1 + 0*x2 + 0*x3
 				select ValueTuple.Create(0*y + 0*x1 + 0*x2 + 0*x3, 0*y + 0*x1 + 0*x2 + 0*x3, 0*y + 0*x1 + 0*x2 + 0*x3);
-			(r1, r2, r3) = q.ToArrays();
+			(r1, r2, r3) = q2.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
 			TestHelper.AssertEqual(expect, r2);
 			TestHelper.AssertEqual(expect, r3);
@@ -555,6 +697,45 @@ namespace Linq2d.Tests
 				from x3 in source
 				from z1 in Result.InitWith(0)
 				select ValueTuple.Create(0*z1[-1, -1] + 0*x1 + 0*x2 + 0*x3, 0*z1[-1, -1] + 0*x1 + 0*x2 + 0*x3, 0*z1[-1, -1] + 0*x1 + 0*x2 + 0*x3);
+
+			var (r1, r2, r3) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+
+		}
+		[Fact]
+		public void Test3Args3ResultsWithRecurrence2()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from z1 in Result.InitWith(0)
+				from z2 in Result.InitWith(0)
+				select ValueTuple.Create(0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1 + 0*x2 + 0*x3, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1 + 0*x2 + 0*x3, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1 + 0*x2 + 0*x3);
+
+			var (r1, r2, r3) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+
+		}
+		[Fact]
+		public void Test3Args3ResultsWithRecurrence3()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from z1 in Result.InitWith(0)
+				from z2 in Result.InitWith(0)
+				from z3 in Result.InitWith(0)
+				select ValueTuple.Create(0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1 + 0*x2 + 0*x3, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1 + 0*x2 + 0*x3, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1 + 0*x2 + 0*x3);
 
 			var (r1, r2, r3) = q.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
@@ -588,14 +769,14 @@ namespace Linq2d.Tests
 			TestHelper.AssertEqual(expect, r1);
 			TestHelper.AssertEqual(expect, r2);
 			TestHelper.AssertEqual(expect, r3);
-			q = 
+			var q2 = 
 				from x1 in source
 				from x2 in source
 				from x3 in source
 				from x4 in source.With(0)
 				let y = 0*x1 + 0*x2 + 0*x3 + 0*x4
 				select ValueTuple.Create(0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4);
-			(r1, r2, r3) = q.ToArrays();
+			(r1, r2, r3) = q2.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
 			TestHelper.AssertEqual(expect, r2);
 			TestHelper.AssertEqual(expect, r3);
@@ -614,6 +795,47 @@ namespace Linq2d.Tests
 				from x4 in source
 				from z1 in Result.InitWith(0)
 				select ValueTuple.Create(0*z1[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4, 0*z1[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4, 0*z1[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4);
+
+			var (r1, r2, r3) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+
+		}
+		[Fact]
+		public void Test4Args3ResultsWithRecurrence2()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from z1 in Result.InitWith(0)
+				from z2 in Result.InitWith(0)
+				select ValueTuple.Create(0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4);
+
+			var (r1, r2, r3) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+
+		}
+		[Fact]
+		public void Test4Args3ResultsWithRecurrence3()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from z1 in Result.InitWith(0)
+				from z2 in Result.InitWith(0)
+				from z3 in Result.InitWith(0)
+				select ValueTuple.Create(0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4);
 
 			var (r1, r2, r3) = q.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
@@ -646,11 +868,11 @@ namespace Linq2d.Tests
 			TestHelper.AssertEqual(expect, r2);
 			TestHelper.AssertEqual(expect, r3);
 			TestHelper.AssertEqual(expect, r4);
-			q = 
+			var q2 = 
 				from x1 in source.With(0)
 				let y = 0*x1
 				select ValueTuple.Create(0*y + 0*x1, 0*y + 0*x1, 0*y + 0*x1, 0*y + 0*x1);
-			(r1, r2, r3, r4) = q.ToArrays();
+			(r1, r2, r3, r4) = q2.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
 			TestHelper.AssertEqual(expect, r2);
 			TestHelper.AssertEqual(expect, r3);
@@ -667,6 +889,63 @@ namespace Linq2d.Tests
 				from x1 in source
 				from z1 in Result.InitWith(0)
 				select ValueTuple.Create(0*z1[-1, -1] + 0*x1, 0*z1[-1, -1] + 0*x1, 0*z1[-1, -1] + 0*x1, 0*z1[-1, -1] + 0*x1);
+
+			var (r1, r2, r3, r4) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+			TestHelper.AssertEqual(expect, r4);
+
+		}
+		[Fact]
+		public void Test1Arg4ResultsWithRecurrence2()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from z1 in Result.InitWith(0)
+				from z2 in Result.InitWith(0)
+				select ValueTuple.Create(0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1);
+
+			var (r1, r2, r3, r4) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+			TestHelper.AssertEqual(expect, r4);
+
+		}
+		[Fact]
+		public void Test1Arg4ResultsWithRecurrence3()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from z1 in Result.InitWith(0)
+				from z2 in Result.InitWith(0)
+				from z3 in Result.InitWith(0)
+				select ValueTuple.Create(0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1);
+
+			var (r1, r2, r3, r4) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+			TestHelper.AssertEqual(expect, r4);
+
+		}
+		[Fact]
+		public void Test1Arg4ResultsWithRecurrence4()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from z1 in Result.InitWith(0)
+				from z2 in Result.InitWith(0)
+				from z3 in Result.InitWith(0)
+				from z4 in Result.InitWith(0)
+				select ValueTuple.Create(0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*z4[-1, -1] + 0*x1, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*z4[-1, -1] + 0*x1, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*z4[-1, -1] + 0*x1, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*z4[-1, -1] + 0*x1);
 
 			var (r1, r2, r3, r4) = q.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
@@ -699,12 +978,12 @@ namespace Linq2d.Tests
 			TestHelper.AssertEqual(expect, r2);
 			TestHelper.AssertEqual(expect, r3);
 			TestHelper.AssertEqual(expect, r4);
-			q = 
+			var q2 = 
 				from x1 in source
 				from x2 in source.With(0)
 				let y = 0*x1 + 0*x2
 				select ValueTuple.Create(0*y + 0*x1 + 0*x2, 0*y + 0*x1 + 0*x2, 0*y + 0*x1 + 0*x2, 0*y + 0*x1 + 0*x2);
-			(r1, r2, r3, r4) = q.ToArrays();
+			(r1, r2, r3, r4) = q2.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
 			TestHelper.AssertEqual(expect, r2);
 			TestHelper.AssertEqual(expect, r3);
@@ -722,6 +1001,66 @@ namespace Linq2d.Tests
 				from x2 in source
 				from z1 in Result.InitWith(0)
 				select ValueTuple.Create(0*z1[-1, -1] + 0*x1 + 0*x2, 0*z1[-1, -1] + 0*x1 + 0*x2, 0*z1[-1, -1] + 0*x1 + 0*x2, 0*z1[-1, -1] + 0*x1 + 0*x2);
+
+			var (r1, r2, r3, r4) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+			TestHelper.AssertEqual(expect, r4);
+
+		}
+		[Fact]
+		public void Test2Args4ResultsWithRecurrence2()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from z1 in Result.InitWith(0)
+				from z2 in Result.InitWith(0)
+				select ValueTuple.Create(0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1 + 0*x2, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1 + 0*x2, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1 + 0*x2, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1 + 0*x2);
+
+			var (r1, r2, r3, r4) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+			TestHelper.AssertEqual(expect, r4);
+
+		}
+		[Fact]
+		public void Test2Args4ResultsWithRecurrence3()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from z1 in Result.InitWith(0)
+				from z2 in Result.InitWith(0)
+				from z3 in Result.InitWith(0)
+				select ValueTuple.Create(0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1 + 0*x2, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1 + 0*x2, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1 + 0*x2, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1 + 0*x2);
+
+			var (r1, r2, r3, r4) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+			TestHelper.AssertEqual(expect, r4);
+
+		}
+		[Fact]
+		public void Test2Args4ResultsWithRecurrence4()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from z1 in Result.InitWith(0)
+				from z2 in Result.InitWith(0)
+				from z3 in Result.InitWith(0)
+				from z4 in Result.InitWith(0)
+				select ValueTuple.Create(0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*z4[-1, -1] + 0*x1 + 0*x2, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*z4[-1, -1] + 0*x1 + 0*x2, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*z4[-1, -1] + 0*x1 + 0*x2, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*z4[-1, -1] + 0*x1 + 0*x2);
 
 			var (r1, r2, r3, r4) = q.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
@@ -756,13 +1095,13 @@ namespace Linq2d.Tests
 			TestHelper.AssertEqual(expect, r2);
 			TestHelper.AssertEqual(expect, r3);
 			TestHelper.AssertEqual(expect, r4);
-			q = 
+			var q2 = 
 				from x1 in source
 				from x2 in source
 				from x3 in source.With(0)
 				let y = 0*x1 + 0*x2 + 0*x3
 				select ValueTuple.Create(0*y + 0*x1 + 0*x2 + 0*x3, 0*y + 0*x1 + 0*x2 + 0*x3, 0*y + 0*x1 + 0*x2 + 0*x3, 0*y + 0*x1 + 0*x2 + 0*x3);
-			(r1, r2, r3, r4) = q.ToArrays();
+			(r1, r2, r3, r4) = q2.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
 			TestHelper.AssertEqual(expect, r2);
 			TestHelper.AssertEqual(expect, r3);
@@ -781,6 +1120,69 @@ namespace Linq2d.Tests
 				from x3 in source
 				from z1 in Result.InitWith(0)
 				select ValueTuple.Create(0*z1[-1, -1] + 0*x1 + 0*x2 + 0*x3, 0*z1[-1, -1] + 0*x1 + 0*x2 + 0*x3, 0*z1[-1, -1] + 0*x1 + 0*x2 + 0*x3, 0*z1[-1, -1] + 0*x1 + 0*x2 + 0*x3);
+
+			var (r1, r2, r3, r4) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+			TestHelper.AssertEqual(expect, r4);
+
+		}
+		[Fact]
+		public void Test3Args4ResultsWithRecurrence2()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from z1 in Result.InitWith(0)
+				from z2 in Result.InitWith(0)
+				select ValueTuple.Create(0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1 + 0*x2 + 0*x3, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1 + 0*x2 + 0*x3, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1 + 0*x2 + 0*x3, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1 + 0*x2 + 0*x3);
+
+			var (r1, r2, r3, r4) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+			TestHelper.AssertEqual(expect, r4);
+
+		}
+		[Fact]
+		public void Test3Args4ResultsWithRecurrence3()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from z1 in Result.InitWith(0)
+				from z2 in Result.InitWith(0)
+				from z3 in Result.InitWith(0)
+				select ValueTuple.Create(0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1 + 0*x2 + 0*x3, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1 + 0*x2 + 0*x3, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1 + 0*x2 + 0*x3, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1 + 0*x2 + 0*x3);
+
+			var (r1, r2, r3, r4) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+			TestHelper.AssertEqual(expect, r4);
+
+		}
+		[Fact]
+		public void Test3Args4ResultsWithRecurrence4()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from z1 in Result.InitWith(0)
+				from z2 in Result.InitWith(0)
+				from z3 in Result.InitWith(0)
+				from z4 in Result.InitWith(0)
+				select ValueTuple.Create(0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*z4[-1, -1] + 0*x1 + 0*x2 + 0*x3, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*z4[-1, -1] + 0*x1 + 0*x2 + 0*x3, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*z4[-1, -1] + 0*x1 + 0*x2 + 0*x3, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*z4[-1, -1] + 0*x1 + 0*x2 + 0*x3);
 
 			var (r1, r2, r3, r4) = q.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
@@ -817,14 +1219,14 @@ namespace Linq2d.Tests
 			TestHelper.AssertEqual(expect, r2);
 			TestHelper.AssertEqual(expect, r3);
 			TestHelper.AssertEqual(expect, r4);
-			q = 
+			var q2 = 
 				from x1 in source
 				from x2 in source
 				from x3 in source
 				from x4 in source.With(0)
 				let y = 0*x1 + 0*x2 + 0*x3 + 0*x4
 				select ValueTuple.Create(0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4);
-			(r1, r2, r3, r4) = q.ToArrays();
+			(r1, r2, r3, r4) = q2.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
 			TestHelper.AssertEqual(expect, r2);
 			TestHelper.AssertEqual(expect, r3);
@@ -844,6 +1246,72 @@ namespace Linq2d.Tests
 				from x4 in source
 				from z1 in Result.InitWith(0)
 				select ValueTuple.Create(0*z1[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4, 0*z1[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4, 0*z1[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4, 0*z1[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4);
+
+			var (r1, r2, r3, r4) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+			TestHelper.AssertEqual(expect, r4);
+
+		}
+		[Fact]
+		public void Test4Args4ResultsWithRecurrence2()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from z1 in Result.InitWith(0)
+				from z2 in Result.InitWith(0)
+				select ValueTuple.Create(0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4);
+
+			var (r1, r2, r3, r4) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+			TestHelper.AssertEqual(expect, r4);
+
+		}
+		[Fact]
+		public void Test4Args4ResultsWithRecurrence3()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from z1 in Result.InitWith(0)
+				from z2 in Result.InitWith(0)
+				from z3 in Result.InitWith(0)
+				select ValueTuple.Create(0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4);
+
+			var (r1, r2, r3, r4) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+			TestHelper.AssertEqual(expect, r4);
+
+		}
+		[Fact]
+		public void Test4Args4ResultsWithRecurrence4()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from z1 in Result.InitWith(0)
+				from z2 in Result.InitWith(0)
+				from z3 in Result.InitWith(0)
+				from z4 in Result.InitWith(0)
+				select ValueTuple.Create(0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*z4[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*z4[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*z4[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4, 0*z1[-1, -1] + 0*z2[-1, -1] + 0*z3[-1, -1] + 0*z4[-1, -1] + 0*x1 + 0*x2 + 0*x3 + 0*x4);
 
 			var (r1, r2, r3, r4) = q.ToArrays();
 			TestHelper.AssertEqual(expect, r1);

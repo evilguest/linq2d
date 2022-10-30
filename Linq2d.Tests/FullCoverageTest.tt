@@ -86,7 +86,7 @@ for(int k=1; k<=maxRes; k++)
 <#
 		}
 #>
-			q = 
+			var q2 = 
 <#
 		for(int s=1; s<=n; s++)
 		{
@@ -97,7 +97,7 @@ for(int k=1; k<=maxRes; k++)
 #>
 				let y = <#= ChainSources(n)#>
 				select <#= ReturnValueTupleWithY(n, k)#>;
-			<#= Tuple("r", k)#> = q.<#= ToArrays(k)#>();
+			<#= Tuple("r", k)#> = q2.<#= ToArrays(k)#>();
 <#
 		for(int s=1; s<=k; s++)
 		{
@@ -110,7 +110,7 @@ for(int k=1; k<=maxRes; k++)
 		}
 
 <#
-		for(int r=1; r<=1; r++)
+		for(int r=1; r<=k; r++)
 		{
 #>
 		[Fact]

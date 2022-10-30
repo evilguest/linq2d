@@ -637,7 +637,7 @@ namespace Linq2d
     {
         public ArrayQueryRecurrent2(ArraySource<T> source, R1 initValue, LambdaExpression kernel): base(source, initValue, kernel){}
         
-        public ArrayQueryRecurrent2(IArraySource<T> sources, R1 initValue, LambdaExpression kernel): base(sources, initValue, kernel){}
+        public ArrayQueryRecurrent2(IArraySource<T> sources, R2 initValue, LambdaExpression kernel): base(sources, initValue, kernel){}
     }
 
 
@@ -695,7 +695,7 @@ namespace Linq2d
 
     internal class ArrayQueryRecurrent2<T1, T2, _, R1, R2>: ArrayQuery2<T1, T2, R1, R2>, IArrayQueryRecurrent2<T1, T2, _, R1, R2>
     {
-        public ArrayQueryRecurrent2(IArraySource<T1, T2> sources, R1 initValue, LambdaExpression kernel): base(sources, initValue, kernel){}
+        public ArrayQueryRecurrent2(IArraySource<T1, T2> sources, R2 initValue, LambdaExpression kernel): base(sources, initValue, kernel){}
     }
 
 
@@ -758,7 +758,7 @@ namespace Linq2d
 
     internal class ArrayQueryRecurrent2<T1, T2, T3, _, R1, R2>: ArrayQuery2<T1, T2, T3, R1, R2>, IArrayQueryRecurrent2<T1, T2, T3, _, R1, R2>
     {
-        public ArrayQueryRecurrent2(IArraySource<T1, T2, T3> sources, R1 initValue, LambdaExpression kernel): base(sources, initValue, kernel){}
+        public ArrayQueryRecurrent2(IArraySource<T1, T2, T3> sources, R2 initValue, LambdaExpression kernel): base(sources, initValue, kernel){}
     }
 
 
@@ -821,7 +821,7 @@ namespace Linq2d
 
     internal class ArrayQueryRecurrent2<T1, T2, T3, T4, _, R1, R2>: ArrayQuery2<T1, T2, T3, T4, R1, R2>, IArrayQueryRecurrent2<T1, T2, T3, T4, _, R1, R2>
     {
-        public ArrayQueryRecurrent2(IArraySource<T1, T2, T3, T4> sources, R1 initValue, LambdaExpression kernel): base(sources, initValue, kernel){}
+        public ArrayQueryRecurrent2(IArraySource<T1, T2, T3, T4> sources, R2 initValue, LambdaExpression kernel): base(sources, initValue, kernel){}
     }
 
 
@@ -997,7 +997,7 @@ namespace Linq2d
     {
         public ArrayQueryRecurrent3(ArraySource<T> source, R1 initValue, LambdaExpression kernel): base(source, initValue, kernel){}
         
-        public ArrayQueryRecurrent3(IArraySource<T> sources, R1 initValue, LambdaExpression kernel): base(sources, initValue, kernel){}
+        public ArrayQueryRecurrent3(IArraySource<T> sources, R3 initValue, LambdaExpression kernel): base(sources, initValue, kernel){}
     }
 
 
@@ -1065,7 +1065,7 @@ namespace Linq2d
 
     internal class ArrayQueryRecurrent3<T1, T2, _, R1, R2, R3>: ArrayQuery3<T1, T2, R1, R2, R3>, IArrayQueryRecurrent3<T1, T2, _, R1, R2, R3>
     {
-        public ArrayQueryRecurrent3(IArraySource<T1, T2> sources, R1 initValue, LambdaExpression kernel): base(sources, initValue, kernel){}
+        public ArrayQueryRecurrent3(IArraySource<T1, T2> sources, R3 initValue, LambdaExpression kernel): base(sources, initValue, kernel){}
     }
 
 
@@ -1134,7 +1134,7 @@ namespace Linq2d
 
     internal class ArrayQueryRecurrent3<T1, T2, T3, _, R1, R2, R3>: ArrayQuery3<T1, T2, T3, R1, R2, R3>, IArrayQueryRecurrent3<T1, T2, T3, _, R1, R2, R3>
     {
-        public ArrayQueryRecurrent3(IArraySource<T1, T2, T3> sources, R1 initValue, LambdaExpression kernel): base(sources, initValue, kernel){}
+        public ArrayQueryRecurrent3(IArraySource<T1, T2, T3> sources, R3 initValue, LambdaExpression kernel): base(sources, initValue, kernel){}
     }
 
 
@@ -1204,7 +1204,7 @@ namespace Linq2d
 
     internal class ArrayQueryRecurrent3<T1, T2, T3, T4, _, R1, R2, R3>: ArrayQuery3<T1, T2, T3, T4, R1, R2, R3>, IArrayQueryRecurrent3<T1, T2, T3, T4, _, R1, R2, R3>
     {
-        public ArrayQueryRecurrent3(IArraySource<T1, T2, T3, T4> sources, R1 initValue, LambdaExpression kernel): base(sources, initValue, kernel){}
+        public ArrayQueryRecurrent3(IArraySource<T1, T2, T3, T4> sources, R3 initValue, LambdaExpression kernel): base(sources, initValue, kernel){}
     }
 
 
@@ -1388,7 +1388,7 @@ namespace Linq2d
     {
         public ArrayQueryRecurrent4(ArraySource<T> source, R1 initValue, LambdaExpression kernel): base(source, initValue, kernel){}
         
-        public ArrayQueryRecurrent4(IArraySource<T> sources, R1 initValue, LambdaExpression kernel): base(sources, initValue, kernel){}
+        public ArrayQueryRecurrent4(IArraySource<T> sources, R4 initValue, LambdaExpression kernel): base(sources, initValue, kernel){}
     }
 
 
@@ -1466,7 +1466,7 @@ namespace Linq2d
 
     internal class ArrayQueryRecurrent4<T1, T2, _, R1, R2, R3, R4>: ArrayQuery4<T1, T2, R1, R2, R3, R4>, IArrayQueryRecurrent4<T1, T2, _, R1, R2, R3, R4>
     {
-        public ArrayQueryRecurrent4(IArraySource<T1, T2> sources, R1 initValue, LambdaExpression kernel): base(sources, initValue, kernel){}
+        public ArrayQueryRecurrent4(IArraySource<T1, T2> sources, R4 initValue, LambdaExpression kernel): base(sources, initValue, kernel){}
     }
 
 
@@ -1541,7 +1541,7 @@ namespace Linq2d
 
     internal class ArrayQueryRecurrent4<T1, T2, T3, _, R1, R2, R3, R4>: ArrayQuery4<T1, T2, T3, R1, R2, R3, R4>, IArrayQueryRecurrent4<T1, T2, T3, _, R1, R2, R3, R4>
     {
-        public ArrayQueryRecurrent4(IArraySource<T1, T2, T3> sources, R1 initValue, LambdaExpression kernel): base(sources, initValue, kernel){}
+        public ArrayQueryRecurrent4(IArraySource<T1, T2, T3> sources, R4 initValue, LambdaExpression kernel): base(sources, initValue, kernel){}
     }
 
 
@@ -1618,7 +1618,7 @@ namespace Linq2d
 
     internal class ArrayQueryRecurrent4<T1, T2, T3, T4, _, R1, R2, R3, R4>: ArrayQuery4<T1, T2, T3, T4, R1, R2, R3, R4>, IArrayQueryRecurrent4<T1, T2, T3, T4, _, R1, R2, R3, R4>
     {
-        public ArrayQueryRecurrent4(IArraySource<T1, T2, T3, T4> sources, R1 initValue, LambdaExpression kernel): base(sources, initValue, kernel){}
+        public ArrayQueryRecurrent4(IArraySource<T1, T2, T3, T4> sources, R4 initValue, LambdaExpression kernel): base(sources, initValue, kernel){}
     }
 
 

@@ -5,6 +5,9 @@
     private static string Plural(string word, int c) => word + (c > 1 ? "s" : "");
     private static string ToArrays(int c) => Plural("ToArray", c);
 
+    private static string ArrayQueryRecurrentA(int inputs, int outputs)
+        =>  "ArrayQueryRecurrent"+(outputs>1?outputs.ToString():"")+TemplateArgsSkipBase(inputs, outputs, "A");
+
     private static string TypeName(string prefix, int inputs, int outputs) 
         => prefix
             + (outputs > 1 ? outputs.ToString() : "")
@@ -27,8 +30,10 @@
     private static string ReturnTuple(int n, string suffix = "")
         => Tuple("R", n, suffix);
 
-    private static string TemplateArgsSkip(int inputs, int outputs)
-        => "<" + string.Join(", ", RepeatArgs("T", inputs).Append("_").Concat(RepeatArgs("R", outputs))) + ">";
+    private static string TemplateArgsSkip(int inputs, int outputs) => TemplateArgsSkipBase(inputs, outputs, "_");
+
+    private static string TemplateArgsSkipBase(int inputs, int outputs, string skip)
+        => "<" + string.Join(", ", RepeatArgs("T", inputs).Append(skip).Concat(RepeatArgs("R", outputs))) + ">";
     private static string TemplateArgsSkipOne(int inputs, int outputs)
         => "<" + string.Join(", ", RepeatArgsZero("T", inputs).Append("_").Concat(RepeatArgs("R", outputs))) + ">";
     private static string TemplateArgsSkipTwo(int inputs, int outputs)
