@@ -30,36 +30,36 @@ namespace Linq2d
 
 
         #region Two arrays one result recurrent 
-        public static IArrayTransform<T1, T2, R> SelectMany<T1, T2, _, R>(this IArrayQuery<T1, T2, _> source, Func<object, Result<R>> recurrentResultSelector, Expression<Func<_, RelativeCell<R>, R>> resultSelector)
-            => new ArrayQuery<T1, T2, R>(source, recurrentResultSelector(default).InitValue, resultSelector);
+//        public static IArrayTransform<T1, T2, R> SelectMany<T1, T2, _, R>(this IArrayQuery<T1, T2, _> source, Func<object, Result<R>> recurrentResultSelector, Expression<Func<_, RelativeCell<R>, R>> resultSelector)
+//            => new ArrayQuery<T1, T2, R>(source, recurrentResultSelector(default).InitValue, resultSelector);
         #endregion
 
         #region Three arrays 
 
-        public static IArrayTransform<T1, T2, T3, R> SelectMany<T1, T2, T3, _, R>(this IArrayQuery<T1, T2, T3, _> source, Func<object, Result<R>> recurrentResultSelector, Expression<Func<_, RelativeCell<R>, R>> resultSelector)
-            => new ArrayQuery<T1, T2, T3, R>(source, recurrentResultSelector(default).InitValue, resultSelector);
+//        public static IArrayTransform<T1, T2, T3, R> SelectMany<T1, T2, T3, _, R>(this IArrayQuery<T1, T2, T3, _> source, Func<object, Result<R>> recurrentResultSelector, Expression<Func<_, RelativeCell<R>, R>> resultSelector)
+//            => new ArrayQuery<T1, T2, T3, R>(source, recurrentResultSelector(default).InitValue, resultSelector);
 
-        public static IArrayQueryRecurrent<T1, T2, T3, A, R1> SelectMany<T1, T2, T3, _, A, R1>(this IArrayQuery<T1, T2, T3, _> source, Func<object, Result<R1>> recurrentResultSelector, Expression<Func<_, RelativeCell<R1>, A>> resultSelector)
-            where A: class
-            => new ArrayQueryRecurrent<T1, T2, T3, A, R1>(source, recurrentResultSelector(default).InitValue, resultSelector);
+//        public static IArrayQueryRecurrent<T1, T2, T3, A, R1> SelectMany<T1, T2, T3, _, A, R1>(this IArrayQuery<T1, T2, T3, _> source, Func<object, Result<R1>> recurrentResultSelector, Expression<Func<_, RelativeCell<R1>, A>> resultSelector)
+//            where A: class
+//            => new ArrayQueryRecurrent<T1, T2, T3, A, R1>(source, recurrentResultSelector(default).InitValue, resultSelector);
 
         #endregion
 
         #region 4 arrays 
-        public static IArrayTransform<T1, T2, T3, T4, R> SelectMany<T1, T2, T3, T4, _, R>(this IArrayQuery<T1, T2, T3, T4, _> source, Func<object, Result<R>> recurrentResultSelector, Expression<Func<_, RelativeCell<R>, R>> resultSelector)
-            => new ArrayQuery<T1, T2, T3, T4, R>(source, recurrentResultSelector(default).InitValue, resultSelector);
+//        public static IArrayTransform<T1, T2, T3, T4, R> SelectMany<T1, T2, T3, T4, _, R>(this IArrayQuery<T1, T2, T3, T4, _> source, Func<object, Result<R>> recurrentResultSelector, Expression<Func<_, RelativeCell<R>, R>> resultSelector)
+//            => new ArrayQuery<T1, T2, T3, T4, R>(source, recurrentResultSelector(default).InitValue, resultSelector);
 
-        public static IArrayQueryRecurrent<T1, T2, T3, T4, A, R1> SelectMany<T1, T2, T3, T4, _, A, R1>(this IArrayQuery<T1, T2, T3, T4, _> source, Func<object, Result<R1>> recurrentResultSelector, Expression<Func<_, RelativeCell<R1>, A>> resultSelector)
-            where A: class
-            => new ArrayQueryRecurrent<T1, T2, T3, T4, A, R1>(source, recurrentResultSelector(default).InitValue, resultSelector);
+//        public static IArrayQueryRecurrent<T1, T2, T3, T4, A, R1> SelectMany<T1, T2, T3, T4, _, A, R1>(this IArrayQuery<T1, T2, T3, T4, _> source, Func<object, Result<R1>> recurrentResultSelector, Expression<Func<_, RelativeCell<R1>, A>> resultSelector)
+//            where A: class
+//            => new ArrayQueryRecurrent<T1, T2, T3, T4, A, R1>(source, recurrentResultSelector(default).InitValue, resultSelector);
 
         #endregion
 
 
         #region Two array two results recurent two
-        public static IArrayQueryRecurrent<T1, T2, A, R> SelectMany<T1, T2, _, A, R>(this IArrayQuery<T1, T2, _> source, Func<object, Result<R>> recurrentResultSelector, Expression<Func<_, RelativeCell<R>, A>> resultSelector)
-            where A: class
-            => new ArrayQueryRecurrent<T1, T2, A, R>(source, recurrentResultSelector(default).InitValue, resultSelector);
+//        public static IArrayQueryRecurrent<T1, T2, A, R> SelectMany<T1, T2, _, A, R>(this IArrayQuery<T1, T2, _> source, Func<object, Result<R>> recurrentResultSelector, Expression<Func<_, RelativeCell<R>, A>> resultSelector)
+//            where A: class
+//            => new ArrayQueryRecurrent<T1, T2, A, R>(source, recurrentResultSelector(default).InitValue, resultSelector);
         #endregion
 
 
@@ -183,29 +183,61 @@ for(int k=1; k<=maxRes; k++)
             => new <#= TypeName("ArrayQuery", n, k)#>(source, source<#= n#>Selector(default), kernel);
 
 <#
+        if(n<maxArg)
+        {
+        }
+#>
+<#
     }
+#>
+
+<#
     if(k==1)
     {
 #>
+<#
+        if(n>1 && n<maxArg)
+        {
+#>
+<#
+        }
+#>
+        // n=<#=n#> k=<#=k#> 
+        public static I<#= ArrayQueryRecurrentA(n, k)#> SelectMany<#= TemplateArgsSkipBase(n, k, "_, A")#>(this IArrayQuery<#=k>2?k-1:""#><#= TemplateArgsSkipTwo(n, k-1)#> source, Func<object, Result<R<#=k>1?k:""#>>> secondSelector, Expression<Func<_, RelativeCell<R<#=k>1?k:""#>>, A>> resultSelector) 
+            where A: class
+            => new <#= ArrayQueryRecurrentA(n, k)#>(source, secondSelector(default).InitValue, resultSelector);
+        public static <#= TypeName("IArrayTransform", n, k)#> SelectMany<#= TemplateArgsSkip(n, k)#>(this IArrayQuery<#=k>2?k-1:""#><#= TemplateArgsSkipTwo(n, k-1)#> source, Func<object, Result<R<#=k>1?k:""#>>> secondSelector, Expression<Func<_, RelativeCell<R<#=k>1?k:""#>>, <#=ReturnTuple(k)#>>> resultSelector) 
+            => new <#= TypeName("ArrayQuery", n, k)#>(source, secondSelector(default).InitValue, resultSelector); // yo!
 <#
     } else //(k>1)
     {
 #>
 ///@@@
+
 <#
         for(int l=2; l<=k;l++)
         {
 #>
         public static <#= TypeName("IArrayTransform", n, k)#> SelectMany<#= TemplateArgsSkip(n, k)#>(this IArrayQueryRecurrent<#=l>2?l-1:""#><#= TemplateArgsSkipTwo(n, l-1)#> source, Func<object, Result<R<#=l#>>> recurrentSelector, Expression<Func<_, RelativeCell<R<#=l#>>, <#= ReturnTuple(k)#>>> resultSelector) 
             => new <#= TypeName("ArrayQuery", n, k)#>(source, recurrentSelector(default).InitValue, resultSelector);
-        // n=<#=n#> k=<#=k#> l=<#=l#> <T, _, A, R1, R2>
+        // n=<#=n#> k=<#=k#> l=<#=l#> 
+        public static I<#= ArrayQueryRecurrentA(n, l)#> SelectMany<#= TemplateArgsSkipBase(n, k, "_, A")#>(this IArrayQueryRecurrent<#=l>2?l-1:""#><#= TemplateArgsSkipTwo(n, l-1)#> source, Func<object, Result<R<#=l#>>> recurrentSelector, Expression<Func<_, RelativeCell<R<#=l#>>, A>> resultSelector) 
+            where A: class
+            => new <#= ArrayQueryRecurrentA(n, l)#>(source, recurrentSelector(default).InitValue, resultSelector);
 
 <#
         }
 #>
-        public static I<#= ArrayQueryRecurrentA(n, k)#> SelectMany<#= TemplateArgsSkipBase(n, k, "_, A")#>(this IArrayQueryRecurrent<#=k>2?k-1:""#><#= TemplateArgsSkipTwo(n, k-1)#> source, Func<object, Result<R<#=k#>>> secondSelector, Expression<Func<_, RelativeCell<R<#=k#>>, A>> resultSelector) 
-            where A: class
-            => new <#= ArrayQueryRecurrentA(n, k)#>(source, secondSelector(default).InitValue, resultSelector);
+
+//-
+//        public static IArrayQueryRecurrent<T1, T2, A, R> SelectMany<T1, T2, _, A, R>(this IArrayQuery<T1, T2, _> source, Func<object, Result<R>> recurrentResultSelector, Expression<Func<_, RelativeCell<R>, A>> resultSelector)
+//            where A: class
+//            => new ArrayQueryRecurrent<T1, T2, A, R>(source, recurrentResultSelector(default).InitValue, resultSelector);
+//        public static IArrayQueryRecurrent<T1, T2, A, R> SelectMany<T1, T2, _, A, R>(this IArrayQuery<T1, T2, _> source, Func<object, Result<R>> recurrentResultSelector, Expression<Func<_, RelativeCell<R>, A>> resultSelector)
+//            where A: class
+//            => new ArrayQueryRecurrent<T1, T2, A, R>(source, recurrentResultSelector(default).InitValue, resultSelector);
+//-
+
 
         public static <#= TypeName("IArrayTransform", n, k)#> SelectMany<#= TemplateArgsSkip(n, k)#>(this IArrayQuery<#= TemplateArgsSkip(n, 0)#> source, Func<object, Result<R<#= k>1?1:""#>>> recurrentResult1Selector, Expression<Func<_, RelativeCell<R<#= k>1?1:""#>>, <#= ReturnTuple(k)#>>> resultSelector)
             => new <#= TypeName("ArrayQuery", n, k)#>(source, recurrentResult1Selector(default).InitValue, resultSelector);
