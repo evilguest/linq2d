@@ -14,6 +14,7 @@
   <ItemGroup>
     <Compile Remove="CodeGen\KernelCompilerVector.cs" />
     <Compile Remove="Expressions\VectorVerify.cs" />
+    <Compile Remove="IArrayQuery - Copy.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -87,6 +88,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>IArrayQuery.tt</DependentUpon>
     </Compile>
+    <Compile Update="IArrayQueryRecurrent.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>IArrayQueryRecurrent.tt</DependentUpon>
+    </Compile>
     <Compile Update="IArraySource.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -114,6 +120,10 @@
     <None Update="IArray.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>IArray.cs</LastGenOutput>
+    </None>
+    <None Update="IArrayQueryRecurrent.tt">
+      <LastGenOutput>IArrayQueryRecurrent.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
     </None>
     <None Update="IArrayQuery.tt">
       <Generator>TextTemplatingFileGenerator</Generator>

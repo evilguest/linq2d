@@ -15,6 +15,8 @@
         => "Func" + TemplateArgsTuple(inputs, outputs, "[,]");
     private static string TemplateArgs(int inputs, int outputs)
         => "<" + string.Join(", ", RepeatArgs("T", inputs).Concat(RepeatArgs("R", outputs))) + ">";
+    private static string TemplateArgsOne(int inputs, int outputs)
+        => "<" + string.Join(", ", RepeatArgsZero("T", inputs).Concat(RepeatArgs("R", outputs))) + ">";
     private static string TemplateArrArgs(int inputs, int outputs)
         => "<" + string.Join(", ", RepeatArgs("T", inputs, "[,]").Concat(RepeatArgs("R", outputs, "[,]"))) + ">";
     private static string TemplateArgsTuple(int inputs, int outputs, string suffix = "")
@@ -29,6 +31,8 @@
         => "<" + string.Join(", ", RepeatArgs("T", inputs).Append("_").Concat(RepeatArgs("R", outputs))) + ">";
     private static string TemplateArgsSkipOne(int inputs, int outputs)
         => "<" + string.Join(", ", RepeatArgsZero("T", inputs).Append("_").Concat(RepeatArgs("R", outputs))) + ">";
+    private static string TemplateArgsSkipTwo(int inputs, int outputs)
+        => "<" + string.Join(", ", RepeatArgs("T", inputs).Append("_").Concat(RepeatArgsZero("R", outputs))) + ">";
     private static IEnumerable<string> RepeatArgs(string name, int count, string suffix = "")
         => count == 1 ? new string[] { name + suffix } : RepeatArgsZero(name, count, suffix);
     private static IEnumerable<string> RepeatArgsZero(string name, int count, string suffix = "")

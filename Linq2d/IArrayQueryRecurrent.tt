@@ -1,0 +1,35 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ include file="..\CommonT4.tt" #>
+
+namespace Linq2d
+{
+
+<#
+for(int k=1; k<=maxRes; k++)
+{
+#>
+
+    #region <#= k#> <#= Plural("result", k)#>
+
+<#
+for(int n=1; n<=maxArg; n++)
+{
+#>
+
+    public interface IArrayQueryRecurrent<#=k>1?k:""#><#= TemplateArgsSkip(n, k)#> : /*IArraySource<#= TemplateArgs(n,0)#>, */<#= TypeName("IArrayQuery", n, k) #> {};
+<#
+}
+#>
+
+    #endregion
+<#
+}
+#>
+
+
+}

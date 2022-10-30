@@ -46,6 +46,7 @@ for(int k=1; k<=maxRes; k++)
 		[Fact]
 		public void Test<#=n#><#=Plural("Arg",n)#><#=k#><#=Plural("Result",k)#>()
 		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
 			var source = ArrayHelper.InitAllRand(5, 5, 42);
 			var q = 
 <#
@@ -56,27 +57,112 @@ for(int k=1; k<=maxRes; k++)
 <#
 		}
 #>
-				select <#= ReturnValueTuple(k)#>;
+				select <#= ReturnValueTuple(n, k)#>;
 			var <#= Tuple("r", k)#> = q.<#= ToArrays(k)#>();
 <#
 		for(int s=1; s<=k; s++)
 		{
 #>
-			TestHelper.AssertEqual(ArrayHelper.InitAll(5, 5, <#=s#>), r<#= k > 1 ? s : ""#>);
+			TestHelper.AssertEqual(expect, r<#= k > 1 ? s : ""#>);
 <#
 		}
 #>
+			q = 
+<#
+		for(int s=1; s<=n; s++)
+		{
+#>
+				from x<#=s#> in source<#= s==n?".With(0)":""#>
+<#
+		}
+#>
+				select <#= ReturnValueTuple(n, k)#>;
+			<#= Tuple("r", k)#> = q.<#= ToArrays(k)#>();
+<#
+		for(int s=1; s<=k; s++)
+		{
+#>
+			TestHelper.AssertEqual(expect, r<#= k > 1 ? s : ""#>);
+<#
+		}
+#>
+			q = 
+<#
+		for(int s=1; s<=n; s++)
+		{
+#>
+				from x<#=s#> in source<#= s==n?".With(0)":""#>
+<#
+		}
+#>
+				let y = <#= ChainSources(n)#>
+				select <#= ReturnValueTupleWithY(n, k)#>;
+			<#= Tuple("r", k)#> = q.<#= ToArrays(k)#>();
+<#
+		for(int s=1; s<=k; s++)
+		{
+#>
+			TestHelper.AssertEqual(expect, r<#= k > 1 ? s : ""#>);
+<#
+		}
+#>
+
+		}
+
+<#
+		for(int r=1; r<=1; r++)
+		{
+#>
+		[Fact]
+		public void Test<#=n#><#=Plural("Arg",n)#><#=k#><#=Plural("Result",k)#>WithRecurrence<#=r#>()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+<#
+		for(int s=1; s<=n; s++)
+		{
+#>
+				from x<#=s#> in source
+<#
+		}
+		for(int s=1; s<=r; s++)
+		{
+#>
+				from z<#=s#> in Result.InitWith(0)
+<#
+		}
+#>
+				select <#= ReturnValueTuple(n, k, ChainVars(r, "z", "[-1, -1]")+" + ")#>;
+
+			var <#= Tuple("r", k)#> = q.<#= ToArrays(k)#>();
+<#
+		for(int s=1; s<=k; s++)
+		{
+#>
+			TestHelper.AssertEqual(expect, r<#= k > 1 ? s : ""#>);
+<#
+		}
+#>
+
 		}
 <#
-	}
+		} // r
+#>
+
+<#
+	} // n
 #>		#endregion
 
 <#
-}
+} // k
 #>
 	}
 }
 <#+
-	private static string ReturnValueTuple(int k) => 
-		k == 1 ? "1" : "ValueTuple.Create" + Tuple("", k);
+	private static string ReturnValueTupleWithY(int n, int k) => ReturnValueTuple(n, k, "0*y + ");
+	private static string ReturnValueTuple(int n, int k, string prefix="") => 
+		k == 1 ? ChainSources(n, prefix) : "ValueTuple.Create(" + string.Join(", ", Enumerable.Repeat(ChainSources(n, prefix), k))+")";
+	private static string ChainSources(int n, string prefix="") => prefix + ChainVars(n, "x");
+	private static string ChainVars(int n, string name, string suffix="") => string.Join(" + ", Enumerable.Range(1,n).Select(i=>"0*"+name+i.ToString()+suffix));
 #>
