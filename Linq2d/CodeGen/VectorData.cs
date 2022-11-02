@@ -7,6 +7,7 @@ using System.Runtime.Intrinsics.X86;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using Linq2d.CodeGen.Fake;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Linq2d.CodeGen
 {
@@ -117,10 +118,10 @@ namespace Linq2d.CodeGen
             where T : struct
             where R : struct
             => InitConvert<Vector256<T>, Vector128<R>>(method);
-        public void InitConvert128<T, R>(Func<Vector128<T>, Vector128<R>> method)
-            where T : struct
-            where R : struct
-            => InitConvert(method);
+        //public void InitConvert128<T, R>(Func<Vector128<T>, Vector128<R>> method)
+        //    where T : struct
+        //    where R : struct
+        //    => InitConvert(method);
         public void InitConvert256<T, R>(Func<Vector256<T>, Vector256<R>> method)
             where T : struct
             where R : struct
@@ -416,6 +417,8 @@ namespace Linq2d.CodeGen
 
                 InitConditional256<double>(Avx.BlendVariable);
                 InitConditional<Vector256<double>, Vector32<byte>>(Vector32.DoubleConditional);
+
+                InitUnary256<double>(ExpressionType.Negate, Negate);
             }
 
             if (Avx2.IsSupported)
@@ -459,24 +462,36 @@ namespace Linq2d.CodeGen
         //    => Vector256.Create((double)value);
         public static Vector256<double> LessThan(Vector256<double> l, Vector256<double> r)
             => Avx.Compare(l, r, FloatComparisonMode.OrderedLessThanSignaling);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector256<double> GreaterThan(Vector256<double> l, Vector256<double> r)
             => Avx.Compare(l, r, FloatComparisonMode.OrderedGreaterThanSignaling);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector256<double> LessThanOrEqual(Vector256<double> l, Vector256<double> r)
             => Avx.Compare(l, r, FloatComparisonMode.OrderedLessThanOrEqualSignaling);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector256<double> GreaterThanOrEqual(Vector256<double> l, Vector256<double> r)
             => Avx.Compare(l, r, FloatComparisonMode.OrderedGreaterThanOrEqualSignaling);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector256<double> ConvertToVector256Double(byte* address)
             => Avx.ConvertToVector256Double(Sse41.ConvertToVector128Int32(address));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector256<double> ConvertToVector256Double(Vector256<long> data)
             => Vector256.Create((double)data.GetElement(0), data.GetElement(1), data.GetElement(2), data.GetElement(3));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector256<double> ConvertToVector256Double(sbyte* address)
             => Avx.ConvertToVector256Double(Sse41.ConvertToVector128Int32(address));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector256<double> ConvertToVector256Double(short* address)
             => Avx.ConvertToVector256Double(Sse41.ConvertToVector128Int32(address));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector256<double> ConvertToVector256Double(ushort* address)
             => Avx.ConvertToVector256Double(Sse41.ConvertToVector128Int32(address));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector256<double> ConvertToVector256Double(int* address)
             => Avx.ConvertToVector256Double(Sse2.LoadVector128(address));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector256<double> Negate(Vector256<double> a) => Avx.Multiply(a, Vector256.Create(-1.0));
 
     }
     public unsafe class Vector8Info : VectorInfo
@@ -557,6 +572,8 @@ namespace Linq2d.CodeGen
 
                 InitBinary256Forced<int, byte, int>(ExpressionType.LeftShift, Avx2.ShiftLeftLogical);
                 InitBinary256Forced<uint, byte, int>(ExpressionType.LeftShift, Avx2.ShiftLeftLogical);
+
+                InitUnary256<float>(ExpressionType.Negate, Negate);
             }
             if (Avx2.IsSupported)
             {
@@ -575,8 +592,14 @@ namespace Linq2d.CodeGen
 
                 InitBinary256<int>(ExpressionType.Multiply, Avx2.MultiplyLow);
                 InitBinary256<uint>(ExpressionType.Multiply, Avx2.MultiplyLow);
+
+                InitUnary256<int>(ExpressionType.Negate, Negate);
             }
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector256<int> Negate(Vector256<int> a) => Avx2.MultiplyLow(a, Vector256.Create(-1));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector256<float> Negate(Vector256<float> a) => Avx.Multiply(a, Vector256.Create(-1.0f));
     }
     public unsafe class Vector16Info : VectorInfo
     {
@@ -622,8 +645,11 @@ namespace Linq2d.CodeGen
             {
                 InitLoadAndConvert<byte, short>(Avx2.ConvertToVector256Int16);
                 InitLoadAndConvert<sbyte, short>(Avx2.ConvertToVector256Int16);
+                InitUnary256<short>(ExpressionType.Negate, Negate);
             }
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector256<short> Negate(Vector256<short> a) => Avx2.MultiplyLow(a, Vector256.Create((short)-1));
     }
     public unsafe class Vector32Info : VectorInfo
     {
@@ -678,20 +704,14 @@ namespace Linq2d.CodeGen
 
         public static IReadOnlyDictionary<MethodInfo, MethodInfo> MethodTable { get; } = new Dictionary<MethodInfo, MethodInfo>();
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector256<short> Negate(Vector256<short> a) => Avx2.MultiplyLow(a, Vector256.Create((short)-1));
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector256<int> Negate(Vector256<int> a) => Avx2.MultiplyLow(a, Vector256.Create(-1));
 
         //[MethodImpl(MethodImplOptions.AggressiveInlining)]
         //public static Vector256<long> Negate(Vector256<long> a) => Avx2.MultiplyLow(a, Vector256.Create(-1L));
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector256<float> Negate(Vector256<float> a) => Avx.Multiply(a, Vector256.Create(-1.0f));
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector256<double> Negate(Vector256<double> a) => Avx.Multiply(a, Vector256.Create(-1.0));
+
+        [ExcludeFromCodeCoverage]
         public static R Load<T, R>(T[,] array, int i, int j, int size)
             => throw new NotImplementedException();
 

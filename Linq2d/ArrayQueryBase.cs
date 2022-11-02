@@ -51,14 +51,8 @@ namespace Linq2d
         protected ArrayQueryBase(IArrayQuery source, LambdaExpression kernel, object resultInit) : this(source, kernel) => ResultReplacements.Add(resultInit);
 
         protected ArrayQueryBase(ArraySource left, ArraySource right, LambdaExpression kernel) : this(left, kernel) => Sources.Add(right);
-        //protected ArrayQueryBase(ArraySource left, ArraySource right, LambdaExpression kernel, object resultInit) : this(left, kernel, resultInit) => Sources.Add(right);
 
         protected ArrayQueryBase(IArrayQuery left, ArraySource right, LambdaExpression kernel) : this(left, kernel) => Sources.Add(right);
-        //protected ArrayQueryBase(IArrayQuery left, ArraySource right, LambdaExpression kernel, object resultInit) : this(left, kernel)
-        //{
-        //    Sources.Add(right);
-        //    ResultReplacements.Add(resultInit);
-        //}
         public bool Vectorized { get; private set; } = false;
         public VectorizationResult VectorizationResult { get; private set; } = null;
 

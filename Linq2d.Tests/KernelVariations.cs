@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Xunit;
 
 namespace Linq2d.Tests
@@ -14,6 +15,7 @@ namespace Linq2d.Tests
             res = from a in arr select a[-a, 0];
             Assert.Throws<IndexOutOfRangeException>(() => res.ToArray());
         }
+        [ExcludeFromCodeCoverage]
         private static (T, T) ExtendToTuple<T>(T x) => (x, default);
         [Fact]
         public void TestSkewedTupleKernelUnmanaged()
@@ -27,6 +29,15 @@ namespace Linq2d.Tests
         {
             var arr = ArrayHelper.InitDiagonal(3, "o");
             var res = from a in arr select ExtendToTuple(a);
+            Assert.Throws<InvalidOperationException>(() => res.ToArrays());
+        }
+
+        [Fact]
+        public void TestConstTupleKernel()
+        {
+            var x = (42, 42);
+            var arr = ArrayHelper.InitDiagonal(3, 1);
+            var res = from a in arr select x;
             Assert.Throws<InvalidOperationException>(() => res.ToArrays());
         }
     }

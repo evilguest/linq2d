@@ -35,10 +35,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Fast\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="Array2d.N.Recurrent.Sources.cs">
       <DependentUpon>Array2d.N.Recurrent.Sources.tt</DependentUpon>
       <DesignTime>True</DesignTime>

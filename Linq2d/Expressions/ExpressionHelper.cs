@@ -24,8 +24,8 @@ namespace Linq2d.Expressions
         //        default: throw new ArgumentException($"Cannot find construction in the expression passed");
         //    }
         //}
-        public static MethodCallExpression Call<D>(Expression<D> call, params Expression[] arguments)
-            where D : Delegate =>
+        public static MethodCallExpression Call<T, R>(this Expression<Func<T, R>> call, params Expression[] arguments)
+            =>
             call.Body switch
             {
                 MethodCallExpression mce => mce.Update(mce.Object, arguments),

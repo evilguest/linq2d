@@ -36,8 +36,7 @@ namespace Linq2d
         public OutOfBoundsPolicy YAbove{ get; }
 
         public static T Throw<T>(Exception e) => throw e;
-//        public static Expression Throws(Type t) => Call(typeof(OutOfBoundsStrategy).GetMethod(nameof(Throw), BindingFlags.Public | BindingFlags.Static).MakeGenericMethod(t), New((string s) => new IndexOutOfRangeException(s), Constant("Index was out of range")));
-        public static Expression Throws<T>() => ExpressionHelper.Call<Func<Exception, T>>((Exception e)=>Throw<T>(e), New((string s) => new IndexOutOfRangeException(s), Constant("Index was out of range")));
+        public static Expression Throws<T>() => ExpressionHelper.Call((Exception e)=>Throw<T>(e), New((string s) => new IndexOutOfRangeException(s), Constant("Index was out of range")));
         public static GetCoordinate Keep { get; } = (coordinate, upperBoundExclusive) => coordinate;
         public static GetCoordinate LimitHigh { get; } = (coordinate, upperBoundExclusive) => Subtract(upperBoundExclusive, Constant(1));
         public static GetCoordinate LimitLow { get; } = (coordinate, upperBoundExclusive) => Constant(0);
