@@ -19,4 +19,12 @@
     {
         public ArraySource<T4> Source4 { get; }
     }
+    public interface IArraySource<T1, T2, T3, T4, T5> : IArraySource<T1, T2, T3, T4>
+    {
+        public ArraySource<T5> Source5 { get; }
+    }
+    public interface IArraySource<T1, T2, T3, T4, T5, T6> : IArraySource<T1, T2, T3, T4, T5>
+    {
+        public ArraySource<T6> Source6 { get; }
+    }
 }

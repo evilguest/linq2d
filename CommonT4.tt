@@ -1,5 +1,5 @@
 ﻿<#+
-    private static int maxArg = 4;
+    private static int maxArg = 7;
     private static int maxRes = 4;
 
     private static string Plural(string word, int c) => word + (c > 1 ? "s" : "");
