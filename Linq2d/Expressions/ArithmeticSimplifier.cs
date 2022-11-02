@@ -85,7 +85,7 @@ namespace Linq2d.Expressions
                     #region Universal arithmetics
                     Negate(Negate(var e)) => e,                                     // - -e => e
                     Not(Not(var e)) => e,                                           // !!e => e
-                    Expr.Convert(Type to, Constant(Type from, object v))
+                    Expr.Convert(var to, Constant(var v, var iv, var from))
                             => Constant(Convert.ChangeType(v, to), to),
                     Negate(Subtract(var e1, var e2)) => Subtract(e2, e1),           // -(a-b)=>b-a;
 
@@ -118,13 +118,13 @@ namespace Linq2d.Expressions
                     #endregion
 
                     #region arithmetics
-                    Multiply(Constant(Type t, var v) zero, _) when t.IsNumeric() && v.Equals(Convert.ChangeType(0, t)) => zero,          // 0 * e => 0
-                    Multiply(Constant(Type t, var v), var e) when t.IsNumeric() && v.Equals(Convert.ChangeType(1, t)) => e,              // 1 * e => e
-                    Multiply(Constant(Type t, var v), var e) when t.IsNumeric() && v.Equals(Convert.ChangeType(-1, t)) => Negate(e),     // -1 * e => -e
-                    Divide(Constant(Type t, var v) zero, _) when t.IsNumeric() && v.Equals(Convert.ChangeType(0, t)) => zero,            // 0 / e => 0
-                    Divide(var e, Constant(Type t, var v)) when t.IsNumeric() && v.Equals(Convert.ChangeType(1, t)) => e,                // e / 1 => e
-                    Divide(Constant(Type t, var v), var e) when t.IsNumeric() && v.Equals(Convert.ChangeType(-1, t)) => Negate(e),       // e / -1 => -e
-                    Add(Constant(var t, var v), var e) when t.IsNumeric() && v.Equals(Convert.ChangeType(0, t)) => e,                    // 0 + e => e
+                    Multiply(Constant(var v, var iv) zero, _) when iv == 0 => zero,          // 0 * e => 0
+                    Multiply(Constant(var v, var iv), var e) when iv == 1 => e,              // 1 * e => e
+                    Multiply(Constant(var v, var iv), var e) when iv == -1 => Negate(e),     // -1 * e => -e
+                    Divide(Constant(var v, var iv) zero, _) when iv == 0 => zero,            // 0 / e => 0
+                    Divide(var e, Constant(var v, var iv)) when iv == 1 => e,                // e / 1 => e
+                    Divide(Constant(var v, var iv), var e) when iv == -1 => Negate(e),       // e / -1 => -e
+                    Add(Constant(var v, var iv), var e) when iv == 0 => e,                   // 0 + e => e
 
                     #region Divisions by 2^N
                     Divide(var e, Constant(1 << 1)) => RightShift(e, Constant(1)),
@@ -155,7 +155,7 @@ namespace Linq2d.Expressions
 
                     #region const expressions
 
-                    Negate(Constant(Type t, var x)) => Constant(Convert.ChangeType(-Convert.ToDouble(x), t)),
+                    Negate(Constant(var x, var iv, var t)) => Constant(Convert.ChangeType(-Convert.ToDouble(x), t)),
                     Not(Constant(bool x)) => Constant(!x),
                     ArrayIndex(Constant(Array a), Constant(int i)) => Constant(a.GetValue(i)),
 
