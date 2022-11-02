@@ -112,11 +112,35 @@ namespace Linq2d.Tests
                     from r in Result.InitWith(0)
                     select s + r[-1, 0];
             Assert.Equal(expect, q.ToArray());
+
             q = from s in sample.With(0)
                 from r in Result.InitWith(0)
                 select s + r[-1, 0];
             Assert.Equal(expect, q.ToArray());
 
         }
+        [Fact]
+        public void TestPrimitiveRecursionWithVariable()
+        {
+            var sample = new[,] { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } };
+            var expect = new[,] { { 1, 2, 3 }, { 5, 7, 9 }, { 12, 15, 18 } };
+            var q =
+                from s in sample
+                let t = s * 0
+                from r in Result.InitWith(0)
+                select s + t + r[-1, 0];
+
+            Assert.Equal(expect, q.ToArray());
+
+            var q1 =
+                from s in sample
+                let t = s * 0
+                from r in Result.InitWith(0)
+                let u = 0 + r[-1, 0]
+                select s + u ;
+
+            Assert.Equal(expect, q1.ToArray());
+        }
+
     }
 }

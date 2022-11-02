@@ -40,8 +40,6 @@ namespace Linq2d
 
         public static ArraySource<T> Wrap<T>(this T[,] array) => new ArraySource<T>(array);
 
-        public static ArraySource<T> Wrap<T>(this T[,] array, T outOfBoundsValue) => new ArraySource<T>(array, outOfBoundsValue);
-
         public static byte[,] Init1Diagonal(int size) => InitDiagonal(size, (byte)1);
         public static T[,] InitDiagonal<T>(int size, T value)
         {
@@ -117,6 +115,7 @@ namespace Linq2d
 
         public static T[,] InitAll<T>(int size, T value) => InitAll(size, size, value);
 
+        /*
         public static string Dump<T>(this T[,] arr, string format)
         {
             var sb = new StringBuilder(arr.Length * format.Length);
@@ -129,6 +128,7 @@ namespace Linq2d
             Console.Write(sb);
             return sb.ToString();
         }
+        */
     }
 
     /*

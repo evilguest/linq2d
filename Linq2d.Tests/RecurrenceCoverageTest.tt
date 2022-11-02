@@ -1,0 +1,191 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<#@ include file="..\CommonT4.tt" #>
+using System;
+using Xunit;
+
+namespace Linq2d.Tests
+{
+	public class RecurrenceCoverage
+	{
+<#
+for(int k=1; k<=maxRes; k++)
+{
+#>
+		#region <#=k#> <#= Plural("result", k)#>
+<#
+	for(int n=1; n<=maxArg; n++)
+	{
+#>
+		#region <#=n#> <#= Plural("arument", n)#>
+
+<#
+		for(int r=1; r<=k; r++)
+		{
+#>
+		[Fact]
+		public void Test<#=n#><#=Plural("Arg",n)#><#=k#><#=Plural("Result",k)#>WithRecurrence<#=r#>Variable()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+<#
+		for(int s=1; s<n; s++)
+		{
+#>
+				from x<#=s#> in source
+<#
+		}
+#>
+				from x<#=n#> in source
+<#
+		for(int s=1; s<=r; s++)
+		{
+#>
+				from z<#=s#> in Result.InitWith(0)
+<#
+		}
+#>
+				let y = <#= ChainSources(n)#>
+				select <#= ReturnValueTupleWithY(n, k, ChainVars(r, "z", "[-1, -1]")+" + ")#>;
+
+			var <#= Tuple("r", k)#> = q.<#= ToArrays(k)#>();
+<#
+		for(int s=1; s<=k; s++)
+		{
+#>
+			TestHelper.AssertEqual(expect, r<#= k > 1 ? s : ""#>);
+<#
+		}
+#>
+		}
+		[Fact]
+		public void Test<#=n#><#=Plural("Arg",n)#><#=k#><#=Plural("Result",k)#>WithVariableRecurrence<#=r#>()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+<#
+		for(int s=1; s<n; s++)
+		{
+#>
+				from x<#=s#> in source
+<#
+		}
+#>
+				from x<#=n#> in source
+				let y = <#= ChainSources(n)#>
+<#
+		for(int s=1; s<=r; s++)
+		{
+#>
+				from z<#=s#> in Result.InitWith(0)
+<#
+		}
+#>
+				select <#= ReturnValueTupleWithY(n, k, ChainVars(r, "z", "[-1, -1]")+" + ")#>;
+
+			var <#= Tuple("r", k)#> = q.<#= ToArrays(k)#>();
+<#
+		for(int s=1; s<=k; s++)
+		{
+#>
+			TestHelper.AssertEqual(expect, r<#= k > 1 ? s : ""#>);
+<#
+		}
+#>
+		}
+		[Fact]
+		public void Test<#=n#><#=Plural("Arg",n)#><#=k#><#=Plural("Result",k)#>WithRecurrence<#=r#>Array()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+<#
+		for(int s=1; s<n; s++)
+		{
+#>
+				from x<#=s#> in source
+<#
+		}
+#>
+				from x<#=n#> in source
+<#
+		for(int s=1; s<=r; s++)
+		{
+#>
+				from z<#=s#> in Result.InitWith(0)
+<#
+		}
+#>
+				select <#= ReturnValueTuple(n, k, ChainVars(r, "z", "[-1, -1]")+" + ")#>;
+
+			var <#= Tuple("r", k)#> = q.<#= ToArrays(k)#>();
+<#
+		for(int s=1; s<=k; s++)
+		{
+#>
+			TestHelper.AssertEqual(expect, r<#= k > 1 ? s : ""#>);
+<#
+		}
+#>
+		}
+		[Fact]
+		public void Test<#=n#><#=Plural("Arg",n)#><#=k#><#=Plural("Result",k)#>WithRecurrence<#=r#>ArraySource()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+<#
+		for(int s=1; s<n; s++)
+		{
+#>
+				from x<#=s#> in source
+<#
+		}
+#>
+				from x<#=n#> in source.With(0)
+<#
+		for(int s=1; s<=r; s++)
+		{
+#>
+				from z<#=s#> in Result.InitWith(0)
+<#
+		}
+#>
+				select <#= ReturnValueTuple(n, k, ChainVars(r, "z", "[-1, -1]")+" + ")#>;
+
+			var <#= Tuple("r", k)#> = q.<#= ToArrays(k)#>();
+<#
+		for(int s=1; s<=k; s++)
+		{
+#>
+			TestHelper.AssertEqual(expect, r<#= k > 1 ? s : ""#>);
+<#
+		}
+#>
+		}
+<#
+		} // r
+#>
+		#endregion //n
+<#
+	} // n
+#>		#endregion //k
+
+<#
+} // k
+#>
+	}
+}
+<#+
+	private static string ReturnValueTupleWithY(int n, int k, string prefix="") => ReturnValueTuple(n, k, prefix + "0*y + ");
+	private static string ReturnValueTuple(int n, int k, string prefix="") => 
+		k == 1 ? ChainSources(n, prefix) : "ValueTuple.Create(" + string.Join(", ", Enumerable.Repeat(ChainSources(n, prefix), k))+")";
+	private static string ChainSources(int n, string prefix="") => prefix + ChainVars(n, "x");
+	private static string ChainVars(int n, string name, string suffix="") => string.Join(" + ", Enumerable.Range(1,n).Select(i=>"0*"+name+i.ToString()+suffix));
+#>

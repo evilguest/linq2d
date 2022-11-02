@@ -39,21 +39,21 @@ namespace Linq2d.Tests
             var q = from x in aa
                     from y in ba
                     from z in ca
-                    select ValueTuple.Create(x + y,y - z);
+                    select ValueTuple.Create(x + y, y - z);
             var (r1, r2) = q.ToArrays();
             Assert.Equal(ex1, r1);
             Assert.Equal(ex2, r2);
 
-            // TODO: implement support for the recurrent filtering with multiple sources
-            //var p = from x in aa
-            //        from y in ba
-            //        from z in ca
-            //        from r in Result.InitWith(0)
-            //        select ValueTuple.Create(x + y, y - z);
-            //(r1, r2) = p.ToArrays();
 
-            //Assert.Equal(ex1, p.ToArray());
-            //Assert.Equal(ex2, r2);
+            var p = from x in aa
+                    from y in ba
+                    from z in ca
+                    from r in Result.InitWith(0)
+                    select ValueTuple.Create(x + y, y - z);
+            (r1, r2) = p.ToArrays();
+
+            Assert.Equal(ex1, r1);
+            Assert.Equal(ex2, r2);
         }
 
 

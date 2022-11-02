@@ -37,6 +37,15 @@ namespace Linq2d
         public static IArrayTransform3<T, R1, R2, R3> SelectMany<T, R1, R2, R3>(this ArraySource<T> source, Func<object, Result<R1>> recurrentResult1Selector, Expression<Func<Cell<T>, RelativeCell<R1>, (R1, R2, R3)>> resultSelector) 
             => new ArrayQuery3<T, R1, R2, R3>(source, recurrentResult1Selector(default).InitValue, resultSelector);
 
+		// final select of 4 result
+        public static IArrayTransform4<T, R1, R2, R3, R4> Select<T, R1, R2, R3, R4>(this ArraySource<T> source, Expression<Func<Cell<T>, (R1, R2, R3, R4)>> resultSelector) 
+            => new ArrayQuery4<T, R1, R2, R3, R4>(source, resultSelector);
+
+
+        // final-recurrent select of 4 results
+        public static IArrayTransform4<T, R1, R2, R3, R4> SelectMany<T, R1, R2, R3, R4>(this ArraySource<T> source, Func<object, Result<R1>> recurrentResult1Selector, Expression<Func<Cell<T>, RelativeCell<R1>, (R1, R2, R3, R4)>> resultSelector) 
+            => new ArrayQuery4<T, R1, R2, R3, R4>(source, recurrentResult1Selector(default).InitValue, resultSelector);
+
 	}
 
 }

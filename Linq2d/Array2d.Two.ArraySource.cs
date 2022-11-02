@@ -27,6 +27,13 @@ namespace Linq2d
         public static IArrayTransform3<T1, T2, R1, R2, R3> SelectMany<T1, T2, R1, R2, R3>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2, R3)>> resultSelector) 
             => new ArrayQuery3<T1, T2, R1, R2, R3>(source, secondSelector(default), resultSelector);
 
+		// final select of 4 results
+        public static IArrayTransform4<T1, T2, R1, R2, R3, R4> SelectMany<T1, T2, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2, R3, R4)>> resultSelector) 
+            => new ArrayQuery4<T1, T2, R1, R2, R3, R4>(source, secondSelector(default).Wrap(), resultSelector);
+
+        public static IArrayTransform4<T1, T2, R1, R2, R3, R4> SelectMany<T1, T2, R1, R2, R3, R4>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, (R1, R2, R3, R4)>> resultSelector) 
+            => new ArrayQuery4<T1, T2, R1, R2, R3, R4>(source, secondSelector(default), resultSelector);
+
 	}
 
 }

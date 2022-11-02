@@ -38,6 +38,14 @@ namespace Linq2d
         public static IArrayTransform3<T, R1, R2, R3> SelectMany<T, _, R1, R2, R3>(this IArrayQueryRecurrent<T, _, R1> sources, Func<object, Result<R2>> recurrentResult2Selector, Expression<Func<_, RelativeCell<R2>, (R1, R2, R3)>> resultSelector) 
             => new ArrayQuery3<T, R1, R2, R3>(sources, recurrentResult2Selector(default).InitValue, resultSelector);
 
+		// final select of 4 results from 1 recurrent source that have captured 1 result
+        public static IArrayTransform4<T, R1, R2, R3, R4> Select<T, _, R1, R2, R3, R4>(this IArrayQueryRecurrent<T, _, R1> source, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+              => new ArrayQuery4<T, R1, R2, R3, R4>(source, resultSelector);
+
+        // final-recurrent select of 4 results from 1 recurrent source that have captured 1 result
+        public static IArrayTransform4<T, R1, R2, R3, R4> SelectMany<T, _, R1, R2, R3, R4>(this IArrayQueryRecurrent<T, _, R1> sources, Func<object, Result<R2>> recurrentResult2Selector, Expression<Func<_, RelativeCell<R2>, (R1, R2, R3, R4)>> resultSelector) 
+            => new ArrayQuery4<T, R1, R2, R3, R4>(sources, recurrentResult2Selector(default).InitValue, resultSelector);
+
 
 
 
@@ -65,6 +73,14 @@ namespace Linq2d
         public static IArrayTransform3<T, R1, R2, R3> SelectMany<T, _, R1, R2, R3>(this IArrayQueryRecurrent2<T, _, R1, R2> sources, Func<object, Result<R3>> recurrentResult3Selector, Expression<Func<_, RelativeCell<R3>, (R1, R2, R3)>> resultSelector) 
             => new ArrayQuery3<T, R1, R2, R3>(sources, recurrentResult3Selector(default).InitValue, resultSelector);
 
+		// final select of 4 results from 1 recurrent source that have captured 2 results
+        public static IArrayTransform4<T, R1, R2, R3, R4> Select<T, _, R1, R2, R3, R4>(this IArrayQueryRecurrent2<T, _, R1, R2> source, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+              => new ArrayQuery4<T, R1, R2, R3, R4>(source, resultSelector);
+
+        // final-recurrent select of 4 results from 1 recurrent source that have captured 2 results
+        public static IArrayTransform4<T, R1, R2, R3, R4> SelectMany<T, _, R1, R2, R3, R4>(this IArrayQueryRecurrent2<T, _, R1, R2> sources, Func<object, Result<R3>> recurrentResult3Selector, Expression<Func<_, RelativeCell<R3>, (R1, R2, R3, R4)>> resultSelector) 
+            => new ArrayQuery4<T, R1, R2, R3, R4>(sources, recurrentResult3Selector(default).InitValue, resultSelector);
+
 
 
 
@@ -74,9 +90,36 @@ namespace Linq2d
             => new ArrayQueryRecurrent3<T, A, R1, R2, R3>(source, resultSelector); 
 
 
+        // recurrent definition of an extra variable for the recurrent selection from 1 source that have captured 3 results
+        public static IArrayQueryRecurrent4<T, A, R1, R2, R3, R4> SelectMany<T, _, A, R1, R2, R3, R4>(this IArrayQueryRecurrent3<T, _, R1, R2, R3> source, Func<object, Result<R4>> recurrentResult4Selector, Expression<Func<_, RelativeCell<R4>, A>> resultSelector) 
+            where A: class
+            => new ArrayQueryRecurrent4<T, A, R1, R2, R3, R4>(source, recurrentResult4Selector(default).InitValue, resultSelector);
+
 		// final select of 3 results from 1 recurrent source that have captured 3 results
         public static IArrayTransform3<T, R1, R2, R3> Select<T, _, R1, R2, R3>(this IArrayQueryRecurrent3<T, _, R1, R2, R3> source, Expression<Func<_, (R1, R2, R3)>> resultSelector)
               => new ArrayQuery3<T, R1, R2, R3>(source, resultSelector);
+
+
+		// final select of 4 results from 1 recurrent source that have captured 3 results
+        public static IArrayTransform4<T, R1, R2, R3, R4> Select<T, _, R1, R2, R3, R4>(this IArrayQueryRecurrent3<T, _, R1, R2, R3> source, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+              => new ArrayQuery4<T, R1, R2, R3, R4>(source, resultSelector);
+
+        // final-recurrent select of 4 results from 1 recurrent source that have captured 3 results
+        public static IArrayTransform4<T, R1, R2, R3, R4> SelectMany<T, _, R1, R2, R3, R4>(this IArrayQueryRecurrent3<T, _, R1, R2, R3> sources, Func<object, Result<R4>> recurrentResult4Selector, Expression<Func<_, RelativeCell<R4>, (R1, R2, R3, R4)>> resultSelector) 
+            => new ArrayQuery4<T, R1, R2, R3, R4>(sources, recurrentResult4Selector(default).InitValue, resultSelector);
+
+
+
+
+        // intermediate select (variable definition) for the 1 source with 4 results from a recurrent source
+        public static IArrayQueryRecurrent4<T, A, R1, R2, R3, R4> Select<T, _, A, R1, R2, R3, R4>(this IArrayQueryRecurrent4<T, _, R1, R2, R3, R4> source, Expression<Func<_, A>> resultSelector)
+            where A: class
+            => new ArrayQueryRecurrent4<T, A, R1, R2, R3, R4>(source, resultSelector); 
+
+
+		// final select of 4 results from 1 recurrent source that have captured 4 results
+        public static IArrayTransform4<T, R1, R2, R3, R4> Select<T, _, R1, R2, R3, R4>(this IArrayQueryRecurrent4<T, _, R1, R2, R3, R4> source, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+              => new ArrayQuery4<T, R1, R2, R3, R4>(source, resultSelector);
 
 
 
@@ -117,6 +160,14 @@ namespace Linq2d
         public static IArrayTransform3<T1, T2, R1, R2, R3> SelectMany<T1, T2, _, R1, R2, R3>(this IArrayQueryRecurrent<T1, T2, _, R1> sources, Func<object, Result<R2>> recurrentResult2Selector, Expression<Func<_, RelativeCell<R2>, (R1, R2, R3)>> resultSelector) 
             => new ArrayQuery3<T1, T2, R1, R2, R3>(sources, recurrentResult2Selector(default).InitValue, resultSelector);
 
+		// final select of 4 results from 2 recurrent sources that have captured 1 result
+        public static IArrayTransform4<T1, T2, R1, R2, R3, R4> Select<T1, T2, _, R1, R2, R3, R4>(this IArrayQueryRecurrent<T1, T2, _, R1> sources, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+              => new ArrayQuery4<T1, T2, R1, R2, R3, R4>(sources, resultSelector);
+
+        // final-recurrent select of 4 results from 2 recurrent sources that have captured 1 result
+        public static IArrayTransform4<T1, T2, R1, R2, R3, R4> SelectMany<T1, T2, _, R1, R2, R3, R4>(this IArrayQueryRecurrent<T1, T2, _, R1> sources, Func<object, Result<R2>> recurrentResult2Selector, Expression<Func<_, RelativeCell<R2>, (R1, R2, R3, R4)>> resultSelector) 
+            => new ArrayQuery4<T1, T2, R1, R2, R3, R4>(sources, recurrentResult2Selector(default).InitValue, resultSelector);
+
 
 
 
@@ -144,6 +195,14 @@ namespace Linq2d
         public static IArrayTransform3<T1, T2, R1, R2, R3> SelectMany<T1, T2, _, R1, R2, R3>(this IArrayQueryRecurrent2<T1, T2, _, R1, R2> sources, Func<object, Result<R3>> recurrentResult3Selector, Expression<Func<_, RelativeCell<R3>, (R1, R2, R3)>> resultSelector) 
             => new ArrayQuery3<T1, T2, R1, R2, R3>(sources, recurrentResult3Selector(default).InitValue, resultSelector);
 
+		// final select of 4 results from 2 recurrent sources that have captured 2 results
+        public static IArrayTransform4<T1, T2, R1, R2, R3, R4> Select<T1, T2, _, R1, R2, R3, R4>(this IArrayQueryRecurrent2<T1, T2, _, R1, R2> sources, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+              => new ArrayQuery4<T1, T2, R1, R2, R3, R4>(sources, resultSelector);
+
+        // final-recurrent select of 4 results from 2 recurrent sources that have captured 2 results
+        public static IArrayTransform4<T1, T2, R1, R2, R3, R4> SelectMany<T1, T2, _, R1, R2, R3, R4>(this IArrayQueryRecurrent2<T1, T2, _, R1, R2> sources, Func<object, Result<R3>> recurrentResult3Selector, Expression<Func<_, RelativeCell<R3>, (R1, R2, R3, R4)>> resultSelector) 
+            => new ArrayQuery4<T1, T2, R1, R2, R3, R4>(sources, recurrentResult3Selector(default).InitValue, resultSelector);
+
 
 
 
@@ -153,9 +212,36 @@ namespace Linq2d
             => new ArrayQueryRecurrent3<T1, T2, A, R1, R2, R3>(sources, resultSelector); 
 
 
+        // recurrent definition of an extra variable for the recurrent selection from 2 sources that have captured 3 results
+        public static IArrayQueryRecurrent4<T1, T2, A, R1, R2, R3, R4> SelectMany<T1, T2, _, A, R1, R2, R3, R4>(this IArrayQueryRecurrent3<T1, T2, _, R1, R2, R3> sources, Func<object, Result<R4>> recurrentResult4Selector, Expression<Func<_, RelativeCell<R4>, A>> resultSelector) 
+            where A: class
+            => new ArrayQueryRecurrent4<T1, T2, A, R1, R2, R3, R4>(sources, recurrentResult4Selector(default).InitValue, resultSelector);
+
 		// final select of 3 results from 2 recurrent sources that have captured 3 results
         public static IArrayTransform3<T1, T2, R1, R2, R3> Select<T1, T2, _, R1, R2, R3>(this IArrayQueryRecurrent3<T1, T2, _, R1, R2, R3> sources, Expression<Func<_, (R1, R2, R3)>> resultSelector)
               => new ArrayQuery3<T1, T2, R1, R2, R3>(sources, resultSelector);
+
+
+		// final select of 4 results from 2 recurrent sources that have captured 3 results
+        public static IArrayTransform4<T1, T2, R1, R2, R3, R4> Select<T1, T2, _, R1, R2, R3, R4>(this IArrayQueryRecurrent3<T1, T2, _, R1, R2, R3> sources, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+              => new ArrayQuery4<T1, T2, R1, R2, R3, R4>(sources, resultSelector);
+
+        // final-recurrent select of 4 results from 2 recurrent sources that have captured 3 results
+        public static IArrayTransform4<T1, T2, R1, R2, R3, R4> SelectMany<T1, T2, _, R1, R2, R3, R4>(this IArrayQueryRecurrent3<T1, T2, _, R1, R2, R3> sources, Func<object, Result<R4>> recurrentResult4Selector, Expression<Func<_, RelativeCell<R4>, (R1, R2, R3, R4)>> resultSelector) 
+            => new ArrayQuery4<T1, T2, R1, R2, R3, R4>(sources, recurrentResult4Selector(default).InitValue, resultSelector);
+
+
+
+
+        // intermediate select (variable definition) for the 2 sources with 4 results from a recurrent source
+        public static IArrayQueryRecurrent4<T1, T2, A, R1, R2, R3, R4> Select<T1, T2, _, A, R1, R2, R3, R4>(this IArrayQueryRecurrent4<T1, T2, _, R1, R2, R3, R4> sources, Expression<Func<_, A>> resultSelector)
+            where A: class
+            => new ArrayQueryRecurrent4<T1, T2, A, R1, R2, R3, R4>(sources, resultSelector); 
+
+
+		// final select of 4 results from 2 recurrent sources that have captured 4 results
+        public static IArrayTransform4<T1, T2, R1, R2, R3, R4> Select<T1, T2, _, R1, R2, R3, R4>(this IArrayQueryRecurrent4<T1, T2, _, R1, R2, R3, R4> sources, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+              => new ArrayQuery4<T1, T2, R1, R2, R3, R4>(sources, resultSelector);
 
 
 
@@ -196,6 +282,15 @@ namespace Linq2d
         public static IArrayTransform3<T1, T2, T3, R1, R2, R3> SelectMany<T1, T2, T3, _, R1, R2, R3>(this IArrayQueryRecurrent<T1, T2, T3, _, R1> sources, Func<object, Result<R2>> recurrentResult2Selector, Expression<Func<_, RelativeCell<R2>, (R1, R2, R3)>> resultSelector) 
             => new ArrayQuery3<T1, T2, T3, R1, R2, R3>(sources, recurrentResult2Selector(default).InitValue, resultSelector);
 
+		// final select of 4 results from 3 recurrent sources that have captured 1 result
+        public static IArrayTransform4<T1, T2, T3, R1, R2, R3, R4> Select<T1, T2, T3, _, R1, R2, R3, R4>(this IArrayQueryRecurrent<T1, T2, T3, _, R1> sources, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+              => new ArrayQuery4<T1, T2, T3, R1, R2, R3, R4>(sources, resultSelector);
+
+        // final-recurrent select of 4 results from 3 recurrent sources that have captured 1 result
+        public static IArrayTransform4<T1, T2, T3, R1, R2, R3, R4> SelectMany<T1, T2, T3, _, R1, R2, R3, R4>(this IArrayQueryRecurrent<T1, T2, T3, _, R1> sources, Func<object, Result<R2>> recurrentResult2Selector, Expression<Func<_, RelativeCell<R2>, (R1, R2, R3, R4)>> resultSelector) 
+            => new ArrayQuery4<T1, T2, T3, R1, R2, R3, R4>(sources, recurrentResult2Selector(default).InitValue, resultSelector);
+
+
 
 
         // intermediate select (variable definition) for the 3 sources with 2 results from a recurrent source
@@ -222,6 +317,15 @@ namespace Linq2d
         public static IArrayTransform3<T1, T2, T3, R1, R2, R3> SelectMany<T1, T2, T3, _, R1, R2, R3>(this IArrayQueryRecurrent2<T1, T2, T3, _, R1, R2> sources, Func<object, Result<R3>> recurrentResult3Selector, Expression<Func<_, RelativeCell<R3>, (R1, R2, R3)>> resultSelector) 
             => new ArrayQuery3<T1, T2, T3, R1, R2, R3>(sources, recurrentResult3Selector(default).InitValue, resultSelector);
 
+		// final select of 4 results from 3 recurrent sources that have captured 2 results
+        public static IArrayTransform4<T1, T2, T3, R1, R2, R3, R4> Select<T1, T2, T3, _, R1, R2, R3, R4>(this IArrayQueryRecurrent2<T1, T2, T3, _, R1, R2> sources, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+              => new ArrayQuery4<T1, T2, T3, R1, R2, R3, R4>(sources, resultSelector);
+
+        // final-recurrent select of 4 results from 3 recurrent sources that have captured 2 results
+        public static IArrayTransform4<T1, T2, T3, R1, R2, R3, R4> SelectMany<T1, T2, T3, _, R1, R2, R3, R4>(this IArrayQueryRecurrent2<T1, T2, T3, _, R1, R2> sources, Func<object, Result<R3>> recurrentResult3Selector, Expression<Func<_, RelativeCell<R3>, (R1, R2, R3, R4)>> resultSelector) 
+            => new ArrayQuery4<T1, T2, T3, R1, R2, R3, R4>(sources, recurrentResult3Selector(default).InitValue, resultSelector);
+
+
 
 
         // intermediate select (variable definition) for the 3 sources with 3 results from a recurrent source
@@ -230,9 +334,37 @@ namespace Linq2d
             => new ArrayQueryRecurrent3<T1, T2, T3, A, R1, R2, R3>(sources, resultSelector); 
 
 
+        // recurrent definition of an extra variable for the recurrent selection from 3 sources that have captured 3 results
+        public static IArrayQueryRecurrent4<T1, T2, T3, A, R1, R2, R3, R4> SelectMany<T1, T2, T3, _, A, R1, R2, R3, R4>(this IArrayQueryRecurrent3<T1, T2, T3, _, R1, R2, R3> sources, Func<object, Result<R4>> recurrentResult4Selector, Expression<Func<_, RelativeCell<R4>, A>> resultSelector) 
+            where A: class
+            => new ArrayQueryRecurrent4<T1, T2, T3, A, R1, R2, R3, R4>(sources, recurrentResult4Selector(default).InitValue, resultSelector);
+
 		// final select of 3 results from 3 recurrent sources that have captured 3 results
         public static IArrayTransform3<T1, T2, T3, R1, R2, R3> Select<T1, T2, T3, _, R1, R2, R3>(this IArrayQueryRecurrent3<T1, T2, T3, _, R1, R2, R3> sources, Expression<Func<_, (R1, R2, R3)>> resultSelector)
               => new ArrayQuery3<T1, T2, T3, R1, R2, R3>(sources, resultSelector);
+
+
+		// final select of 4 results from 3 recurrent sources that have captured 3 results
+        public static IArrayTransform4<T1, T2, T3, R1, R2, R3, R4> Select<T1, T2, T3, _, R1, R2, R3, R4>(this IArrayQueryRecurrent3<T1, T2, T3, _, R1, R2, R3> sources, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+              => new ArrayQuery4<T1, T2, T3, R1, R2, R3, R4>(sources, resultSelector);
+
+        // final-recurrent select of 4 results from 3 recurrent sources that have captured 3 results
+        public static IArrayTransform4<T1, T2, T3, R1, R2, R3, R4> SelectMany<T1, T2, T3, _, R1, R2, R3, R4>(this IArrayQueryRecurrent3<T1, T2, T3, _, R1, R2, R3> sources, Func<object, Result<R4>> recurrentResult4Selector, Expression<Func<_, RelativeCell<R4>, (R1, R2, R3, R4)>> resultSelector) 
+            => new ArrayQuery4<T1, T2, T3, R1, R2, R3, R4>(sources, recurrentResult4Selector(default).InitValue, resultSelector);
+
+
+
+
+        // intermediate select (variable definition) for the 3 sources with 4 results from a recurrent source
+        public static IArrayQueryRecurrent4<T1, T2, T3, A, R1, R2, R3, R4> Select<T1, T2, T3, _, A, R1, R2, R3, R4>(this IArrayQueryRecurrent4<T1, T2, T3, _, R1, R2, R3, R4> sources, Expression<Func<_, A>> resultSelector)
+            where A: class
+            => new ArrayQueryRecurrent4<T1, T2, T3, A, R1, R2, R3, R4>(sources, resultSelector); 
+
+
+		// final select of 4 results from 3 recurrent sources that have captured 4 results
+        public static IArrayTransform4<T1, T2, T3, R1, R2, R3, R4> Select<T1, T2, T3, _, R1, R2, R3, R4>(this IArrayQueryRecurrent4<T1, T2, T3, _, R1, R2, R3, R4> sources, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+              => new ArrayQuery4<T1, T2, T3, R1, R2, R3, R4>(sources, resultSelector);
+
 
 
 
@@ -272,6 +404,14 @@ namespace Linq2d
         public static IArrayTransform3<T1, T2, T3, T4, R1, R2, R3> SelectMany<T1, T2, T3, T4, _, R1, R2, R3>(this IArrayQueryRecurrent<T1, T2, T3, T4, _, R1> sources, Func<object, Result<R2>> recurrentResult2Selector, Expression<Func<_, RelativeCell<R2>, (R1, R2, R3)>> resultSelector) 
             => new ArrayQuery3<T1, T2, T3, T4, R1, R2, R3>(sources, recurrentResult2Selector(default).InitValue, resultSelector);
 
+		// final select of 4 results from 4 recurrent sources that have captured 1 result
+        public static IArrayTransform4<T1, T2, T3, T4, R1, R2, R3, R4> Select<T1, T2, T3, T4, _, R1, R2, R3, R4>(this IArrayQueryRecurrent<T1, T2, T3, T4, _, R1> sources, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+              => new ArrayQuery4<T1, T2, T3, T4, R1, R2, R3, R4>(sources, resultSelector);
+
+        // final-recurrent select of 4 results from 4 recurrent sources that have captured 1 result
+        public static IArrayTransform4<T1, T2, T3, T4, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, _, R1, R2, R3, R4>(this IArrayQueryRecurrent<T1, T2, T3, T4, _, R1> sources, Func<object, Result<R2>> recurrentResult2Selector, Expression<Func<_, RelativeCell<R2>, (R1, R2, R3, R4)>> resultSelector) 
+            => new ArrayQuery4<T1, T2, T3, T4, R1, R2, R3, R4>(sources, recurrentResult2Selector(default).InitValue, resultSelector);
+
 
 
         // intermediate select (variable definition) for the 4 sources with 2 results from a recurrent source
@@ -298,6 +438,14 @@ namespace Linq2d
         public static IArrayTransform3<T1, T2, T3, T4, R1, R2, R3> SelectMany<T1, T2, T3, T4, _, R1, R2, R3>(this IArrayQueryRecurrent2<T1, T2, T3, T4, _, R1, R2> sources, Func<object, Result<R3>> recurrentResult3Selector, Expression<Func<_, RelativeCell<R3>, (R1, R2, R3)>> resultSelector) 
             => new ArrayQuery3<T1, T2, T3, T4, R1, R2, R3>(sources, recurrentResult3Selector(default).InitValue, resultSelector);
 
+		// final select of 4 results from 4 recurrent sources that have captured 2 results
+        public static IArrayTransform4<T1, T2, T3, T4, R1, R2, R3, R4> Select<T1, T2, T3, T4, _, R1, R2, R3, R4>(this IArrayQueryRecurrent2<T1, T2, T3, T4, _, R1, R2> sources, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+              => new ArrayQuery4<T1, T2, T3, T4, R1, R2, R3, R4>(sources, resultSelector);
+
+        // final-recurrent select of 4 results from 4 recurrent sources that have captured 2 results
+        public static IArrayTransform4<T1, T2, T3, T4, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, _, R1, R2, R3, R4>(this IArrayQueryRecurrent2<T1, T2, T3, T4, _, R1, R2> sources, Func<object, Result<R3>> recurrentResult3Selector, Expression<Func<_, RelativeCell<R3>, (R1, R2, R3, R4)>> resultSelector) 
+            => new ArrayQuery4<T1, T2, T3, T4, R1, R2, R3, R4>(sources, recurrentResult3Selector(default).InitValue, resultSelector);
+
 
 
         // intermediate select (variable definition) for the 4 sources with 3 results from a recurrent source
@@ -306,9 +454,35 @@ namespace Linq2d
             => new ArrayQueryRecurrent3<T1, T2, T3, T4, A, R1, R2, R3>(sources, resultSelector); 
 
 
+        // recurrent definition of an extra variable for the recurrent selection from 4 sources that have captured 3 results
+        public static IArrayQueryRecurrent4<T1, T2, T3, T4, A, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, _, A, R1, R2, R3, R4>(this IArrayQueryRecurrent3<T1, T2, T3, T4, _, R1, R2, R3> sources, Func<object, Result<R4>> recurrentResult4Selector, Expression<Func<_, RelativeCell<R4>, A>> resultSelector) 
+            where A: class
+            => new ArrayQueryRecurrent4<T1, T2, T3, T4, A, R1, R2, R3, R4>(sources, recurrentResult4Selector(default).InitValue, resultSelector);
+
 		// final select of 3 results from 4 recurrent sources that have captured 3 results
         public static IArrayTransform3<T1, T2, T3, T4, R1, R2, R3> Select<T1, T2, T3, T4, _, R1, R2, R3>(this IArrayQueryRecurrent3<T1, T2, T3, T4, _, R1, R2, R3> sources, Expression<Func<_, (R1, R2, R3)>> resultSelector)
               => new ArrayQuery3<T1, T2, T3, T4, R1, R2, R3>(sources, resultSelector);
+
+
+		// final select of 4 results from 4 recurrent sources that have captured 3 results
+        public static IArrayTransform4<T1, T2, T3, T4, R1, R2, R3, R4> Select<T1, T2, T3, T4, _, R1, R2, R3, R4>(this IArrayQueryRecurrent3<T1, T2, T3, T4, _, R1, R2, R3> sources, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+              => new ArrayQuery4<T1, T2, T3, T4, R1, R2, R3, R4>(sources, resultSelector);
+
+        // final-recurrent select of 4 results from 4 recurrent sources that have captured 3 results
+        public static IArrayTransform4<T1, T2, T3, T4, R1, R2, R3, R4> SelectMany<T1, T2, T3, T4, _, R1, R2, R3, R4>(this IArrayQueryRecurrent3<T1, T2, T3, T4, _, R1, R2, R3> sources, Func<object, Result<R4>> recurrentResult4Selector, Expression<Func<_, RelativeCell<R4>, (R1, R2, R3, R4)>> resultSelector) 
+            => new ArrayQuery4<T1, T2, T3, T4, R1, R2, R3, R4>(sources, recurrentResult4Selector(default).InitValue, resultSelector);
+
+
+
+        // intermediate select (variable definition) for the 4 sources with 4 results from a recurrent source
+        public static IArrayQueryRecurrent4<T1, T2, T3, T4, A, R1, R2, R3, R4> Select<T1, T2, T3, T4, _, A, R1, R2, R3, R4>(this IArrayQueryRecurrent4<T1, T2, T3, T4, _, R1, R2, R3, R4> sources, Expression<Func<_, A>> resultSelector)
+            where A: class
+            => new ArrayQueryRecurrent4<T1, T2, T3, T4, A, R1, R2, R3, R4>(sources, resultSelector); 
+
+
+		// final select of 4 results from 4 recurrent sources that have captured 4 results
+        public static IArrayTransform4<T1, T2, T3, T4, R1, R2, R3, R4> Select<T1, T2, T3, T4, _, R1, R2, R3, R4>(this IArrayQueryRecurrent4<T1, T2, T3, T4, _, R1, R2, R3, R4> sources, Expression<Func<_, (R1, R2, R3, R4)>> resultSelector)
+              => new ArrayQuery4<T1, T2, T3, T4, R1, R2, R3, R4>(sources, resultSelector);
 
 
 

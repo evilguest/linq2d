@@ -10,7 +10,7 @@ namespace Linq2d.Tests
         [Theory]
         [InlineData(1, 2, 42, 3)]
         [InlineData(1000, 20, 42, 3)]
-        public void Test2Results0Recursive(int h, int w, int seed, int divisor)
+        public void Test2Results0Recursive(int h, int w, short seed, int divisor)
         {
             var divex = (from d in ArrayHelper.InitAllRand(h, w, seed) select d / divisor).ToArray();
             var modex = (from d in ArrayHelper.InitAllRand(h, w, seed) select d % divisor).ToArray();
@@ -19,7 +19,7 @@ namespace Linq2d.Tests
             TestHelper.AssertEqual(divex, div);
             TestHelper.AssertEqual(modex, mod);
 
-            (div, mod) = (from d in ArrayHelper.InitAllRand(h, w, seed).With(0)
+            (div, mod) = (from d in ArrayHelper.InitAllRand(h, w, seed).With((short)0)
                               select ValueTuple.Create(d / divisor, d % divisor)).ToArrays();
             TestHelper.AssertEqual(divex, div);
             TestHelper.AssertEqual(modex, mod);

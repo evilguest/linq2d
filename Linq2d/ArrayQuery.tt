@@ -14,6 +14,33 @@ for(int k=1; k <= maxRes; k++)
 {
 #>
     #region <#= k#> <#= Plural("result", k)#>
+
+    internal abstract partial class <#= TypeName("ArrayQuery", 0, k)#> : ArrayQueryBase
+    {
+        protected ArrayQuery<#=k>1?k:""#>(ArraySource source, LambdaExpression kernel) : base(source, kernel) { }
+        protected ArrayQuery<#=k>1?k:""#>(IArrayQuery sources, LambdaExpression kernel) : base(sources, kernel) { }
+        protected ArrayQuery<#=k>1?k:""#>(ArraySource left, ArraySource right, LambdaExpression kernel) : base(left, right, kernel) { }
+        protected ArrayQuery<#=k>1?k:""#>(IArrayQuery sources, ArraySource right, LambdaExpression kernel) : base(sources, right, kernel) { }
+
+        protected ArrayQuery<#=k>1?k:""#>(ArraySource source, LambdaExpression kernel, R<#= k>1?1:""#> initValue<#= k>1?1:""#>) : base(source, kernel, initValue<#= k>1?1:""#>) { }
+<#
+    for(int l=1; l<=k; l++)
+    {
+#>
+        protected ArrayQuery<#=k>1?k:""#>(IArrayQuery sources, LambdaExpression kernel, R<#= k>1?l:""#> initValue<#= k>1?l:""#>) : base(sources, kernel, initValue<#= k>1?l:""#>) { }
+<#
+    }
+#>
+        protected <#= ReturnTuple(k, "[,]")#><#=k>1?"?":""#> _result;
+        protected abstract <#= ReturnTuple(k, "[,]")#> GetResult();
+        public <#= ReturnTuple(k, "[,]")#> <#=Plural("ToArray",k)#>()
+        {
+            if (_result == null)
+                _result = GetResult();
+            return _result<#= k>1?".Value":""#>;
+        }
+    }
+
 <#
 for(int n=1; n<=maxArg; n++)
 {
