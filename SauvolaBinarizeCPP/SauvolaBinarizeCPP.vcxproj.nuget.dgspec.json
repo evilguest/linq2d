@@ -22,7 +22,7 @@
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net40": {
+          "net6.0": {
             "projectReferences": {}
           }
         }
@@ -31,7 +31,7 @@
         "GCCBuildTargets": "[1.*, )"
       },
       "frameworks": {
-        "net40": {}
+        "net6.0": {}
       },
       "runtimes": {
         "win": {

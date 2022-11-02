@@ -86,7 +86,7 @@ SAUVOLABINARIZECPP_API int SaturatedMultiplyDouble(int h, int w, double* input, 
         return -2; // error: no output
     if (h < 1 || w < 1)
         return -3; // error: size is not enough
-    //auto curr = 0;
+    auto curr = 0;
     for (int i = 0; i < h; i++)
         for (int j = 0; j < w; j++)
             output[i * w + j] = min(input[i * w + j] * 1.5, 1.0);
