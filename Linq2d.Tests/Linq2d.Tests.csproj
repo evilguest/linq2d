@@ -40,6 +40,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="MultiArgsCoverage.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>MultiArgsCoverage.cs</LastGenOutput>
+    </None>
     <None Update="RecurrenceCoverageTest.tt">
       <LastGenOutput>RecurrenceCoverageTest.cs</LastGenOutput>
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -55,6 +59,11 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>FullCoverageTest.tt</DependentUpon>
+    </Compile>
+    <Compile Update="MultiArgsCoverage.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MultiArgsCoverage.tt</DependentUpon>
     </Compile>
     <Compile Update="RecurrenceCoverageTest.cs">
       <DesignTime>True</DesignTime>
