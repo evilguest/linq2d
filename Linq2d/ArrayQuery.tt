@@ -309,6 +309,7 @@ for(int n=1; n<=maxArg; n++)
     }
 #>
         public ArrayQueryRecurrent<#=k>1?k:""#>(<#=TypeName("IArraySource", n, 0)#> sources, R<#= k>1? k: ""#> initValue, LambdaExpression kernel): base(sources, initValue, kernel){}
+        public ArrayQueryRecurrent<#=k>1?k:""#>(<#=TypeName("IArraySource", n, 0)#> source, LambdaExpression kernel): base(source, kernel){}
     }
 
 

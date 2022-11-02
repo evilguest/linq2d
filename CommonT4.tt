@@ -16,10 +16,10 @@
         => "Func" + TemplateArgsTuple(inputs, outputs);
     private static string FuncArraySignature(int inputs, int outputs)
         => "Func" + TemplateArgsTuple(inputs, outputs, "[,]");
-    private static string TemplateArgs(int inputs, int outputs)
-        => "<" + string.Join(", ", RepeatArgs("T", inputs).Concat(RepeatArgs("R", outputs))) + ">";
-    private static string TemplateArgsOne(int inputs, int outputs)
-        => "<" + string.Join(", ", RepeatArgsZero("T", inputs).Concat(RepeatArgs("R", outputs))) + ">";
+    private static string TemplateArgs(int inputs, int outputs, string inputName="T", string outputName="R")
+        => "<" + string.Join(", ", RepeatArgs(inputName, inputs).Concat(RepeatArgs(outputName, outputs))) + ">";
+    private static string TemplateArgsOne(int inputs, int outputs, string inputName="T", string outputName="R")
+        => "<" + string.Join(", ", RepeatArgsZero(inputName, inputs).Concat(RepeatArgs(outputName, outputs))) + ">";
     private static string TemplateArrArgs(int inputs, int outputs)
         => "<" + string.Join(", ", RepeatArgs("T", inputs, "[,]").Concat(RepeatArgs("R", outputs, "[,]"))) + ">";
     private static string TemplateArgsTuple(int inputs, int outputs, string suffix = "")
@@ -38,6 +38,8 @@
         => "<" + string.Join(", ", RepeatArgsZero("T", inputs).Append("_").Concat(RepeatArgs("R", outputs))) + ">";
     private static string TemplateArgsSkipTwo(int inputs, int outputs)
         => "<" + string.Join(", ", RepeatArgs("T", inputs).Append("_").Concat(RepeatArgsZero("R", outputs))) + ">";
+    private static string TemplateArgsSkipThree(int inputs, int outputs1, int outputs2)
+        => "<" + string.Join(", ", RepeatArgs("T", inputs).Append("_").Concat(outputs2>1?RepeatArgsZero("R", outputs1):RepeatArgs("R", outputs1))) + ">";
     private static IEnumerable<string> RepeatArgs(string name, int count, string suffix = "")
         => count == 1 ? new string[] { name + suffix } : RepeatArgsZero(name, count, suffix);
     private static IEnumerable<string> RepeatArgsZero(string name, int count, string suffix = "")

@@ -1,0 +1,32 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ include file="..\CommonT4.tt" #>
+using System;
+using System.Linq.Expressions;
+
+namespace Linq2d
+{
+	public static partial class Array2d
+	{
+
+<#
+for(int k=1; k<=maxRes; k++)
+{
+#>
+		// final select of <#= k#> <#= Plural("result", k)#>
+        public static <#= TypeName(k==1?"IArrayQuery":"IArrayTransform", 2, k)#> SelectMany<#= TemplateArgs(2, k)#>(this ArraySource<T1> source, Func<object, T2[,]> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, <#= ReturnTuple(k)#>>> resultSelector) 
+            => new <#= TypeName("ArrayQuery", 2, k)#>(source, secondSelector(default).Wrap(), resultSelector);
+
+        public static <#= TypeName(k==1?"IArrayQuery":"IArrayTransform", 2, k)#> SelectMany<#= TemplateArgs(2, k)#>(this ArraySource<T1> source, Func<object, ArraySource<T2>> secondSelector, Expression<Func<Cell<T1>, Cell<T2>, <#= ReturnTuple(k)#>>> resultSelector) 
+            => new <#= TypeName("ArrayQuery", 2, k)#>(source, secondSelector(default), resultSelector);
+
+<#
+}
+#>
+	}
+
+}

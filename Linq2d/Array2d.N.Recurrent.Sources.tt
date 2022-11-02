@@ -1,0 +1,84 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ include file="..\CommonT4.tt" #>
+using System;
+using System.Linq.Expressions;
+
+namespace Linq2d
+{
+    public static partial class Array2d
+    {
+<#
+for(int n=1; n<=maxArg; n++)
+{
+#>
+        #region <#= n#> <#= Plural("source", n) #>
+<#
+    for(int k=1; k<=maxRes; k++)
+    {
+#>
+        // intermediate select (variable definition) for the <#= n#> <#= Plural("source", n) #> with <#= k#> results from a recurrent source
+        public static I<#= ArrayQueryRecurrentA(n, k)#> Select<#= TemplateArgsSkipBase(n, k, "_, A")#>(this IArrayQueryRecurrent<#=k>1?k:""#><#= TemplateArgsSkip(n, k)#> <#= Plural("source", n) #>, Expression<Func<_, A>> resultSelector)
+            where A: class
+            => new <#= ArrayQueryRecurrentA(n, k)#>(<#= Plural("source", n) #>, resultSelector); 
+
+<#
+        if(k<maxRes)
+        {
+#>
+
+        // recurrent definition of an extra variable for the recurrent selection from <#= n#> <#= Plural("source", n) #> that have captured <#= k#> <#= Plural("result", k) #>
+        public static I<#= ArrayQueryRecurrentA(n, k+1)#> SelectMany<#= TemplateArgsSkipBase(n, k+1, "_, A")#>(this IArrayQueryRecurrent<#=k>1?k:""#><#= TemplateArgsSkipTwo(n, k)#> <#= Plural("source", n) #>, Func<object, Result<R<#= k+1#>>> recurrentResult<#= k+1#>Selector, Expression<Func<_, RelativeCell<R<#= k+1#>>, A>> resultSelector) 
+            where A: class
+            => new <#= ArrayQueryRecurrentA(n, k+1)#>(<#= Plural("source", n) #>, recurrentResult<#= k+1#>Selector(default).InitValue, resultSelector);
+<#
+        } // k<maxRes
+#>
+<#
+        for(int r=k; r<=maxRes; r++)
+        {
+#>
+
+		// final select of <#= r#> <#= Plural("result", r) #> from <#= n#> recurrent <#= Plural("source", n) #> that have captured <#= k#> <#= Plural("result", k) #>
+        public static <#= TypeName(r==1?"IArrayTransform":"IArrayTransform", n, r)#> Select<#= TemplateArgsSkip(n, r)#>(this IArrayQueryRecurrent<#=k>1?k:""#><#= TemplateArgsSkipThree(n, k, r)#> <#= Plural("source", n) #>, Expression<Func<_, <#= ReturnTuple(r)#>>> resultSelector)
+              => new <#= TypeName("ArrayQuery", n, r)#>(<#= Plural("source", n) #>, resultSelector);
+
+<#
+            if(r>k)
+            {
+#>
+        // final-recurrent select of <#= r#> <#= Plural("result", r) #> from <#= n#> recurrent <#= Plural("source", n) #> that have captured <#= k#> <#= Plural("result", k) #>
+        public static <#= TypeName(r==1?"IArrayTransform":"IArrayTransform", n, r)#> SelectMany<#= TemplateArgsSkip(n, r)#>(this IArrayQueryRecurrent<#=k>1?k:""#><#= TemplateArgsSkipTwo(n, k)#> sources, Func<object, Result<R<#= k+1#>>> recurrentResult<#= k+1#>Selector, Expression<Func<_, RelativeCell<R<#= k+1#>>, <#= ReturnTuple(r)#>>> resultSelector) 
+            => new <#= TypeName("ArrayQuery", n, r)#>(sources, recurrentResult<#= k+1#>Selector(default).InitValue, resultSelector);
+<#
+            } // r>k
+#>
+<#
+        } // r
+#>
+
+<#
+        if (n<maxRes) 
+        {        
+#>
+
+<#
+        } // n<maxRes        
+#>
+
+
+<#
+    } // k
+#>
+        #endregion
+
+<#
+} // n
+#>
+	}
+
+}

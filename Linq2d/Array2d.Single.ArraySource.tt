@@ -1,0 +1,38 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ include file="..\CommonT4.tt" #>
+using System;
+using System.Linq.Expressions;
+
+namespace Linq2d
+{
+	public static partial class Array2d
+	{
+        // recurrent select of a single result
+        public static IArrayQueryRecurrent<T, A, R> SelectMany<T, A, R>(this ArraySource<T> source, Func<object, Result<R>> recurrentSelector, Expression<Func<Cell<T>, RelativeCell<R>, A>> resultSelector)
+        where A: class
+            => new ArrayQueryRecurrent<T, A, R>(source, recurrentSelector(default).InitValue, resultSelector);
+
+<#
+for(int k=1; k<=maxRes; k++)
+{
+#>
+		// final select of <#= k#> result
+        public static <#= TypeName(k==1?"IArrayQuery":"IArrayTransform", 1, k)#> Select<#= TemplateArgs(1, k)#>(this ArraySource<T> source, Expression<Func<Cell<T>, <#= ReturnTuple(k)#>>> resultSelector) 
+            => new <#= TypeName("ArrayQuery", 1, k)#>(source, resultSelector);
+
+
+        // final-recurrent select of <#= k#> results
+        public static <#= TypeName("IArrayTransform", 1, k)#> SelectMany<#= TemplateArgs(1, k)#>(this ArraySource<T> source, Func<object, Result<R<#= k>1?1:""#>>> recurrentResult1Selector, Expression<Func<Cell<T>, RelativeCell<R<#= k>1?1:""#>>, <#= ReturnTuple(k)#>>> resultSelector) 
+            => new <#= TypeName("ArrayQuery", 1, k)#>(source, recurrentResult1Selector(default).InitValue, resultSelector);
+
+<#
+}
+#>
+	}
+
+}

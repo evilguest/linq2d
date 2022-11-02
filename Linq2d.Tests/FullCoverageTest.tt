@@ -145,7 +145,33 @@ for(int k=1; k<=maxRes; k++)
 		}
 #>
 
+			var q1 = 
+<#
+		for(int s=1; s<=n; s++)
+		{
+#>
+				from x<#=s#> in source
+<#
 		}
+		for(int s=1; s<=r; s++)
+		{
+#>
+				from z<#=s#> in Result.InitWith(0)
+<#
+		}
+#>
+				let y = <#= ChainSources(n)#>
+				select <#= ReturnValueTupleWithY(n, k, ChainVars(r, "z", "[-1, -1]")+" + ")#>;
+
+			<#= Tuple("r", k)#> = q1.<#= ToArrays(k)#>();
+<#
+		for(int s=1; s<=k; s++)
+		{
+#>
+			TestHelper.AssertEqual(expect, r<#= k > 1 ? s : ""#>);
+<#
+		}
+#>		}
 <#
 		} // r
 #>
@@ -160,7 +186,7 @@ for(int k=1; k<=maxRes; k++)
 	}
 }
 <#+
-	private static string ReturnValueTupleWithY(int n, int k) => ReturnValueTuple(n, k, "0*y + ");
+	private static string ReturnValueTupleWithY(int n, int k, string prefix="") => ReturnValueTuple(n, k, prefix + "0*y + ");
 	private static string ReturnValueTuple(int n, int k, string prefix="") => 
 		k == 1 ? ChainSources(n, prefix) : "ValueTuple.Create(" + string.Join(", ", Enumerable.Repeat(ChainSources(n, prefix), k))+")";
 	private static string ChainSources(int n, string prefix="") => prefix + ChainVars(n, "x");

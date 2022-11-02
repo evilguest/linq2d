@@ -12,6 +12,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Array2d - Copy.N.Sources.cs" />
+    <Compile Remove="Array2d - Copy.Single.Array.cs" />
+    <Compile Remove="Array2d - Copy.Two.Array.cs" />
     <Compile Remove="CodeGen\KernelCompilerVector.cs" />
     <Compile Remove="Expressions\VectorVerify.cs" />
     <Compile Remove="IArrayQuery - Copy.cs" />
@@ -35,10 +38,35 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Array2d.cs">
+    <None Include="Array2d.N.Recurrent.Sources.cs">
+      <DependentUpon>Array2d.N.Recurrent.Sources.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>Array2d.tt</DependentUpon>
+    </None>
+    <None Include="Array2d.N.Sources.cs">
+      <DependentUpon>Array2d.N.Sources.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </None>
+    <None Include="Array2d.Two.ArraySource.cs">
+      <DependentUpon>Array2d.Two.ArraySource.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </None>
+    <None Include="Array2d.Single.ArraySource.cs">
+      <DependentUpon>Array2d.Single.ArraySource.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </None>
+    <None Include="Array2d.Two.Array.cs">
+      <DependentUpon>Array2d.Two.Array.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </None>
+    <None Include="Array2d.Single.Array.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Array2d.Single.Array.tt</DependentUpon>
     </None>
     <None Include="ArrayQuery.cs">
       <DesignTime>True</DesignTime>
@@ -68,10 +96,40 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Array2d.cs">
+    <Compile Update="Array2d.N.Recurrent.Sources.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>Array2d.tt</DependentUpon>
+      <DependentUpon>Array2d.N.Recurrent.Sources.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Array2d.N.Sources.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Array2d.N.Sources.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Array2d.Single.Array.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Array2d.Single.Array.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Array2d.Single.ArraySource.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Array2d.Single.ArraySource.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Array2d.Single.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Array2d.Single.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Array2d.Two.Array.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Array2d.Two.Array.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Array2d.Two.ArraySource.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Array2d.Two.ArraySource.tt</DependentUpon>
     </Compile>
     <Compile Update="ArrayQuery.cs">
       <DesignTime>True</DesignTime>
@@ -106,9 +164,29 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Array2d.tt">
+    <None Update="Array2d.N.Recurrent.Sources.tt">
+      <LastGenOutput>Array2d.N.Recurrent.Sources.cs</LastGenOutput>
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Array2d.cs</LastGenOutput>
+    </None>
+    <None Update="Array2d.N.Sources.tt">
+      <LastGenOutput>Array2d.N.Sources.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="Array2d.Two.ArraySource.tt">
+      <LastGenOutput>Array2d.Two.ArraySource.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="Array2d.Single.ArraySource.tt">
+      <LastGenOutput>Array2d.Single.ArraySource.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="Array2d.Two.Array.tt">
+      <LastGenOutput>Array2d.Two.Array.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="Array2d.Single.Array.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Array2d.Single.Array.cs</LastGenOutput>
     </None>
     <None Update="ArrayQuery.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
