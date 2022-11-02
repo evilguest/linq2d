@@ -1,0 +1,50 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Linq" #>
+<#@ include file="..\CommonT4.tt" #>
+using System;
+using System.Linq.Expressions;
+
+namespace Linq2d
+{
+<#
+for(int k=1; k <= maxRes; k++)
+{
+#>
+    #region <#= k#> <#= Plural("result", k)#>
+
+<#
+for(int n=1; n<=maxArg; n++)
+{
+#>
+
+    internal class <#= ArrayQueryRecurrentA(n, k)#>: <#= TypeName("ArrayQuery", n, k)#>, I<#= ArrayQueryRecurrentA(n, k)#>
+    {
+<#
+    if(n==1 && k==1)
+    {
+#>
+        public ArrayQueryRecurrent<#=k>1?k:""#>(ArraySource<T> source, R<#= k>1? 1: ""#> initValue, LambdaExpression kernel): base(source, initValue, kernel){}
+        
+<#
+    }
+#>
+        internal ArrayQueryRecurrent<#=k>1?k:""#>(
+            /*IArrayQuery<#= TemplateArgsSkip(n, 0)#>*/ <#=TypeName("IArraySource", n, 0)#> sources, 
+            R<#= k>1? k: ""#> initValue, 
+            /*Expression<Func<_, <#= ReturnTuple(k)#>>>*/ LambdaExpression kernel): base(sources, initValue, kernel){}
+        internal ArrayQueryRecurrent<#=k>1?k:""#>(
+            /*IArrayQueryRecurrent<#=k>1?k:""#><#= TemplateArgsSkip(n, k)#>*/ <#=TypeName("IArraySource", n, 0)#> source, 
+            /*Expression<Func<_, A>>*/ LambdaExpression kernel): base(source, kernel){}
+    }
+
+<#
+} // n - inputs
+#>
+    #endregion
+<#
+} // k - results
+#>
+}

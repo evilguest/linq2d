@@ -9,310 +9,15 @@ using System.Linq.Expressions;
 
 namespace Linq2d
 {
-    /*
-    internal class ArrayQuery<T, R>: ArrayQuery<R>, IArrayQuery<T, R>
-    {
-        public ArraySource<T> Source { get; }
-
-        private Func<T[,], R[,]> _transform;
-
-        public ArrayQuery(ArraySource<T> source, Expression<Func<Cell<T>, R>> kernel) : base(source, kernel)
-        {
-            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
-            Source = source;
-        }
-
-        public ArrayQuery(IArraySource<T> source, LambdaExpression kernel): base(source, kernel)
-        {
-            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
-            Source = source.Source;
-        }
-
-        public ArrayQuery(ArraySource<T> source, R resultInit, LambdaExpression kernel): base(source, kernel, resultInit)
-        {
-            MethodName = new System.Diagnostics.StackTrace().GetFrame(3).GetMethod().Name;
-            Source = source;
-        }
-
-        public ArrayQuery(IArraySource<T> source, R resultInit, LambdaExpression kernel): base(source.Source, kernel, resultInit)
-        {
-            MethodName = new System.Diagnostics.StackTrace().GetFrame(3).GetMethod().Name;
-            Source = source.Source;
-        }
-
-        public Func<T[,], R[,]> Transform
-        {
-            get
-            {
-                if (_transform == null)
-                    _transform = BuildTransform<Func<T[,], R[,]>>();
-                return _transform;
-            }
-        }
-
-        protected override R[,] GetResult() => Transform(Source.Array);
-    }
-*/
-/*    internal class ArrayQueryRecurrent<T, A, R>: ArrayQuery<T, R>, IArrayQueryRecurrent<T, A, R>
-    {
-        public ArrayQueryRecurrent(ArraySource<T> source, R initValue, LambdaExpression kernel): base(source, initValue, kernel){}
-        public ArrayQueryRecurrent(IArraySource<T> source, R initValue, LambdaExpression kernel): base(source.Source, initValue, kernel){}
-    }
-*/    
-    #region one result
-/*
-    internal class ArrayQuery<T1, T2, R> : ArrayQuery<R>, IArrayQuery<T1, T2, R>
-    {
-        public ArrayQuery(ArraySource<T1> source1, ArraySource<T2> source2, Expression<Func<Cell<T1>, Cell<T2>, R>> kernel) : base(source1, source2, kernel)
-        {
-            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
-            Source1 = source1 ?? throw new ArgumentNullException(nameof(source1));
-            Source2 = source2 ?? throw new ArgumentNullException(nameof(source2));
-        }
-
-        public ArrayQuery(IArraySource<T1> source, ArraySource<T2> source2, LambdaExpression kernel) : base(source.Source, source2, kernel)
-        {
-            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
-            Source1 = source.Source;
-            Source2 = source2 ?? throw new ArgumentNullException(nameof(source2));
-        }
-
-        public ArrayQuery(IArraySource<T1, T2> sources, R initValue, LambdaExpression kernel) : base(sources, kernel, initValue)
-        {
-            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
-            Source1 = sources.Source1;
-            Source2 = sources.Source2;
-        }
-
-        public ArrayQuery(IArraySource<T1, T2> sources, LambdaExpression kernel) : base(sources, kernel)
-        {
-            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
-            Source1 = sources.Source1;
-            Source2 = sources.Source2;
-        }
-
-        public ArraySource<T1> Source1 { get; }
-        public ArraySource<T2> Source2 { get; }
-        private Func<T1[,], T2[,], R[,]> _transform;
-        public Func<T1[,], T2[,], R[,]> Transform
-        {
-            get
-            {
-                if (_transform == null)
-                    _transform = BuildTransform<Func<T1[,], T2[,], R[,]>>();
-                return _transform;
-            }
-        }
-
-        protected override R[,] GetResult() => Transform(Source1.Array, Source2.Array);
-
-    }
-    
-<#
-for(int n=3; n<=maxArg; n++)
-{
-#>
-
-    internal class <#= TypeName("ArrayQuery", n, 1)#> : ArrayQuery<R>, <#= TypeName("IArrayQuery", n, 1)#>
-    {
-<#
-for(int i=0; i<n; i++)
-{
-#>
-        public ArraySource<T<#= i+1 #>> Source<#= i+1 #>{ get; }
-<#
-}
-#>
-
-        private <#= FuncArraySignature(n, 1)#> _transform;
-
-        public ArrayQuery(<#= TypeName("IArraySource", n-1,0)#> sources, ArraySource<T<#= n#>> source<#= n#>, LambdaExpression kernel) : base(sources, source<#= n#>, kernel)
-        {
-            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
-<#
-for(int i=1; i<n; i++)
-{
-#>
-            Source<#= i #> = sources.Source<#= i #>;
-<#
-}
-#>
-            Source<#= n#> = source<#= n#> ?? throw new ArgumentNullException(nameof(source<#= n#>));
-        }
-
-        public ArrayQuery(<#= TypeName("IArraySource", n,0)#> sources, R initValue, LambdaExpression kernel) : base(sources, kernel, initValue)
-        {
-            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
-<#
-for(int i=1; i<=n; i++)
-{
-#>
-            Source<#= i #> = sources.Source<#= i #>;
-<#
-}
-#>
-        }
-
-        public ArrayQuery(<#= TypeName("IArraySource", n,0)#> sources, LambdaExpression kernel) : base(sources, kernel)
-        {
-            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
-<#
-for(int i=1; i<=n; i++)
-{
-#>
-            Source<#= i #> = sources.Source<#= i #>;
-<#
-}
-#>
-        }
-
-        public Func<<#for(int i=0; i<n; i++){ #>T<#= i+1 #>[,], <# } #>R[,]> Transform
-        {
-            get
-            {
-                if (_transform == null)
-                    _transform = BuildTransform<Func<<#for(int i=0; i<n; i++){ #>T<#= i+1 #>[,], <# } #>R[,]>>();
-                return _transform;
-            }
-        }
-
-        protected override R[,] GetResult() => Transform(Source1.Array<#for(int i=2; i<=n; i++){#>, Source<#= i #>.Array<#}#>);
-    }
-<#
-}
-#>
-*/
-    #endregion
-
 <#
 for(int k=1; k <= maxRes; k++)
 {
 #>
     #region <#= k#> <#= Plural("result", k)#>
-
-/*
-    internal class <#= TypeName("ArrayQuery", 1, k)#>: <#= TypeName("ArrayQuery", 0, k)#>, <#= TypeName("IArrayQuery", 1, k)#>
-    {
-        public ArraySource<T> Source { get; }
-
-        private <#= FuncArraySignature(1, k)#> _transform;
-
-
-        public ArrayQuery<#= k#>(ArraySource<T> source, Expression<Func<Cell<T>, <#= ReturnTuple(k)#>>> kernel) : base(source, kernel)
-        {
-            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
-            Source = source;
-        }
-        public ArrayQuery<#= k#>(ArraySource<T> source, R1 initValue, Expression<Func<Cell<T>, RelativeCell<R1>, <#= ReturnTuple(k)#>>> kernel):base(source, kernel, initValue)
-        {
-            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
-            Source = source;
-        }
-
-        public ArrayQuery<#= k#>(IArraySource<T> source, LambdaExpression kernel): base(source, kernel)
-        {
-            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
-            Source = source.Source;
-        }
-
-        public ArrayQuery<#= k#>(IArraySource<T> source, R1 initValue, LambdaExpression kernel):base(source, kernel, initValue)
-        {
-            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
-            Source = source.Source;
-        }
-
-        public ArrayQuery<#= k#>(IArraySource<T> source, R2 initValue, LambdaExpression kernel): base(source, kernel, initValue)
-        {
-            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
-            Source = source.Source;
-        }
-
-
-        public <#= FuncArraySignature(1, k)#> Transform
-        {
-            get
-            {
-                if (_transform == null)
-                    _transform = BuildTransform<<#= FuncArraySignature(1, k)#>>();
-                return _transform;
-            }
-        }
-
-        protected override <#= ReturnTuple(k, "[,]")#> GetResult() => Transform(Source.Array);
-
-    }
-*/
-/*
-    internal class <#= TypeName("ArrayQuery", 2, k)#> : <#= TypeName("ArrayQuery", 0, k)#>, <#= TypeName("IArrayQuery", 2, k)#>
-    {
-        public ArrayQuery<#= k#>(ArraySource<T1> source1, ArraySource<T2> source2, Expression<Func<Cell<T1>, Cell<T2>, <#= ReturnTuple(k)#>>> kernel) : base(source1, source2, kernel)
-        {
-            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
-            Source1 = source1 ?? throw new ArgumentNullException(nameof(source1));
-            Source2 = source2 ?? throw new ArgumentNullException(nameof(source2));
-        }
-        public ArrayQuery<#= k#>(IArraySource<T1> source, ArraySource<T2> source2, LambdaExpression kernel) : base(source.Source, source2, kernel)
-        {
-            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
-            Source1 = source.Source;
-            Source2 = source2 ?? throw new ArgumentNullException(nameof(source2));
-        }
-        public ArrayQuery<#= k#>(IArraySource<T1, T2> sources, LambdaExpression kernel) : base(sources, kernel)
-        {
-            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
-            Source1 = sources.Source1;
-            Source2 = sources.Source2;
-        }
-        public ArrayQuery<#= k#>(IArraySource<T1, T2> sources, R1 initValue, LambdaExpression kernel) : base(sources, kernel, initValue)
-        {
-            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
-            Source1 = sources.Source1;
-            Source2 = sources.Source2;
-        }
-        public ArrayQuery<#= k#>(IArraySource<T1, T2> sources, R2 initValue, LambdaExpression kernel) : base(sources, kernel, initValue)
-        {
-            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
-            Source1 = sources.Source1;
-            Source2 = sources.Source2;
-        }
-        public ArraySource<T1> Source1 { get; }
-        public ArraySource<T2> Source2 { get; }
-        private <#= FuncArraySignature(2, k)#> _transform;
-        public <#= FuncArraySignature(2, k)#> Transform
-        {
-            get
-            {
-                if (_transform == null)
-                    _transform = BuildTransform<<#= FuncArraySignature(2, k)#>>();
-                return _transform;
-            }
-        }
-
-        protected override <#= ReturnTuple(k, "[,]")#> GetResult() => Transform(Source1.Array, Source2.Array);
-
-    }
-    */
 <#
 for(int n=1; n<=maxArg; n++)
 {
 #>
-
-    internal class ArrayQueryRecurrent<#=k>1?k:""#><#= TemplateArgsSkip(n, k)#>: <#= TypeName("ArrayQuery", n, k)#>, IArrayQueryRecurrent<#=k>1?k:""#><#= TemplateArgsSkip(n, k)#>
-    {
-<#
-    if(n==1)
-    {
-#>
-        public ArrayQueryRecurrent<#=k>1?k:""#>(ArraySource<T> source, R<#= k>1? 1: ""#> initValue, LambdaExpression kernel): base(source, initValue, kernel){}
-        
-<#
-    }
-#>
-        public ArrayQueryRecurrent<#=k>1?k:""#>(<#=TypeName("IArraySource", n, 0)#> sources, R<#= k>1? k: ""#> initValue, LambdaExpression kernel): base(sources, initValue, kernel){}
-        public ArrayQueryRecurrent<#=k>1?k:""#>(<#=TypeName("IArraySource", n, 0)#> source, LambdaExpression kernel): base(source, kernel){}
-    }
-
-
 
     internal class <#= TypeName("ArrayQuery", n, k)#> : <#= TypeName("ArrayQuery", 0, k)#>, <#= TypeName("IArrayQuery", n, k)#>
     {
@@ -334,16 +39,16 @@ for(int i=1; i<=n; i++)
             Source = source;
         }
 <#
-    for(int r=1; r<=k; r++)
-    {
+//    for(int r=1; r<=k; r++)
+//    {
 #>
-        public ArrayQuery<#= k>1?k:""#>(ArraySource<T> source, R<#=k>1?r:""#> initValue, LambdaExpression kernel) : base(source, kernel, initValue)
+        public ArrayQuery<#= k>1?k:""#>(ArraySource<T> source, R<#=k>1?1:""#> initValue, LambdaExpression kernel) : base(source, kernel, initValue)
         {
             MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
             Source = source;
         }
 <#
-    } // r
+//    } // r
 #>
 
 <#
@@ -380,18 +85,6 @@ for(int i=1; i<n; i++)
 }
 #>
             Source<#= n#> = source<#= n#>;
-        }
-        public ArrayQuery<#= k>1?k:""#>(IArraySource<#= TemplateArgsOne(n-1, 0)#> sources, LambdaExpression kernel) : base(sources, kernel)
-        {
-            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
-<#
-for(int i=1; i<n; i++)
-{
-#>
-            Source<#= i #> = sources.Source<#= n>2?i:"" #>;
-<#
-}
-#>
         }
 <#
     }

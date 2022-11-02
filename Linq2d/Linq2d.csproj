@@ -15,6 +15,7 @@
     <Compile Remove="Array2d - Copy.N.Sources.cs" />
     <Compile Remove="Array2d - Copy.Single.Array.cs" />
     <Compile Remove="Array2d - Copy.Two.Array.cs" />
+    <Compile Remove="ArrayQuery - Copy.cs" />
     <Compile Remove="CodeGen\KernelCompilerVector.cs" />
     <Compile Remove="Expressions\VectorVerify.cs" />
     <Compile Remove="IArrayQuery - Copy.cs" />
@@ -67,6 +68,11 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Array2d.Single.Array.tt</DependentUpon>
+    </None>
+    <None Include="ArrayQueryRecurrent.cs">
+      <DependentUpon>ArrayQueryRecurrent.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
     </None>
     <None Include="ArrayQuery.cs">
       <DesignTime>True</DesignTime>
@@ -136,6 +142,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>ArrayQuery.tt</DependentUpon>
     </Compile>
+    <Compile Update="ArrayQueryRecurrent.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ArrayQueryRecurrent.tt</DependentUpon>
+    </Compile>
     <Compile Update="IArray.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -187,6 +198,10 @@
     <None Update="Array2d.Single.Array.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Array2d.Single.Array.cs</LastGenOutput>
+    </None>
+    <None Update="ArrayQueryRecurrent.tt">
+      <LastGenOutput>ArrayQueryRecurrent.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
     </None>
     <None Update="ArrayQuery.tt">
       <Generator>TextTemplatingFileGenerator</Generator>

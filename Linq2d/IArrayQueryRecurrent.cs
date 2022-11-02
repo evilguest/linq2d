@@ -42,18 +42,5 @@ namespace Linq2d
 
     #endregion
 
-    #region 4 results
-
-
-    public interface IArrayQueryRecurrent4<T, _, R1, R2, R3, R4> : IArraySource<T>, IArrayTransform4<T, R1, R2, R3, R4> {};
-
-    public interface IArrayQueryRecurrent4<T1, T2, _, R1, R2, R3, R4> : IArraySource<T1, T2>, IArrayTransform4<T1, T2, R1, R2, R3, R4> {};
-
-    public interface IArrayQueryRecurrent4<T1, T2, T3, _, R1, R2, R3, R4> : IArraySource<T1, T2, T3>, IArrayTransform4<T1, T2, T3, R1, R2, R3, R4> {};
-
-    public interface IArrayQueryRecurrent4<T1, T2, T3, T4, _, R1, R2, R3, R4> : IArraySource<T1, T2, T3, T4>, IArrayTransform4<T1, T2, T3, T4, R1, R2, R3, R4> {};
-
-    #endregion
-
 
 }

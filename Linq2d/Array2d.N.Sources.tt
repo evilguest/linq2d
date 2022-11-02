@@ -37,7 +37,7 @@ for(int n=1; n<=maxArg; n++)
             => new <#= TypeName("ArrayQuery", n, k)#>(sources, recurrentResult1Selector(default).InitValue, resultSelector);
 
 <#
-        if (n<maxRes) 
+        if (n<maxArg) 
         {        
 #>
 
@@ -47,7 +47,7 @@ for(int n=1; n<=maxArg; n++)
         public static <#= TypeName("IArrayQuery", n+1, k)#> SelectMany<#= TemplateArgsSkip(n+1, k)#>(this IArrayQuery<#= TemplateArgsSkipOne(n, 0)#> <#= Plural("source", n) #>, Func<object, ArraySource<T<#= n+1#>>> source<#= n+1#>Selector, Expression<Func<_, Cell<T<#= n+1#>>, <#= ReturnTuple(k)#>>> kernel)
             => new <#= TypeName("ArrayQuery", n+1, k)#>(<#= Plural("source", n) #>, source<#= n+1#>Selector(default), kernel); 
 <#
-        } // n<maxRes        
+        } // n<maxArg        
 #>
 
 

@@ -39,10 +39,60 @@ for(int k=1; k<=maxRes; k++)
 {
 #>
 		#region <#=k#> <#= Plural("result", k)#>
+
+		[Fact]
+		public void Test2ArgsWrapped<#=k#><#=Plural("Result",k)#>()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source.With(0)
+				from x2 in source
+				select <#= ReturnValueTuple(2, k)#>;
+			var <#= Tuple("r", k)#> = q.<#= ToArrays(k)#>();
+<#
+		for(int s=1; s<=k; s++)
+		{
+#>
+			TestHelper.AssertEqual(expect, r<#= k > 1 ? s : ""#>);
+<#
+		}
+#>
+			q = 
+				from x1 in source.With(0)
+				from x2 in source.With(0)
+				select <#= ReturnValueTuple(2, k)#>;
+			<#= Tuple("r", k)#> = q.<#= ToArrays(k)#>();
+<#
+		for(int s=1; s<=k; s++)
+		{
+#>
+			TestHelper.AssertEqual(expect, r<#= k > 1 ? s : ""#>);
+<#
+		}
+#>
+			var q2 = 
+				from x1 in source.With(0)
+				from x2 in source
+				let y = <#= ChainSources(2)#>
+				select <#= ReturnValueTupleWithY(2, k)#>;
+			<#= Tuple("r", k)#> = q2.<#= ToArrays(k)#>();
+<#
+		for(int s=1; s<=k; s++)
+		{
+#>
+			TestHelper.AssertEqual(expect, r<#= k > 1 ? s : ""#>);
+<#
+		}
+#>
+
+		}
+
 <#
 	for(int n=1; n<=maxArg; n++)
 	{
 #>
+
 		[Fact]
 		public void Test<#=n#><#=Plural("Arg",n)#><#=k#><#=Plural("Result",k)#>()
 		{
@@ -50,13 +100,14 @@ for(int k=1; k<=maxRes; k++)
 			var source = ArrayHelper.InitAllRand(5, 5, 42);
 			var q = 
 <#
-		for(int s=1; s<=n; s++)
+		for(int s=1; s<n; s++)
 		{
 #>
 				from x<#=s#> in source
 <#
 		}
 #>
+				from x<#=n#> in source
 				select <#= ReturnValueTuple(n, k)#>;
 			var <#= Tuple("r", k)#> = q.<#= ToArrays(k)#>();
 <#
@@ -69,13 +120,14 @@ for(int k=1; k<=maxRes; k++)
 #>
 			q = 
 <#
-		for(int s=1; s<=n; s++)
+		for(int s=1; s<n; s++)
 		{
 #>
-				from x<#=s#> in source<#= s==n?".With(0)":""#>
+				from x<#=s#> in source
 <#
 		}
 #>
+				from x<#=n#> in source.With(0)
 				select <#= ReturnValueTuple(n, k)#>;
 			<#= Tuple("r", k)#> = q.<#= ToArrays(k)#>();
 <#
@@ -120,12 +172,15 @@ for(int k=1; k<=maxRes; k++)
 			var source = ArrayHelper.InitAllRand(5, 5, 42);
 			var q = 
 <#
-		for(int s=1; s<=n; s++)
+		for(int s=1; s<n; s++)
 		{
 #>
 				from x<#=s#> in source
 <#
 		}
+#>
+				from x<#=n#> in source
+<#
 		for(int s=1; s<=r; s++)
 		{
 #>
@@ -144,15 +199,47 @@ for(int k=1; k<=maxRes; k++)
 <#
 		}
 #>
-
-			var q1 = 
+			q = 
 <#
-		for(int s=1; s<=n; s++)
+		for(int s=1; s<n; s++)
 		{
 #>
 				from x<#=s#> in source
 <#
 		}
+#>
+				from x<#=n#> in source.With(0)
+<#
+		for(int s=1; s<=r; s++)
+		{
+#>
+				from z<#=s#> in Result.InitWith(0)
+<#
+		}
+#>
+				select <#= ReturnValueTuple(n, k, ChainVars(r, "z", "[-1, -1]")+" + ")#>;
+
+			<#= Tuple("r", k)#> = q.<#= ToArrays(k)#>();
+<#
+		for(int s=1; s<=k; s++)
+		{
+#>
+			TestHelper.AssertEqual(expect, r<#= k > 1 ? s : ""#>);
+<#
+		}
+#>
+
+			var q1 = 
+<#
+		for(int s=1; s<n; s++)
+		{
+#>
+				from x<#=s#> in source
+<#
+		}
+#>
+				from x<#=n#> in source.With(0)
+<#
 		for(int s=1; s<=r; s++)
 		{
 #>
@@ -171,7 +258,38 @@ for(int k=1; k<=maxRes; k++)
 			TestHelper.AssertEqual(expect, r<#= k > 1 ? s : ""#>);
 <#
 		}
-#>		}
+#>
+			q1 = 
+<#
+		for(int s=1; s<n; s++)
+		{
+#>
+				from x<#=s#> in source
+<#
+		}
+#>
+				from x<#=n#> in source.With(0)
+<#
+		for(int s=1; s<=r; s++)
+		{
+#>
+				from z<#=s#> in Result.InitWith(0)
+<#
+		}
+#>
+				let y = <#= ChainSources(n)#>
+				select <#= ReturnValueTupleWithY(n, k, ChainVars(r, "z", "[-1, -1]")+" + ")#>;
+
+			<#= Tuple("r", k)#> = q1.<#= ToArrays(k)#>();
+<#
+		for(int s=1; s<=k; s++)
+		{
+#>
+			TestHelper.AssertEqual(expect, r<#= k > 1 ? s : ""#>);
+<#
+		}
+#>
+	}
 <#
 		} // r
 #>
