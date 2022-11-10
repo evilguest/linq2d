@@ -34,6 +34,11 @@ namespace Linq2d
     {
         Func<T1[,], T2[,], T3[,], T4[,], T5[,], T6[,], R[,]> Transform { get; }
     }
+
+    public interface IArrayTransform<T1, T2, T3, T4, T5, T6, T7, R> : IArray<R>
+    {
+        Func<T1[,], T2[,], T3[,], T4[,], T5[,], T6[,], T7[,], R[,]> Transform { get; }
+    }
     #endregion
 
     #region 2 results
@@ -66,6 +71,11 @@ namespace Linq2d
     public interface IArrayTransform2<T1, T2, T3, T4, T5, T6, R1, R2> : IArray<R1, R2>
     {
         Func<T1[,], T2[,], T3[,], T4[,], T5[,], T6[,], (R1[,], R2[,])> Transform { get; }
+    }
+
+    public interface IArrayTransform2<T1, T2, T3, T4, T5, T6, T7, R1, R2> : IArray<R1, R2>
+    {
+        Func<T1[,], T2[,], T3[,], T4[,], T5[,], T6[,], T7[,], (R1[,], R2[,])> Transform { get; }
     }
     #endregion
 
@@ -100,6 +110,11 @@ namespace Linq2d
     {
         Func<T1[,], T2[,], T3[,], T4[,], T5[,], T6[,], (R1[,], R2[,], R3[,])> Transform { get; }
     }
+
+    public interface IArrayTransform3<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3> : IArray<R1, R2, R3>
+    {
+        Func<T1[,], T2[,], T3[,], T4[,], T5[,], T6[,], T7[,], (R1[,], R2[,], R3[,])> Transform { get; }
+    }
     #endregion
 
     #region 4 results
@@ -132,6 +147,11 @@ namespace Linq2d
     public interface IArrayTransform4<T1, T2, T3, T4, T5, T6, R1, R2, R3, R4> : IArray<R1, R2, R3, R4>
     {
         Func<T1[,], T2[,], T3[,], T4[,], T5[,], T6[,], (R1[,], R2[,], R3[,], R4[,])> Transform { get; }
+    }
+
+    public interface IArrayTransform4<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3, R4> : IArray<R1, R2, R3, R4>
+    {
+        Func<T1[,], T2[,], T3[,], T4[,], T5[,], T6[,], T7[,], (R1[,], R2[,], R3[,], R4[,])> Transform { get; }
     }
     #endregion
 

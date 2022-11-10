@@ -306,6 +306,65 @@ namespace Linq2d
         protected override R[,] GetResult() => Transform(Source1.Array, Source2.Array, Source3.Array, Source4.Array, Source5.Array, Source6.Array);
 
     }
+
+    internal class ArrayQuery<T1, T2, T3, T4, T5, T6, T7, R> : ArrayQuery<R>, IArrayQuery<T1, T2, T3, T4, T5, T6, T7, R>
+    {
+        public ArraySource<T1> Source1{ get; }
+        public ArraySource<T2> Source2{ get; }
+        public ArraySource<T3> Source3{ get; }
+        public ArraySource<T4> Source4{ get; }
+        public ArraySource<T5> Source5{ get; }
+        public ArraySource<T6> Source6{ get; }
+        public ArraySource<T7> Source7{ get; }
+
+
+        public ArrayQuery(IArraySource<T1, T2, T3, T4, T5, T6> sources, ArraySource<T7> source7, LambdaExpression kernel) : base(sources, source7, kernel)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = sources.Source1;
+            Source2 = sources.Source2;
+            Source3 = sources.Source3;
+            Source4 = sources.Source4;
+            Source5 = sources.Source5;
+            Source6 = sources.Source6;
+            Source7 = source7;
+        }
+        public ArrayQuery(IArraySource<T1, T2, T3, T4, T5, T6, T7> sources, LambdaExpression kernel) : base(sources, kernel)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = sources.Source1;
+            Source2 = sources.Source2;
+            Source3 = sources.Source3;
+            Source4 = sources.Source4;
+            Source5 = sources.Source5;
+            Source6 = sources.Source6;
+            Source7 = sources.Source7;
+        }
+        public ArrayQuery(IArraySource<T1, T2, T3, T4, T5, T6, T7> sources, R initValue, LambdaExpression kernel) : base(sources, kernel, initValue)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = sources.Source1;
+            Source2 = sources.Source2;
+            Source3 = sources.Source3;
+            Source4 = sources.Source4;
+            Source5 = sources.Source5;
+            Source6 = sources.Source6;
+            Source7 = sources.Source7;
+        }
+        private Func<T1[,], T2[,], T3[,], T4[,], T5[,], T6[,], T7[,], R[,]> _transform;
+        public Func<T1[,], T2[,], T3[,], T4[,], T5[,], T6[,], T7[,], R[,]> Transform
+        {
+            get
+            {
+                if (_transform == null)
+                    _transform = BuildTransform<Func<T1[,], T2[,], T3[,], T4[,], T5[,], T6[,], T7[,], R[,]>>();
+                return _transform;
+            }
+        }
+
+        protected override R[,] GetResult() => Transform(Source1.Array, Source2.Array, Source3.Array, Source4.Array, Source5.Array, Source6.Array, Source7.Array);
+
+    }
     #endregion
     #region 2 results
 
@@ -654,6 +713,76 @@ namespace Linq2d
         }
 
         protected override (R1[,], R2[,]) GetResult() => Transform(Source1.Array, Source2.Array, Source3.Array, Source4.Array, Source5.Array, Source6.Array);
+
+    }
+
+    internal class ArrayQuery2<T1, T2, T3, T4, T5, T6, T7, R1, R2> : ArrayQuery2<R1, R2>, IArrayQuery2<T1, T2, T3, T4, T5, T6, T7, R1, R2>
+    {
+        public ArraySource<T1> Source1{ get; }
+        public ArraySource<T2> Source2{ get; }
+        public ArraySource<T3> Source3{ get; }
+        public ArraySource<T4> Source4{ get; }
+        public ArraySource<T5> Source5{ get; }
+        public ArraySource<T6> Source6{ get; }
+        public ArraySource<T7> Source7{ get; }
+
+
+        public ArrayQuery2(IArraySource<T1, T2, T3, T4, T5, T6> sources, ArraySource<T7> source7, LambdaExpression kernel) : base(sources, source7, kernel)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = sources.Source1;
+            Source2 = sources.Source2;
+            Source3 = sources.Source3;
+            Source4 = sources.Source4;
+            Source5 = sources.Source5;
+            Source6 = sources.Source6;
+            Source7 = source7;
+        }
+        public ArrayQuery2(IArraySource<T1, T2, T3, T4, T5, T6, T7> sources, LambdaExpression kernel) : base(sources, kernel)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = sources.Source1;
+            Source2 = sources.Source2;
+            Source3 = sources.Source3;
+            Source4 = sources.Source4;
+            Source5 = sources.Source5;
+            Source6 = sources.Source6;
+            Source7 = sources.Source7;
+        }
+        public ArrayQuery2(IArraySource<T1, T2, T3, T4, T5, T6, T7> sources, R1 initValue, LambdaExpression kernel) : base(sources, kernel, initValue)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = sources.Source1;
+            Source2 = sources.Source2;
+            Source3 = sources.Source3;
+            Source4 = sources.Source4;
+            Source5 = sources.Source5;
+            Source6 = sources.Source6;
+            Source7 = sources.Source7;
+        }
+        public ArrayQuery2(IArraySource<T1, T2, T3, T4, T5, T6, T7> sources, R2 initValue, LambdaExpression kernel) : base(sources, kernel, initValue)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = sources.Source1;
+            Source2 = sources.Source2;
+            Source3 = sources.Source3;
+            Source4 = sources.Source4;
+            Source5 = sources.Source5;
+            Source6 = sources.Source6;
+            Source7 = sources.Source7;
+        }
+        private Func<T1[,], T2[,], T3[,], T4[,], T5[,], T6[,], T7[,], (R1[,], R2[,])> _transform;
+        public Func<T1[,], T2[,], T3[,], T4[,], T5[,], T6[,], T7[,], (R1[,], R2[,])> Transform
+        {
+            get
+            {
+                if (_transform == null)
+                    _transform = BuildTransform<Func<T1[,], T2[,], T3[,], T4[,], T5[,], T6[,], T7[,], (R1[,], R2[,])>>();
+                return _transform;
+            }
+        }
+
+        protected override (R1[,], R2[,]) GetResult() => Transform(Source1.Array, Source2.Array, Source3.Array, Source4.Array, Source5.Array, Source6.Array, Source7.Array);
 
     }
     #endregion
@@ -1050,6 +1179,87 @@ namespace Linq2d
         }
 
         protected override (R1[,], R2[,], R3[,]) GetResult() => Transform(Source1.Array, Source2.Array, Source3.Array, Source4.Array, Source5.Array, Source6.Array);
+
+    }
+
+    internal class ArrayQuery3<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3> : ArrayQuery3<R1, R2, R3>, IArrayQuery3<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3>
+    {
+        public ArraySource<T1> Source1{ get; }
+        public ArraySource<T2> Source2{ get; }
+        public ArraySource<T3> Source3{ get; }
+        public ArraySource<T4> Source4{ get; }
+        public ArraySource<T5> Source5{ get; }
+        public ArraySource<T6> Source6{ get; }
+        public ArraySource<T7> Source7{ get; }
+
+
+        public ArrayQuery3(IArraySource<T1, T2, T3, T4, T5, T6> sources, ArraySource<T7> source7, LambdaExpression kernel) : base(sources, source7, kernel)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = sources.Source1;
+            Source2 = sources.Source2;
+            Source3 = sources.Source3;
+            Source4 = sources.Source4;
+            Source5 = sources.Source5;
+            Source6 = sources.Source6;
+            Source7 = source7;
+        }
+        public ArrayQuery3(IArraySource<T1, T2, T3, T4, T5, T6, T7> sources, LambdaExpression kernel) : base(sources, kernel)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = sources.Source1;
+            Source2 = sources.Source2;
+            Source3 = sources.Source3;
+            Source4 = sources.Source4;
+            Source5 = sources.Source5;
+            Source6 = sources.Source6;
+            Source7 = sources.Source7;
+        }
+        public ArrayQuery3(IArraySource<T1, T2, T3, T4, T5, T6, T7> sources, R1 initValue, LambdaExpression kernel) : base(sources, kernel, initValue)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = sources.Source1;
+            Source2 = sources.Source2;
+            Source3 = sources.Source3;
+            Source4 = sources.Source4;
+            Source5 = sources.Source5;
+            Source6 = sources.Source6;
+            Source7 = sources.Source7;
+        }
+        public ArrayQuery3(IArraySource<T1, T2, T3, T4, T5, T6, T7> sources, R2 initValue, LambdaExpression kernel) : base(sources, kernel, initValue)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = sources.Source1;
+            Source2 = sources.Source2;
+            Source3 = sources.Source3;
+            Source4 = sources.Source4;
+            Source5 = sources.Source5;
+            Source6 = sources.Source6;
+            Source7 = sources.Source7;
+        }
+        public ArrayQuery3(IArraySource<T1, T2, T3, T4, T5, T6, T7> sources, R3 initValue, LambdaExpression kernel) : base(sources, kernel, initValue)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = sources.Source1;
+            Source2 = sources.Source2;
+            Source3 = sources.Source3;
+            Source4 = sources.Source4;
+            Source5 = sources.Source5;
+            Source6 = sources.Source6;
+            Source7 = sources.Source7;
+        }
+        private Func<T1[,], T2[,], T3[,], T4[,], T5[,], T6[,], T7[,], (R1[,], R2[,], R3[,])> _transform;
+        public Func<T1[,], T2[,], T3[,], T4[,], T5[,], T6[,], T7[,], (R1[,], R2[,], R3[,])> Transform
+        {
+            get
+            {
+                if (_transform == null)
+                    _transform = BuildTransform<Func<T1[,], T2[,], T3[,], T4[,], T5[,], T6[,], T7[,], (R1[,], R2[,], R3[,])>>();
+                return _transform;
+            }
+        }
+
+        protected override (R1[,], R2[,], R3[,]) GetResult() => Transform(Source1.Array, Source2.Array, Source3.Array, Source4.Array, Source5.Array, Source6.Array, Source7.Array);
 
     }
     #endregion
@@ -1492,6 +1702,98 @@ namespace Linq2d
         }
 
         protected override (R1[,], R2[,], R3[,], R4[,]) GetResult() => Transform(Source1.Array, Source2.Array, Source3.Array, Source4.Array, Source5.Array, Source6.Array);
+
+    }
+
+    internal class ArrayQuery4<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3, R4> : ArrayQuery4<R1, R2, R3, R4>, IArrayQuery4<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3, R4>
+    {
+        public ArraySource<T1> Source1{ get; }
+        public ArraySource<T2> Source2{ get; }
+        public ArraySource<T3> Source3{ get; }
+        public ArraySource<T4> Source4{ get; }
+        public ArraySource<T5> Source5{ get; }
+        public ArraySource<T6> Source6{ get; }
+        public ArraySource<T7> Source7{ get; }
+
+
+        public ArrayQuery4(IArraySource<T1, T2, T3, T4, T5, T6> sources, ArraySource<T7> source7, LambdaExpression kernel) : base(sources, source7, kernel)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = sources.Source1;
+            Source2 = sources.Source2;
+            Source3 = sources.Source3;
+            Source4 = sources.Source4;
+            Source5 = sources.Source5;
+            Source6 = sources.Source6;
+            Source7 = source7;
+        }
+        public ArrayQuery4(IArraySource<T1, T2, T3, T4, T5, T6, T7> sources, LambdaExpression kernel) : base(sources, kernel)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = sources.Source1;
+            Source2 = sources.Source2;
+            Source3 = sources.Source3;
+            Source4 = sources.Source4;
+            Source5 = sources.Source5;
+            Source6 = sources.Source6;
+            Source7 = sources.Source7;
+        }
+        public ArrayQuery4(IArraySource<T1, T2, T3, T4, T5, T6, T7> sources, R1 initValue, LambdaExpression kernel) : base(sources, kernel, initValue)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = sources.Source1;
+            Source2 = sources.Source2;
+            Source3 = sources.Source3;
+            Source4 = sources.Source4;
+            Source5 = sources.Source5;
+            Source6 = sources.Source6;
+            Source7 = sources.Source7;
+        }
+        public ArrayQuery4(IArraySource<T1, T2, T3, T4, T5, T6, T7> sources, R2 initValue, LambdaExpression kernel) : base(sources, kernel, initValue)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = sources.Source1;
+            Source2 = sources.Source2;
+            Source3 = sources.Source3;
+            Source4 = sources.Source4;
+            Source5 = sources.Source5;
+            Source6 = sources.Source6;
+            Source7 = sources.Source7;
+        }
+        public ArrayQuery4(IArraySource<T1, T2, T3, T4, T5, T6, T7> sources, R3 initValue, LambdaExpression kernel) : base(sources, kernel, initValue)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = sources.Source1;
+            Source2 = sources.Source2;
+            Source3 = sources.Source3;
+            Source4 = sources.Source4;
+            Source5 = sources.Source5;
+            Source6 = sources.Source6;
+            Source7 = sources.Source7;
+        }
+        public ArrayQuery4(IArraySource<T1, T2, T3, T4, T5, T6, T7> sources, R4 initValue, LambdaExpression kernel) : base(sources, kernel, initValue)
+        {
+            MethodName = new System.Diagnostics.StackTrace().GetFrame(2).GetMethod().Name;
+            Source1 = sources.Source1;
+            Source2 = sources.Source2;
+            Source3 = sources.Source3;
+            Source4 = sources.Source4;
+            Source5 = sources.Source5;
+            Source6 = sources.Source6;
+            Source7 = sources.Source7;
+        }
+        private Func<T1[,], T2[,], T3[,], T4[,], T5[,], T6[,], T7[,], (R1[,], R2[,], R3[,], R4[,])> _transform;
+        public Func<T1[,], T2[,], T3[,], T4[,], T5[,], T6[,], T7[,], (R1[,], R2[,], R3[,], R4[,])> Transform
+        {
+            get
+            {
+                if (_transform == null)
+                    _transform = BuildTransform<Func<T1[,], T2[,], T3[,], T4[,], T5[,], T6[,], T7[,], (R1[,], R2[,], R3[,], R4[,])>>();
+                return _transform;
+            }
+        }
+
+        protected override (R1[,], R2[,], R3[,], R4[,]) GetResult() => Transform(Source1.Array, Source2.Array, Source3.Array, Source4.Array, Source5.Array, Source6.Array, Source7.Array);
 
     }
     #endregion

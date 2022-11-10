@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Numerics;
 using System.Reflection;
 using System.Runtime.Intrinsics;
+using System.Threading.Tasks.Dataflow;
+using Linq.Expressions.Deconstruct;
 using Linq2d.CodeGen;
 using Linq2d.CodeGen.Fake;
+using static Linq.Expressions.Deconstruct.Expr;
 
 namespace Linq2d.Expressions
 {
@@ -16,17 +20,16 @@ namespace Linq2d.Expressions
         public static VectorizationResult Vectorize(int vectorSize, Expression expression, IReadOnlyList<ParameterExpression> resultVars, IReadOnlyList<ParameterExpression> sourceArgs)
         {
             var v = new Vectorizer(vectorSize, resultVars, sourceArgs);
-            if (expression is ConstantExpression ce)
-            {
-                if (VectorData.VectorInfo[vectorSize].LiftOperations.ContainsKey(ce.Type))
-                    return new VectorizationResult(true, Expression.Call(VectorData.VectorInfo[vectorSize].LiftOperations[ce.Type], ce), null, null);
-                else
-                    return new VectorizationResult(false, expression, expression, $"Failed to lift the constant {ce.Value} to {ce.Type} vector of size {vectorSize}");
-
-            }
-            var vectorizedExpression = v.Visit(expression);
+            var vectorizedExpression = expression is ConstantExpression ce 
+                ? v.HandleConstant(ce)
+                : v.Visit(expression);
             return new VectorizationResult(v._success, vectorizedExpression, v._blockedBy, v._reason);
         }
+
+        protected Expression HandleConstant(ConstantExpression node) 
+            => VectorData.VectorInfo[_vectorSize].LiftOperations.TryGetValue(node.Type, out var method)
+                ? Expression.Call(method, node)
+                : Fail(node, $"Failed to lift the constant {node.Value} to {node.Type} vector of size {_vectorSize}");
 
         private Vectorizer(int vectorSize, IReadOnlyList<ParameterExpression> resultVars, IReadOnlyList<ParameterExpression> sourceArgs)
         {
@@ -144,10 +147,9 @@ namespace Linq2d.Expressions
             // first things first: if the node operand is an index and we're trying to convert...
             if(node.Operand is IndexExpression ieo && ieo.Indexer == ArrayItem(ieo.Type))
             {
-                if (VectorInfo.LoadAndConvertOperations.ContainsKey((ieo.Type, node.Type)))
-                    return Expression.Call(GetLoadSubstitute(ieo.Type, node.Type), ieo.Object, ieo.Arguments[0], ieo.Arguments[1], Expression.Constant(_vectorSize));
-                else
-                    return Fail(node, $"Failed to find a load-and-conver operation from type {ieo.Type} to {node.Type} vector of size {_vectorSize}");
+                return VectorInfo.LoadAndConvertOperations.ContainsKey((ieo.Type, node.Type))
+                    ? Expression.Call(GetLoadSubstitute(ieo.Type, node.Type), ieo.Object, ieo.Arguments[0], ieo.Arguments[1], Expression.Constant(_vectorSize))
+                    : Fail(node, $"Failed to find a load-and-convert operation from type {ieo.Type} to {node.Type} vector of size {_vectorSize}");
             }
             var operand = Visit(node.Operand);
 
@@ -157,20 +159,13 @@ namespace Linq2d.Expressions
             if (IsVector(operand.Type))
             {
                 var operandElementType = operand.Type.GetGenericArguments()[0];
-                if (node.NodeType == ExpressionType.Convert)
-                { 
-                    if (VectorInfo.Vector.ContainsKey(node.Type) && VectorInfo.ConvertOperations.ContainsKey((operand.Type, VectorInfo.Vector[node.Type])))
-                        return Expression.Call(VectorInfo.ConvertOperations[(operand.Type, VectorInfo.Vector[node.Type])], operand);
-                    else
-                        return Fail(node, $"Failed to find a suitable convert operation from {operand.Type} to {node.Type} for vector of size {_vectorSize}");
-                }
-                else
-                {
-                    if (VectorInfo.UnaryOperations.ContainsKey((node.NodeType, operandElementType)))
-                        return Expression.Call(VectorInfo.UnaryOperations[(node.NodeType, operandElementType)], operand);
-                    else
-                        return Fail(node, $"Failed to find a {node.NodeType} operation for {operandElementType} vector of size {_vectorSize}");
-                }
+                return node.NodeType == ExpressionType.Convert
+                    ? VectorInfo.Vector.ContainsKey(node.Type) && VectorInfo.ConvertOperations.TryGetValue((operand.Type, VectorInfo.Vector[node.Type]), out var convertMethod)
+                        ? Expression.Call(convertMethod, operand)
+                        : Fail(node, $"Failed to find a suitable convert operation from {operand.Type} to {node.Type} for vector of size {_vectorSize}")
+                    : VectorInfo.UnaryOperations.TryGetValue((node.NodeType, operandElementType), out var unaryMethod)
+                        ? Expression.Call(unaryMethod, operand)
+                        : Fail(node, $"Failed to find a {node.NodeType} operation for {operandElementType} vector of size {_vectorSize}");
             }
             else return node.Update(operand);
         }
@@ -181,15 +176,13 @@ namespace Linq2d.Expressions
             return Expression.Convert(scalar, convertMethod.ReturnType, convertMethod);
         }
 
-        private Dictionary<ParameterExpression, ParameterExpression> _variableReplacements = new Dictionary<ParameterExpression, ParameterExpression>();
+        private Dictionary<ParameterExpression, ParameterExpression> _variableReplacements = new();
 
-        protected override Expression VisitParameter(ParameterExpression node)
-        {
-            if (_variableReplacements.ContainsKey(node))
-                return _variableReplacements[node];
-            else
-                return base.VisitParameter(node);
-        }
+        protected override Expression VisitParameter(ParameterExpression node) 
+            => _variableReplacements.TryGetValue(node, out var replacement) 
+                ? replacement 
+                : base.VisitParameter(node);
+
         protected override Expression VisitBinary(BinaryExpression node)
         {
             var left = Visit(node.Left);
@@ -290,5 +283,49 @@ namespace Linq2d.Expressions
         //private VectorInfo VectorInfo { get; private set; }
         private static PropertyInfo ArrayItem(Type t) => t.MakeArrayType(2).GetProperty("Item");
     }
+    /*   class VectorizerTx
+       {
+           private int vectorSize;
+           private IReadOnlyList<ParameterExpression> resultVars;
+           private IReadOnlyList<ParameterExpression> sourceArgs;
+           private bool _success;
+           private Expression _blockedBy;
+           private string _reason;
+
+           public VectorizerTx(int vectorSize, IReadOnlyList<ParameterExpression> resultVars, IReadOnlyList<ParameterExpression> sourceArgs)
+           {
+               this.vectorSize = vectorSize;
+               this.resultVars = resultVars;
+               this.sourceArgs = sourceArgs;
+           }
+
+           public static VectorizationResult Vectorize(int vectorSize, Expression expression, IReadOnlyList<ParameterExpression> resultVars, IReadOnlyList<ParameterExpression> sourceArgs)
+           {
+               var v = new VectorizerTx(vectorSize, resultVars, sourceArgs);
+               if (expression is ConstantExpression ce)
+               {
+                   if (VectorData.VectorInfo[vectorSize].LiftOperations.ContainsKey(ce.Type))
+                       return new VectorizationResult(true, Expression.Call(VectorData.VectorInfo[vectorSize].LiftOperations[ce.Type], ce), null, null);
+                   else
+                       return new VectorizationResult(false, expression, expression, $"Failed to lift the constant {ce.Value} to {ce.Type} vector of size {vectorSize}");
+
+               }
+               var vectorizedExpression = expression.TransformEx(v.Vectorize);
+               return new VectorizationResult(v._success, vectorizedExpression, v._blockedBy, v._reason);
+           }
+           private Expr Vectorize(Expr e)
+               => e switch 
+               {
+                   Constant(var v, var iv, var type) => VectorData.VectorInfo[vectorSize].LiftOperations.ContainsKey(type)) ? Expression.Call(VectorData.VectorInfo[vectorSize].LiftOperations[type], e) : Fail(e: 
+
+                };
+            private Expression Fail(Expression node, string reason)
+        {
+            _blockedBy = node;
+            _success = false;
+            _reason = reason;
+            return node;
+        }
+   }*/
     public record class VectorizationResult(bool Success, Expression Expression, Expression BlockedBy, string Reason);
 }

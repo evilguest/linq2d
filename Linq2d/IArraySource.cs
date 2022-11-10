@@ -27,4 +27,8 @@
     {
         public ArraySource<T6> Source6 { get; }
     }
+    public interface IArraySource<T1, T2, T3, T4, T5, T6, T7> : IArraySource<T1, T2, T3, T4, T5, T6>
+    {
+        public ArraySource<T7> Source7 { get; }
+    }
 }

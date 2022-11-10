@@ -119,6 +119,7 @@ namespace Linq2d.Tests
                 return res;
             }
         }
+        /*
         public static unsafe int[,] C4NNUnsafeScalarWSZCheck(byte[,] data)
         {
             int w = data.Width();
@@ -174,7 +175,7 @@ namespace Linq2d.Tests
                 pTarget[w * (h - 1) + w - 1] = (2 * pSource[w * h - 1] + (h > 1 ? pSource[w * h - 2] : pSource[w * h - 1]) + (w > 1 ? pSource[w * (h - 1) - 1] : pSource[w * h - 1])) / 4;
                 return res;
             }
-        }
+        }*/
         
         [Theory]
         //[InlineData(1, 2, 4)] -- known to fail; will review this corner case later.

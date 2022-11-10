@@ -607,6 +607,130 @@ namespace Linq2d.Tests
 
 		}
 
+
+		[Fact]
+		public void Test7Args1Result()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				from x7 in source
+				select 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7;
+			var r = q.ToArray();
+			TestHelper.AssertEqual(expect, r);
+		}
+
+		[Fact]
+		public void Test7Args1ResultWithVariable()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				from x7 in source
+				let y = 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7
+				select 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7;
+			var r = q.ToArray();
+			TestHelper.AssertEqual(expect, r);
+
+		}
+		[Fact]
+		public void Test7Args1ResultVariableWith()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				let y = 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6
+				from x7 in source
+				select 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7;
+			var r = q.ToArray();
+			TestHelper.AssertEqual(expect, r);
+		}
+		[Fact]
+		public void Test7Args1ResultVariableWithWrapped()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				let y = 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6
+				from x7 in source.With(0)
+				select 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7;
+			var r = q.ToArray();
+			TestHelper.AssertEqual(expect, r);
+		}
+
+		[Fact]
+		public void Test7Args1ResultWrappedWithVariable()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				from x7 in source.With(0)
+				let y = 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7
+				select 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7;
+			var r = q.ToArray();
+			TestHelper.AssertEqual(expect, r);
+
+		}		[Fact]
+		public void Test7Args1ResultWrapped()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				from x7 in source.With(0)
+				select 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7;
+			var r = q.ToArray();
+			TestHelper.AssertEqual(expect, r);
+			var q2 = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				from x7 in source.With(0)
+				let y = 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7
+				select 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7;
+			r = q2.ToArray();
+			TestHelper.AssertEqual(expect, r);
+
+		}
+
 		#endregion
 
 		#region 2 results
@@ -1248,6 +1372,137 @@ namespace Linq2d.Tests
 				from x6 in source.With(0)
 				let y = 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6
 				select ValueTuple.Create(0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6);
+			(r1, r2) = q2.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+
+		}
+
+
+		[Fact]
+		public void Test7Args2Results()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				from x7 in source
+				select ValueTuple.Create(0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7);
+			var (r1, r2) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+		}
+
+		[Fact]
+		public void Test7Args2ResultsWithVariable()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				from x7 in source
+				let y = 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7
+				select ValueTuple.Create(0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7);
+			var (r1, r2) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+
+		}
+		[Fact]
+		public void Test7Args2ResultsVariableWith()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				let y = 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6
+				from x7 in source
+				select ValueTuple.Create(0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7);
+			var (r1, r2) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+		}
+		[Fact]
+		public void Test7Args2ResultsVariableWithWrapped()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				let y = 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6
+				from x7 in source.With(0)
+				select ValueTuple.Create(0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7);
+			var (r1, r2) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+		}
+
+		[Fact]
+		public void Test7Args2ResultsWrappedWithVariable()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				from x7 in source.With(0)
+				let y = 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7
+				select ValueTuple.Create(0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7);
+			var (r1, r2) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+
+		}		[Fact]
+		public void Test7Args2ResultsWrapped()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				from x7 in source.With(0)
+				select ValueTuple.Create(0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7);
+			var (r1, r2) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			var q2 = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				from x7 in source.With(0)
+				let y = 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7
+				select ValueTuple.Create(0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7);
 			(r1, r2) = q2.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
 			TestHelper.AssertEqual(expect, r2);
@@ -1937,6 +2192,144 @@ namespace Linq2d.Tests
 				from x6 in source.With(0)
 				let y = 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6
 				select ValueTuple.Create(0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6);
+			(r1, r2, r3) = q2.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+
+		}
+
+
+		[Fact]
+		public void Test7Args3Results()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				from x7 in source
+				select ValueTuple.Create(0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7);
+			var (r1, r2, r3) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+		}
+
+		[Fact]
+		public void Test7Args3ResultsWithVariable()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				from x7 in source
+				let y = 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7
+				select ValueTuple.Create(0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7);
+			var (r1, r2, r3) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+
+		}
+		[Fact]
+		public void Test7Args3ResultsVariableWith()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				let y = 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6
+				from x7 in source
+				select ValueTuple.Create(0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7);
+			var (r1, r2, r3) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+		}
+		[Fact]
+		public void Test7Args3ResultsVariableWithWrapped()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				let y = 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6
+				from x7 in source.With(0)
+				select ValueTuple.Create(0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7);
+			var (r1, r2, r3) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+		}
+
+		[Fact]
+		public void Test7Args3ResultsWrappedWithVariable()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				from x7 in source.With(0)
+				let y = 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7
+				select ValueTuple.Create(0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7);
+			var (r1, r2, r3) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+
+		}		[Fact]
+		public void Test7Args3ResultsWrapped()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				from x7 in source.With(0)
+				select ValueTuple.Create(0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7);
+			var (r1, r2, r3) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+			var q2 = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				from x7 in source.With(0)
+				let y = 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7
+				select ValueTuple.Create(0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7);
 			(r1, r2, r3) = q2.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
 			TestHelper.AssertEqual(expect, r2);
@@ -2669,6 +3062,151 @@ namespace Linq2d.Tests
 				from x6 in source.With(0)
 				let y = 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6
 				select ValueTuple.Create(0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6);
+			(r1, r2, r3, r4) = q2.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+			TestHelper.AssertEqual(expect, r4);
+
+		}
+
+
+		[Fact]
+		public void Test7Args4Results()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				from x7 in source
+				select ValueTuple.Create(0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7);
+			var (r1, r2, r3, r4) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+			TestHelper.AssertEqual(expect, r4);
+		}
+
+		[Fact]
+		public void Test7Args4ResultsWithVariable()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				from x7 in source
+				let y = 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7
+				select ValueTuple.Create(0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7);
+			var (r1, r2, r3, r4) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+			TestHelper.AssertEqual(expect, r4);
+
+		}
+		[Fact]
+		public void Test7Args4ResultsVariableWith()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				let y = 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6
+				from x7 in source
+				select ValueTuple.Create(0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7);
+			var (r1, r2, r3, r4) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+			TestHelper.AssertEqual(expect, r4);
+		}
+		[Fact]
+		public void Test7Args4ResultsVariableWithWrapped()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				let y = 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6
+				from x7 in source.With(0)
+				select ValueTuple.Create(0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7);
+			var (r1, r2, r3, r4) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+			TestHelper.AssertEqual(expect, r4);
+		}
+
+		[Fact]
+		public void Test7Args4ResultsWrappedWithVariable()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				from x7 in source.With(0)
+				let y = 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7
+				select ValueTuple.Create(0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7);
+			var (r1, r2, r3, r4) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+			TestHelper.AssertEqual(expect, r4);
+
+		}		[Fact]
+		public void Test7Args4ResultsWrapped()
+		{
+			var expect = ArrayHelper.InitAll(5, 5, 0);
+			var source = ArrayHelper.InitAllRand(5, 5, 42);
+			var q = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				from x7 in source.With(0)
+				select ValueTuple.Create(0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7);
+			var (r1, r2, r3, r4) = q.ToArrays();
+			TestHelper.AssertEqual(expect, r1);
+			TestHelper.AssertEqual(expect, r2);
+			TestHelper.AssertEqual(expect, r3);
+			TestHelper.AssertEqual(expect, r4);
+			var q2 = 
+				from x1 in source
+				from x2 in source
+				from x3 in source
+				from x4 in source
+				from x5 in source
+				from x6 in source
+				from x7 in source.With(0)
+				let y = 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7
+				select ValueTuple.Create(0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7, 0*y + 0*x1 + 0*x2 + 0*x3 + 0*x4 + 0*x5 + 0*x6 + 0*x7);
 			(r1, r2, r3, r4) = q2.ToArrays();
 			TestHelper.AssertEqual(expect, r1);
 			TestHelper.AssertEqual(expect, r2);

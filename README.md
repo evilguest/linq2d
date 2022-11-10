@@ -2,7 +2,7 @@
 # Linq2d
 Linq2d is a C# library designed to provide a convenient way to express various arithmetic filters over 2d arrays with a decent performance.
 It relies upon the Linq concepts for writing the array transforms and dynamic code generation for performing the actual computation.
-I have created it mostly for fun, out of joy of being able to work with the Lambdas, Expressions, MSIL, and Intel Intrinsics. C# is an awesome language, .Net Core is an awesome platform, and I wanted to probe the boundaries of possible with this. 
+I have created it mostly for fun, out of joy of being able to work with the Lambdas, Expressions, MSIL, and Intel Intrinsics. C# is an awesome language, .Net Core is an awesome platform, and I wanted to probe the boundaries of  what's possible with it. 
 ## Video
 You can watch the presentation of the Linq2d I've made for https://2020.DotFest.ru:
 |Russian|English|
@@ -15,7 +15,7 @@ var sample = new[,] { { 1, 2 }, { 3, 4 } };
 q = from s in sample select s + 1;
 Assert.Equal(new[,] { { 2, 3 }, { 4, 5 } }, q.ToArray());
 ```
-So far, the query over a 2d array looks like a standard query over an `IEnumerable<int>` would - we have a range variable `s` that takes the values from the input, and an expression that produces the elements of the output. The `.ToArray()` instance method is used to get the query results in a form of `int[,]`. 
+So far, the query over a 2d array looks like a standard query over an `IEnumerable<int>` would - we have a range variable `s` that takes the values from the input, and an expression that produces the elements of the output. The `.ToArray()` instance method is used to get the query results in a form of an `int[,]`. 
 
 Consider a bit more contrived example: 
 ```csharp
@@ -29,7 +29,7 @@ Assert.Equal(new[,] { { 5, 5 }, { 5, 5 } }, q.ToArray());
 Now we're adding the contents of two arrays to each other. Unlike the traditional Linq, Linq2d does not require any kind of joins - it aligns the inputs to each other, and requires them to be of the same size. Size difference would be reported as an `ArgumentException` at the run time.  
 
 ### Relative Access
-Having an access only to the "current" values of the processed arrays would be boring and too restrictive. Linq2d range variables can do more than that. Let's compute a simple filter known as "C4" - arithmetic mean of the array element neighbours:
+Having an access only to the "current" elements of the arrays being processed would not be expressive enough. Linq2d range variables can do more than that. Let's compute a simple filter known as "C4" - arithmetic mean of the array element neighbours:
 ```csharp
 var sample = new[,] { { 4, 4, 4}, { 4, 4, 4 } , { 4, 4, 4 }};
 var q = from s in sample select (s[-1, 0] + s[1, 0] + s[0, -1] + s[0, 1]) / 4; // ouch!
@@ -101,41 +101,40 @@ Sometimes it might be useful to access the already calculated parts of the resul
 ```csharp
 var sample = new[,] { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} };
 var q = from s in sample
-        from r in Result.SubstBy(0)
+        from r in Result.InitWith(0)
         select s + r[-1, 0];
 Assert.Equal(new[,] { {1, 2, 3}, {5, 7, 9}, {12, 15, 18} }, q.ToArray();
 ```
 Result range variable is similar to the input reference, but it is a subject to a few extra limitations:
 - Only relative access is allowed. It is prohibited to get the "current" result value, since it hasn't been computed yet
-- It is required to provide the value for the result access outside of the result array, in an argument to the static `Result.SubstBy()` method.
+- It is required to provide the value for the result access outside of the result array, in an argument to the static `Result.InitWith()` method.
 
 Multiple results selection can be combined with the recurrent calculation. Here is an expression that produces the integrals of both data and data squared:
 ```csharp
 byte[,] grayImage = ImageHelpers.IO.LoadGrayScale("test.bmp");
 var integral = from g in grayImage
-               from ri in Result.SubstBy(0)  
-               from rq in Result.SubstBy(0)  
+               from ri in Result.InitWith(0)  
+               from rq in Result.InitWith(0)  
                select ValueTuple.Create(
                  ri[-1, 0] + ri[0, -1] - ri[-1, -1] + g,
                  rq[-1, 0] + rq[0, -1] - rq[-1, -1] + g * g);
 ```
-
-The Result references should be the last in the sources list, and their count must be less than or equal to the count of the select clause members. 
-First Result reference refers to the member #1, second - to #2, and so on. I.e. if the result expression does not need the first recurrent result, then it should be ignored:
+The count of Result references must be less than or equal to the count of the select clause members. 
+The first Result reference refers to the member #1, the second - to #2, and so on. I.e. if the result expression does not need the first recurrent result, then it could be ignored:
 ```csharp
 byte[,] grayImage = ImageHelpers.IO.LoadGrayScale("test.bmp");
 var secondRecurrent = from g in grayImage
-               from _ in Result.SubstBy(0)  
-               from r in Result.SubstBy(0)  
+               from _ in Result.InitWith(0)  
+               from r in Result.InitWith(0)  
                select ValueTuple.Create(
                  g * 2,
                  g + r[-1, 0] + r[0, -1] - r[-1, -1]);
 ```
-Same result could be achieved by swapping the order of the output parameters; then the dummy range variable is not needed:
+The same result can be achieved by swapping the order of the output parameters; then the dummy range variable is not needed:
 ```csharp
 byte[,] grayImage = ImageHelpers.IO.LoadGrayScale("test.bmp");
 var secondRecurrent = from g in grayImage
-               from r in Result.SubstBy(0)  
+               from r in Result.InitWith(0)  
                select ValueTuple.Create(
                  g + r[-1, 0] + r[0, -1] - r[-1, -1],
                  g * 2);
@@ -143,12 +142,21 @@ var secondRecurrent = from g in grayImage
 ### Performance
 Performance is important in the numeric computations, especially when dealing with substantially large data sets.
 Linq2d attempts to alleviate the abstraction penalties incurred with the .Net framework: 
-- Usual multidimensional array acesses (_`a[1, 2]`_) are always subject to the range checks; JIT doesn't optimize those checks away even for the straightforward iteration cycles. 
+- Usual multidimensional array acesses (`a[1, 2]`   ) are always subject to the range checks; JIT doesn't optimize those checks away even for the straightforward iteration cycles. 
 - Calling a delegate with a small body in a tight loop is a terrible idea, performance-wise; the call overhead is ~10 times more than an integer register-memory operation (Intel x64 is assumed)
 Therefore Linq2d does not attempt to execute the operation specified in the select statement as Linq2objects does; it compiles the whole iteration block into a dynamic delegate and then applies it to the input data.
+This delegate is exposed as the `Transform` property of the query object. If the same filter is going to be applied multiple times over varying source data, one can reuse the delegate and avoid the overhead of dynamic compilation.
+The following sample features storing the C4 filter for the future reuse:
+```csharp
+public static readonly Func<int[,], int[,]>  C4 = BuildC4();
+(from s in sample.With(OutOfBoundsStrategy.NearestNeighbour)
+        select (s[-1, 0] + s[1, 0] + s[0, -1] + s[0, 1]) / 4);
+```
+
+
 Here are some benchmark results measured on my laptop:
 
-``` ini
+```
 BenchmarkDotNet=v0.12.1, OS=Windows 10.0.18363.836 (1909/November2018Update/19H2)
 Intel Core i7-6600U CPU 2.60GHz (Skylake), 1 CPU, 4 logical and 2 physical cores
 .NET Core SDK=3.1.300

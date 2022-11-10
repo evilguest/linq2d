@@ -56,22 +56,7 @@ for(int n=1; n<=maxArg; n++)
             => new <#= TypeName("ArrayQuery", n, r)#>(sources, recurrentResult<#= k+1#>Selector(default).InitValue, resultSelector);
 <#
             } // r>k
-#>
-<#
         } // r
-#>
-
-<#
-        if (n<maxRes) 
-        {        
-#>
-
-<#
-        } // n<maxRes        
-#>
-
-
-<#
     } // k
 #>
         #endregion

@@ -18,6 +18,8 @@ namespace Linq2d
 
     public interface IArrayQueryRecurrent<T1, T2, T3, T4, T5, T6, _, R> : IArraySource<T1, T2, T3, T4, T5, T6>, IArrayTransform<T1, T2, T3, T4, T5, T6, R> {};
 
+    public interface IArrayQueryRecurrent<T1, T2, T3, T4, T5, T6, T7, _, R> : IArraySource<T1, T2, T3, T4, T5, T6, T7>, IArrayTransform<T1, T2, T3, T4, T5, T6, T7, R> {};
+
     #endregion
 
     #region 2 results
@@ -34,6 +36,8 @@ namespace Linq2d
     public interface IArrayQueryRecurrent2<T1, T2, T3, T4, T5, _, R1, R2> : IArraySource<T1, T2, T3, T4, T5>, IArrayTransform2<T1, T2, T3, T4, T5, R1, R2> {};
 
     public interface IArrayQueryRecurrent2<T1, T2, T3, T4, T5, T6, _, R1, R2> : IArraySource<T1, T2, T3, T4, T5, T6>, IArrayTransform2<T1, T2, T3, T4, T5, T6, R1, R2> {};
+
+    public interface IArrayQueryRecurrent2<T1, T2, T3, T4, T5, T6, T7, _, R1, R2> : IArraySource<T1, T2, T3, T4, T5, T6, T7>, IArrayTransform2<T1, T2, T3, T4, T5, T6, T7, R1, R2> {};
 
     #endregion
 
@@ -52,6 +56,8 @@ namespace Linq2d
 
     public interface IArrayQueryRecurrent3<T1, T2, T3, T4, T5, T6, _, R1, R2, R3> : IArraySource<T1, T2, T3, T4, T5, T6>, IArrayTransform3<T1, T2, T3, T4, T5, T6, R1, R2, R3> {};
 
+    public interface IArrayQueryRecurrent3<T1, T2, T3, T4, T5, T6, T7, _, R1, R2, R3> : IArraySource<T1, T2, T3, T4, T5, T6, T7>, IArrayTransform3<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3> {};
+
     #endregion
 
     #region 4 results
@@ -68,6 +74,8 @@ namespace Linq2d
     public interface IArrayQueryRecurrent4<T1, T2, T3, T4, T5, _, R1, R2, R3, R4> : IArraySource<T1, T2, T3, T4, T5>, IArrayTransform4<T1, T2, T3, T4, T5, R1, R2, R3, R4> {};
 
     public interface IArrayQueryRecurrent4<T1, T2, T3, T4, T5, T6, _, R1, R2, R3, R4> : IArraySource<T1, T2, T3, T4, T5, T6>, IArrayTransform4<T1, T2, T3, T4, T5, T6, R1, R2, R3, R4> {};
+
+    public interface IArrayQueryRecurrent4<T1, T2, T3, T4, T5, T6, T7, _, R1, R2, R3, R4> : IArraySource<T1, T2, T3, T4, T5, T6, T7>, IArrayTransform4<T1, T2, T3, T4, T5, T6, T7, R1, R2, R3, R4> {};
 
     #endregion
 
