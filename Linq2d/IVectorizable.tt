@@ -1,0 +1,23 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Linq" #>
+<#@ include file="..\CommonT4.tt" #>
+using Linq2d.Expressions;
+
+namespace Linq2d
+{
+<#
+for(int k=1; k <= maxRes; k++)
+{
+#>
+    public interface IVectorizable<#= k>1?k:""#>
+    {
+        public <#= VecResultTuple(k)#> <#=Plural("VectorizationResult",k)#> { get; }
+    }
+
+<#
+} // k - results
+#>
+}

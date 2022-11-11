@@ -12,16 +12,35 @@ namespace Linq2d.CodeGen
 {
     public abstract class VectorInfo : IVectorInfo
     {
-
         public VectorInfo()
         {
+            if (Sse.IsSupported)
+            {
+                InitSse();
+                Available = true;
+            }
             if (Sse2.IsSupported)
+            {
                 InitSse2();
+                Available = true;
+            }
+            if (Sse41.IsSupported)
+            {
+                InitSse41();
+                Available = true;
+            }
             if (Avx.IsSupported)
+            {
                 InitAvx();
+                Available = true;
+            }
             if (Avx2.IsSupported)
+            {
                 InitAvx2();
+                Available = true;
+            }
         }
+        public bool Available { get;protected set; }
         #region fields
         private readonly Dictionary<(Type sourceType, Type targetType), MethodInfo> _loadAndConvertOperations = new Dictionary<(Type sourceType, Type targetType), MethodInfo>();
         private readonly Dictionary<(Type sourceType, Type targetType), MethodInfo> _convertOperations = new Dictionary<(Type sourceType, Type targetType), MethodInfo>();
@@ -103,7 +122,7 @@ namespace Linq2d.CodeGen
         #endregion
 
         #region Convert
-        public void InitConvert<T, R>(Func<T, R> method)
+        private void InitConvert<T, R>(Func<T, R> method)
             => _convertOperations[(typeof(T), typeof(R))] = method.Method;
 
         public void InitConvert<T, R>(Func<Vector128<T>, Vector256<R>> method)
@@ -114,10 +133,10 @@ namespace Linq2d.CodeGen
             where T : struct
             where R : struct
             => InitConvert<Vector256<T>, Vector128<R>>(method);
-        //public void InitConvert128<T, R>(Func<Vector128<T>, Vector128<R>> method)
-        //    where T : struct
-        //    where R : struct
-        //    => InitConvert(method);
+        public void InitConvert128<T, R>(Func<Vector128<T>, Vector128<R>> method)
+            where T : struct
+            where R : struct
+            => InitConvert(method);
         public void InitConvert256<T, R>(Func<Vector256<T>, Vector256<R>> method)
             where T : struct
             where R : struct
@@ -211,7 +230,9 @@ namespace Linq2d.CodeGen
         #endregion
 
         #region Overridables
+        protected virtual void InitSse() { }
         protected virtual void InitSse2() { }
+        protected virtual void InitSse41() { }
         protected virtual void InitAvx2() { }
         protected virtual void InitAvx() { }
         #endregion

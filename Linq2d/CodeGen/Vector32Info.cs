@@ -12,6 +12,9 @@ namespace Linq2d.CodeGen
             InitType256<byte>();
             InitType256<sbyte>();
 
+            InitLift<byte>(Vector256.Create);
+            InitLift<sbyte>(Vector256.Create);
+
             InitStore<byte, Vector256<byte>>(Avx.Store);
             InitStore<sbyte, Vector256<sbyte>>(Avx.Store);
 

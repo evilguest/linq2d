@@ -95,6 +95,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>IArrayTransform.tt</DependentUpon>
     </None>
+    <None Include="IVectorizable.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>IVectorizable.tt</DependentUpon>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -168,6 +173,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>IArrayTransform.tt</DependentUpon>
     </Compile>
+    <Compile Update="IVectorizable.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>IVectorizable.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -225,6 +235,10 @@
     <None Update="IArrayTransform.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>IArrayTransform.cs</LastGenOutput>
+    </None>
+    <None Update="IVectorizable.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>IVectorizable.cs</LastGenOutput>
     </None>
   </ItemGroup>
 

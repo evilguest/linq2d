@@ -1,6 +1,11 @@
 ﻿<#+
-    private static int maxArg = 7;
-    private static int maxRes = 4;
+    private static int maxArg {get => 7; }
+    private static int maxRes {get => 4; }
+
+    private static string VecResultTuple(int k) => 
+        k>1 
+        ? "("+string.Join(", ", Enumerable.Repeat("VectorizationResult", k))+")" 
+        : "VectorizationResult";
 
     private static string Plural(string word, int c) => word + (c > 1 ? "s" : "");
     private static string ToArrays(int c) => Plural("ToArray", c);
@@ -14,19 +19,25 @@
             + TemplateArgs(inputs, outputs);
     private static string FuncSignature(int inputs, int outputs)
         => "Func" + TemplateArgsTuple(inputs, outputs);
+
     private static string FuncArraySignature(int inputs, int outputs)
         => "Func" + TemplateArgsTuple(inputs, outputs, "[,]");
+
     private static string TemplateArgs(int inputs, int outputs, string inputName="T", string outputName="R")
         => "<" + string.Join(", ", RepeatArgs(inputName, inputs).Concat(RepeatArgs(outputName, outputs))) + ">";
+
     private static string TemplateArgsOne(int inputs, int outputs, string inputName="T", string outputName="R")
         => "<" + string.Join(", ", RepeatArgsZero(inputName, inputs).Concat(RepeatArgs(outputName, outputs))) + ">";
+
     private static string TemplateArrArgs(int inputs, int outputs)
         => "<" + string.Join(", ", RepeatArgs("T", inputs, "[,]").Concat(RepeatArgs("R", outputs, "[,]"))) + ">";
+
     private static string TemplateArgsTuple(int inputs, int outputs, string suffix = "")
         => "<" + string.Join(", ", RepeatArgs("T", inputs, suffix).Append(ReturnTuple(outputs, suffix))) + ">";
 
     private static string Tuple(string prefix, int n, string suffix="")
         => n == 1 ? prefix+suffix : "(" + string.Join(", ", RepeatArgs(prefix, n, suffix)) + ")";
+
     private static string ReturnTuple(int n, string suffix = "")
         => Tuple("R", n, suffix);
 

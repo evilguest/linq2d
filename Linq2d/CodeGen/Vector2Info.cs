@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Linq.Expressions;
-using Sse41 = System.Runtime.Intrinsics.X86.Sse41;
 
 namespace Linq2d.CodeGen
 {
     using Intrinsics;
+    using System.Runtime.Intrinsics;
+
     public unsafe class Vector2Info : VectorInfo
     {
         protected override void InitSse2()
@@ -12,6 +13,10 @@ namespace Linq2d.CodeGen
             InitType128<long>();
             InitType128<ulong>();
             InitType128<double>();
+
+            InitLift<long>(Vector128.Create);
+            InitLift<ulong>(Vector128.Create);
+            InitLift<double>(Vector128.Create);
 
             InitStore<long>(Sse2.Store);
             InitStore<ulong>(Sse2.Store);
@@ -50,21 +55,18 @@ namespace Linq2d.CodeGen
             InitBinary128Forced<long, byte, int>(ExpressionType.LeftShift, Sse2.ShiftLeftLogical);
             InitBinary128Forced<ulong, byte, int>(ExpressionType.LeftShift, Sse2.ShiftLeftLogical);
         }
-        public Vector2Info()
+        protected override void InitSse41()
         {
-            if (Sse41.IsSupported)
-            {
-                InitLoadAndConvert<byte, long>(Sse41.ConvertToVector128Int64);
-                InitLoadAndConvert<sbyte, long>(Sse41.ConvertToVector128Int64);
-                InitLoadAndConvert<short, long>(Sse41.ConvertToVector128Int64);
-                InitLoadAndConvert<ushort, long>(Sse41.ConvertToVector128Int64);
-                InitLoadAndConvert<int, long>(Sse41.ConvertToVector128Int64);
-                InitLoadAndConvert<uint, long>(Sse41.ConvertToVector128Int64);
+            InitLoadAndConvert<byte, long>(Sse41.ConvertToVector128Int64);
+            InitLoadAndConvert<sbyte, long>(Sse41.ConvertToVector128Int64);
+            InitLoadAndConvert<short, long>(Sse41.ConvertToVector128Int64);
+            InitLoadAndConvert<ushort, long>(Sse41.ConvertToVector128Int64);
+            InitLoadAndConvert<int, long>(Sse41.ConvertToVector128Int64);
+            InitLoadAndConvert<uint, long>(Sse41.ConvertToVector128Int64);
 
-                InitConditional128<double>(Sse41.BlendVariable);
-                InitConditional128<long>(Sse41.BlendVariable);
-                InitConditional128<ulong>(Sse41.BlendVariable);
-            }
+            InitConditional128<double>(Sse41.BlendVariable);
+            InitConditional128<long>(Sse41.BlendVariable);
+            InitConditional128<ulong>(Sse41.BlendVariable);
         }
 
     }

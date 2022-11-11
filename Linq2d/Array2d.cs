@@ -1,4 +1,8 @@
-﻿namespace Linq2d
+﻿using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("Linq2d.Tests")]
+
+namespace Linq2d
 {
     public static partial class Array2d
     {

@@ -21,7 +21,7 @@ namespace Linq2d.Benchmarks
             var q = GetQuery();
             _integrateVector = q.Transform;
             var ev = (IVectorizable)q;
-            if(!ev.Vectorized)
+            if(!ev.VectorizationResult.Success)
                 Console.Error.WriteLine($"C4 vectorization failed due to the expression\n{ev.VectorizationResult.BlockedBy.ToCSharpCode()}:\n  {ev.VectorizationResult.Reason}");
 
             Array2d.TryVectorize = false;

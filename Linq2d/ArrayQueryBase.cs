@@ -14,7 +14,7 @@ using static System.Linq.Expressions.Expression;
 
 namespace Linq2d
 {
-    internal class ArrayQueryBase: IVectorizable
+    internal class ArrayQueryBase
     {
         public LambdaExpression Kernel { get; }
         public List<ArraySource> Sources { get; } = new List<ArraySource>();
@@ -54,7 +54,7 @@ namespace Linq2d
 
         protected ArrayQueryBase(IArrayQuery left, ArraySource right, LambdaExpression kernel) : this(left, kernel) => Sources.Add(right);
         public bool Vectorized { get; private set; } = false;
-        public VectorizationResult VectorizationResult { get; private set; } = null;
+        public VectorizationResult[] VectorizationResults { get; private set; }
 
         protected D BuildTransform<D>()
             where D : Delegate
@@ -260,44 +260,38 @@ namespace Linq2d
 
                     // Vector part
                     {
-
                         var vectorizable = Array2d.TryVectorize;
                         var coreKernels = new Expression[Results.Count];
                         coreRanges = baseRanges.Add(iVar, Constant(-minX), Subtract(hVar, Constant(maxX + 1))).Add(jVar, Constant(-minY), Subtract(wVar, Constant(maxY + 1)));
 
                         var argTypes = (from s in Sources select s.Type).Union(Results);
-                        var stepSizes = new int[Results.Count];
+//                        var stepSizes = new int[Results.Count];
                         var vectorKernels = new Expression[Results.Count];
-                        //var step = 32 / (from t in argTypes select (int)typeof(Unsafe).GetMethod("SizeOf").MakeGenericMethod(t).Invoke(null, null)).Max();
-                        for (int c = 0; (c < Results.Count) && vectorizable; c++)
+                        VectorizationResults = new VectorizationResult[Results.Count];
+                        for (int c = 0; c < Results.Count; c++)
                         {
                             if (!Array2d.PoolCSEVariables)  // if the user disabled pooling, then
                                 _variablePool = null;       // reset the pool on each iteration, suppressing the reuse
 
-                            coreKernels[c] = InlineKernel(kernels[c], iVar, jVar, hVar, wVar, coreRanges, resultVars, sourceArgs, ref _variablePool);
-                            var v = new VectorizationResult(false, null, null, null);
-
+                            coreKernels[c] = vectorKernels[c] = InlineKernel(kernels[c], iVar, jVar, hVar, wVar, coreRanges, resultVars, sourceArgs, ref _variablePool);
+                            
                             // try smaller step sizes until it works
-                            // todo: replace 32 and 2 to suitable boundaries to avoid testing the dead ends
-                            for (var step = 32; !v.Success && step > 2; step >>= 1) 
+                            foreach (var step in VectorData.StepSizesDesc)
                             {
-                                v = Vectorizer.Vectorize(step, coreKernels[c], resultVars, sourceArgs);
-                                stepSizes[c] = step;
+                                var v = VectorizationResults[c] = Vectorizer.Vectorize(step, coreKernels[c], resultVars, sourceArgs);
+                                if (v.Success)
+                                {
+                                    vectorKernels[c] = v.Expression;
+                                    break;
+                                }
                             }
-                            if (v.Success)
-                            {
-                                vectorKernels[c] = v.Expression;
-                            }
-                            else
-                            {
-                                vectorizable = false;
-                                VectorizationResult = v;
-                            }
+                            vectorizable = false;
                         }
                        
                         if (vectorizable)
                         {
                             Vectorized = true;
+                            var stepSizes = from vr in VectorizationResults select vr.Step;
                             var maxStep = stepSizes.Max();
                             var minStep = stepSizes.Min();
 
@@ -316,12 +310,12 @@ namespace Linq2d
                                 {
                                     for (int c = 0; c < Results.Count; c++)
                                     {
-                                        if (minStep * unroll % stepSizes[c] == 0)
+                                        if (minStep * unroll % VectorizationResults[c].Step == 0)
                                         {
                                             ilg.Ldloc(pTrgs[c]);
                                             kcs.Load2dPointerOffset(Results[c], iVar, jVar);
                                             kcs.Compile(vectorKernels[c]);
-                                            ilg.Call(VectorData.VectorInfo[stepSizes[c]].StoreOperations[Results[c]]);
+                                            ilg.Call(VectorData.VectorInfo[VectorizationResults[c].Step].StoreOperations[Results[c]]);
                                         }
                                     }
                                     ilg.Increment(j, minStep);

@@ -1,35 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-
-using System.Runtime.Intrinsics;
-using System.Runtime.CompilerServices;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Linq2d.CodeGen
 {
-
-    public class VectorData
+    public static class VectorData
     {
-        private static Dictionary<int, IVectorInfo> _vectorInfo = new Dictionary<int, IVectorInfo>()
+        static VectorData() => Init();
+        private static IEnumerable<(int size, IVectorInfo info)> GetInfos()
         {
-            [2] = new Vector2Info(),
-            [4] = new Vector4Info(),
-            [8] = new Vector8Info(),
-            [16] = new Vector16Info(),
-            [32] = new Vector32Info()
-        };
+            yield return (2, new Vector2Info());
+            yield return (4, new Vector4Info());
+            yield return (8, new Vector8Info());
+            yield return (16, new Vector16Info());
+            yield return (32, new Vector32Info());
+        }
 
-        public static IReadOnlyDictionary<int, IVectorInfo> VectorInfo { get => _vectorInfo; }
+        public static void Init()
+        {
+            var avis = (from i in GetInfos() where i.info.Available select i).ToList();
+            MinStep = (from vi in avis select vi.size).Min();
+            MaxStep = (from vi in avis select vi.size).Max();
+            VectorInfo = new Dictionary<int, IVectorInfo>(from vi in avis select KeyValuePair.Create(vi.size, vi.info));
+        }
 
-        public static IReadOnlyDictionary<MethodInfo, MethodInfo> MethodTable { get; } = new Dictionary<MethodInfo, MethodInfo>();
-
-
-
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //public static Vector256<long> Negate(Vector256<long> a) => Avx2.MultiplyLow(a, Vector256.Create(-1L));
-
-
+        public static int MinStep { get; private set; }
+        public static int MaxStep { get; private set; }
+        public static IReadOnlyDictionary<int, IVectorInfo> VectorInfo { get; private set; }
+        public static IEnumerable<int> StepSizesDesc { get => from sv in VectorInfo.Keys orderby sv descending select sv; }
 
         [ExcludeFromCodeCoverage]
         public static R Load<T, R>(T[,] array, int i, int j, int size)

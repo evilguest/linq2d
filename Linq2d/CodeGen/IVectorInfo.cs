@@ -9,6 +9,7 @@ namespace Linq2d.CodeGen
 {
     public interface IVectorInfo
     {
+        bool Available { get; }
         IReadOnlyDictionary<Type, MethodInfo> StoreOperations { get; }
         IReadOnlyDictionary<(Type sourceType, Type targetType), MethodInfo> LoadAndConvertOperations { get; }
         IReadOnlyDictionary<Type, MethodInfo> LiftOperations { get; }

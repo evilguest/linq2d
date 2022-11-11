@@ -71,15 +71,15 @@ namespace Linq2d.Tests
 
             var whalf = W / 2;
             var area = from i in integral_image_linq.With(OutOfBoundsStrategy.Integral(0))
-                       let tl = i.Offset(-whalf-1, -whalf-1)
+                       let tl = i.Offset(-whalf - 1, -whalf - 1)
                        let br = i.Offset(whalf, whalf)
                        select (br.X - tl.X) * (br.Y - tl.Y);
             var areaA = area.ToArray();
             TestHelper.AssertEqual(CalculateArea(grayImage, whalf), area.ToArray());
             var diff = from i in integral_image_linq.With(OutOfBoundsStrategy.Integral(0))
-                       let tl = i.Offset(-whalf-1, -whalf-1)
-                       let tr = i.Offset(-whalf-1, whalf)
-                       let bl = i.Offset(whalf, -whalf-1)
+                       let tl = i.Offset(-whalf - 1, -whalf - 1)
+                       let tr = i.Offset(-whalf - 1, whalf)
+                       let bl = i.Offset(whalf, -whalf - 1)
                        let br = i.Offset(whalf, whalf)
                        select br.Value + tl.Value - tr.Value - bl.Value;
             var diffA = diff.ToArray();
@@ -95,7 +95,7 @@ namespace Linq2d.Tests
 
             var mean = from d in diffA
                        from a in areaA
-                       select (double) d / a;
+                       select (double)d / a;
 
             TestHelper.AssertEqual(CalculateMean(diffA, areaA), mean.ToArray());
 
@@ -112,6 +112,35 @@ namespace Linq2d.Tests
                          select m * (1 + K * ((s / 128) - 1));
             TestHelper.AssertEqual(CalculateThreshold(mean.ToArray(), std.ToArray()), thresh.ToArray());
 
+        }
+        [Fact]
+        public void TestStepsWithoutAvx2()
+        {
+            CodeGen.Intrinsics.Avx2.Suppress = true;
+            TestSteps(17, 17, 5);
+            CodeGen.Intrinsics.Avx2.Suppress = false;
+        }
+        [Fact]
+        public void TestStepsWithoutAvx()
+        {
+            CodeGen.Intrinsics.Avx.Suppress = true;
+            TestSteps(17, 17, 5);
+            CodeGen.Intrinsics.Avx.Suppress = false;
+        }
+
+        [Fact]
+        public void TestStepsWithoutSse2()
+        {
+            CodeGen.Intrinsics.Sse2.Suppress = true;
+            TestSteps(17, 17, 5);
+            CodeGen.Intrinsics.Sse2.Suppress = false;
+        }
+        [Fact]
+        public void TestStepsWithoutSse()
+        {
+            CodeGen.Intrinsics.Sse.Suppress = true;
+            TestSteps(17, 17, 5);
+            CodeGen.Intrinsics.Sse.Suppress = false;
         }
 
         private double[,] CalculateThreshold(double[,] mean, double[,] std)

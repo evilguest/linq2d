@@ -23,7 +23,7 @@ namespace Linq2d.Expressions
             var vectorizedExpression = expression is ConstantExpression ce 
                 ? v.HandleConstant(ce)
                 : v.Visit(expression);
-            return new VectorizationResult(v._success, vectorizedExpression, v._blockedBy, v._reason);
+            return new VectorizationResult(v._success, vectorSize, vectorizedExpression, v._blockedBy, v._reason);
         }
 
         protected Expression HandleConstant(ConstantExpression node) 
@@ -283,49 +283,5 @@ namespace Linq2d.Expressions
         //private VectorInfo VectorInfo { get; private set; }
         private static PropertyInfo ArrayItem(Type t) => t.MakeArrayType(2).GetProperty("Item");
     }
-    /*   class VectorizerTx
-       {
-           private int vectorSize;
-           private IReadOnlyList<ParameterExpression> resultVars;
-           private IReadOnlyList<ParameterExpression> sourceArgs;
-           private bool _success;
-           private Expression _blockedBy;
-           private string _reason;
-
-           public VectorizerTx(int vectorSize, IReadOnlyList<ParameterExpression> resultVars, IReadOnlyList<ParameterExpression> sourceArgs)
-           {
-               this.vectorSize = vectorSize;
-               this.resultVars = resultVars;
-               this.sourceArgs = sourceArgs;
-           }
-
-           public static VectorizationResult Vectorize(int vectorSize, Expression expression, IReadOnlyList<ParameterExpression> resultVars, IReadOnlyList<ParameterExpression> sourceArgs)
-           {
-               var v = new VectorizerTx(vectorSize, resultVars, sourceArgs);
-               if (expression is ConstantExpression ce)
-               {
-                   if (VectorData.VectorInfo[vectorSize].LiftOperations.ContainsKey(ce.Type))
-                       return new VectorizationResult(true, Expression.Call(VectorData.VectorInfo[vectorSize].LiftOperations[ce.Type], ce), null, null);
-                   else
-                       return new VectorizationResult(false, expression, expression, $"Failed to lift the constant {ce.Value} to {ce.Type} vector of size {vectorSize}");
-
-               }
-               var vectorizedExpression = expression.TransformEx(v.Vectorize);
-               return new VectorizationResult(v._success, vectorizedExpression, v._blockedBy, v._reason);
-           }
-           private Expr Vectorize(Expr e)
-               => e switch 
-               {
-                   Constant(var v, var iv, var type) => VectorData.VectorInfo[vectorSize].LiftOperations.ContainsKey(type)) ? Expression.Call(VectorData.VectorInfo[vectorSize].LiftOperations[type], e) : Fail(e: 
-
-                };
-            private Expression Fail(Expression node, string reason)
-        {
-            _blockedBy = node;
-            _success = false;
-            _reason = reason;
-            return node;
-        }
-   }*/
-    public record class VectorizationResult(bool Success, Expression Expression, Expression BlockedBy, string Reason);
+    public record class VectorizationResult(bool Success, int Step, Expression Expression, Expression BlockedBy, string Reason);
 }
