@@ -8,6 +8,7 @@ namespace Linq2d.CodeGen
     {
         public static class Vector32
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public static Vector32<byte> Create(byte b)
                 => new Vector32<byte>(b, b, b, b);
 
@@ -23,18 +24,18 @@ namespace Linq2d.CodeGen
                 return r;
             }
 
-            //public static Vector32<byte> ConvertToVector32Byte(Vector128<int> data)
-            //{
-            //    var t = data.AsByte();
-            //    return new Vector32<byte>(t.GetElement(0), t.GetElement(4), t.GetElement(8), t.GetElement(12));
-            //}
+            public static Vector32<byte> ConvertToVector32Byte(Vector128<int> data)
+            {
+                var t = data.AsByte();
+                return new Vector32<byte>(t.GetElement(0), t.GetElement(4), t.GetElement(8), t.GetElement(12));
+            }
             public static Vector32<byte> ConvertToVector32Byte(Vector256<long> data)
             {
                 var t = data.AsByte();
                 return new Vector32<byte>(t.GetElement(0), t.GetElement(8), t.GetElement(16), t.GetElement(24));
             }
 
-            public static Vector32<byte> DoubleConditional(Vector256<double> boolean, Vector32<byte> ifTrue, Vector32<byte> ifFalse)
+            public static Vector32<byte> DoubleConditional(Vector32<byte> ifTrue, Vector32<byte> ifFalse, Vector256<byte> boolean)
             {
                 int s = ConvertToVector32Byte(boolean.AsInt64())._i;
                 return new Vector32<byte>((s & ifTrue._i) | (~s & ifFalse._i));

@@ -21,8 +21,8 @@ namespace Linq2d.CodeGen.Intrinsics
         internal static Vector256<float> Add(Vector256<float> arg1, Vector256<float> arg2) => Base.Add(arg1, arg2);
         internal static Vector256<double> Add(Vector256<double> arg1, Vector256<double> arg2) => Base.Add(arg1, arg2);
 
-        internal static Vector256<double> BlendVariable(Vector256<double> arg1, Vector256<double> arg2, Vector256<double> arg3)
-            => Base.BlendVariable(arg1, arg2, arg3);
+        internal static Vector256<double> BlendVariable(Vector256<double> left, Vector256<double> right, Vector256<byte> mask)
+            => Base.BlendVariable(left, right, mask.AsDouble());
 
         internal static Vector256<double> Compare(Vector256<double> l, Vector256<double> r, System.Runtime.Intrinsics.X86.FloatComparisonMode orderedLessThanSignaling) 
             => Base.Compare(l, r, orderedLessThanSignaling);

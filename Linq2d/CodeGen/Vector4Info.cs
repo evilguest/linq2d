@@ -26,6 +26,7 @@ namespace Linq2d.CodeGen
             InitBinary128<float>(ExpressionType.Subtract, Sse.Subtract);
             InitBinary128<float>(ExpressionType.Multiply, Sse.Multiply);
             InitBinary128<float>(ExpressionType.Divide, Sse.Divide);
+            InitBinary128<float>(ExpressionType.Equal, Sse.CompareEqual);
         }
 
         protected override void InitSse2()
@@ -62,6 +63,9 @@ namespace Linq2d.CodeGen
             InitBinary128<int>(ExpressionType.And, Sse2.And);
             InitBinary128<uint>(ExpressionType.And, Sse2.And);
 
+            InitBinary128<int, byte>(ExpressionType.Equal, Sse2.CompareEqual);
+            InitBinary128<uint, byte>(ExpressionType.Equal, Sse2.CompareEqual);
+
             InitBinary128Forced<int, byte, int>(ExpressionType.RightShift, Sse2.ShiftRightArithmetic);
             InitBinary128Forced<uint, byte, int>(ExpressionType.RightShift, Sse2.ShiftRightLogical);
 
@@ -82,6 +86,8 @@ namespace Linq2d.CodeGen
 
             InitBinary128<int>(ExpressionType.Multiply, Sse41.MultiplyLow);
             InitBinary128<uint>(ExpressionType.Multiply, Sse41.MultiplyLow);
+
+
             InitBinary128<int>(Math.Max, Sse41.Max);
             InitBinary128<int>(Math.Min, Sse41.Min);
             InitBinary128<uint>(Math.Max, Sse41.Max);
@@ -128,16 +134,16 @@ namespace Linq2d.CodeGen
             InitBinary256<double>(ExpressionType.Multiply, Avx.Multiply);
             InitBinary256<double>(ExpressionType.Divide, Avx.Divide);
 
-            InitBinary256<double>(ExpressionType.LessThan, LessThan);
-            InitBinary256<double>(ExpressionType.LessThanOrEqual, LessThanOrEqual);
-            InitBinary256<double>(ExpressionType.GreaterThan, GreaterThan);
-            InitBinary256<double>(ExpressionType.GreaterThanOrEqual, GreaterThanOrEqual);
+            InitBinary256<double, byte>(ExpressionType.LessThan, LessThan);
+            InitBinary256<double, byte>(ExpressionType.LessThanOrEqual, LessThanOrEqual);
+            InitBinary256<double, byte>(ExpressionType.GreaterThan, GreaterThan);
+            InitBinary256<double, byte>(ExpressionType.GreaterThanOrEqual, GreaterThanOrEqual);
 
             InitBinary256<double>(Math.Max, Avx.Max);
             InitBinary256<double>(Math.Min, Avx.Min);
 
             InitConditional256<double>(Avx.BlendVariable);
-            InitConditional<Vector256<double>, Vector32<byte>>(Vector32.DoubleConditional);
+            InitConditional<Vector256<byte>, Vector32<byte>>(Vector32.DoubleConditional);
 
             InitUnary256<double>(ExpressionType.Negate, Negate);
         }
@@ -188,17 +194,17 @@ namespace Linq2d.CodeGen
             InitLoadAndConvert<byte>(Vector32.Load);
             Available = true;
         }
-        public static Vector256<double> LessThan(Vector256<double> l, Vector256<double> r)
-            => Avx.Compare(l, r, FloatComparisonMode.OrderedLessThanSignaling);
+        public static Vector256<byte> LessThan(Vector256<double> l, Vector256<double> r)
+            => Avx.Compare(l, r, FloatComparisonMode.OrderedLessThanSignaling).AsByte();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector256<double> GreaterThan(Vector256<double> l, Vector256<double> r)
-            => Avx.Compare(l, r, FloatComparisonMode.OrderedGreaterThanSignaling);
+        public static Vector256<byte> GreaterThan(Vector256<double> l, Vector256<double> r)
+            => Avx.Compare(l, r, FloatComparisonMode.OrderedGreaterThanSignaling).AsByte();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector256<double> LessThanOrEqual(Vector256<double> l, Vector256<double> r)
-            => Avx.Compare(l, r, FloatComparisonMode.OrderedLessThanOrEqualSignaling);
+        public static Vector256<byte> LessThanOrEqual(Vector256<double> l, Vector256<double> r)
+            => Avx.Compare(l, r, FloatComparisonMode.OrderedLessThanOrEqualSignaling).AsByte();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector256<double> GreaterThanOrEqual(Vector256<double> l, Vector256<double> r)
-            => Avx.Compare(l, r, FloatComparisonMode.OrderedGreaterThanOrEqualSignaling);
+        public static Vector256<byte> GreaterThanOrEqual(Vector256<double> l, Vector256<double> r)
+            => Avx.Compare(l, r, FloatComparisonMode.OrderedGreaterThanOrEqualSignaling).AsByte();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector256<double> ConvertToVector256Double(byte* address)
             => Avx.ConvertToVector256Double(Sse41.ConvertToVector128Int32(address));

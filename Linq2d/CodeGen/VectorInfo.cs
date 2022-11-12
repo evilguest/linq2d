@@ -179,6 +179,10 @@ namespace Linq2d.CodeGen
             where T2 : unmanaged
             where R : unmanaged
             => InitBinary(ex, method);
+        public void InitBinary128<T, R>(ExpressionType ex, Func<Vector128<T>, Vector128<T>, Vector128<R>> method)
+            where T : unmanaged
+            where R : unmanaged
+            => InitBinary(ex, method);
         public void InitBinary128<T>(ExpressionType ex, Func<Vector128<T>, Vector128<T>, Vector128<T>> method)
             where T : unmanaged
             => InitBinary(ex, method);
@@ -189,6 +193,10 @@ namespace Linq2d.CodeGen
             where T1 : unmanaged
             => _binaryOperations[(ex, typeof(Vector128<T1>), typeof(T2A))] = method.Method;
 
+        public void InitBinary256<T, R>(ExpressionType ex, Func<Vector256<T>, Vector256<T>, Vector256<R>> method)
+            where T : unmanaged
+            where R : unmanaged
+            => InitBinary(ex, method);
         public void InitBinary256<T1, T2, R>(ExpressionType ex, Func<Vector256<T1>, Vector256<T2>, Vector256<R>> method)
             where T1 : unmanaged
             where T2 : unmanaged
@@ -217,12 +225,12 @@ namespace Linq2d.CodeGen
 
         #endregion
         #region Conditional
-        public void InitConditional<T, A>(Func<T, A, A, A> conditional)
+        public void InitConditional<T, A>(Func<A, A, T, A> conditional)
             => _conditionalTable[(typeof(T), typeof(A))] = conditional.Method;
-        public void InitConditional128<T>(Func<Vector128<T>, Vector128<T>, Vector128<T>, Vector128<T>> conditional)
+        public void InitConditional128<T>(Func<Vector128<T>, Vector128<T>, Vector128<byte>, Vector128<T>> conditional)
             where T : unmanaged
             => InitConditional(conditional);
-        public void InitConditional256<T>(Func<Vector256<T>, Vector256<T>, Vector256<T>, Vector256<T>> conditional)
+        public void InitConditional256<T>(Func<Vector256<T>, Vector256<T>, Vector256<byte>, Vector256<T>> conditional)
             where T : unmanaged
             => InitConditional(conditional);
 

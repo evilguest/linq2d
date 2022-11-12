@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using Base = System.Runtime.Intrinsics.X86.Sse2;
 
@@ -162,5 +163,10 @@ namespace Linq2d.CodeGen.Intrinsics
         internal static Vector128<float> ConvertToVector128Single(Vector128<int> vector128) => Base.ConvertToVector128Single(vector128);
 
         internal static Vector128<int> ConvertToVector128Int32(Vector128<float> arg) => Base.ConvertToVector128Int32(arg);
+
+        internal static Vector128<byte> CompareEqual(Vector128<short> arg1, Vector128<short> arg2) => Base.CompareEqual(arg1, arg2).AsByte();
+        internal static Vector128<byte> CompareEqual(Vector128<ushort> arg1, Vector128<ushort> arg2) => Base.CompareEqual(arg1, arg2).AsByte();
+        internal static Vector128<byte> CompareEqual(Vector128<int> arg1, Vector128<int> arg2) => Base.CompareEqual(arg1, arg2).AsByte();
+        internal static Vector128<byte> CompareEqual(Vector128<uint> arg1, Vector128<uint> arg2) => Base.CompareEqual(arg1, arg2).AsByte();
     }
 }

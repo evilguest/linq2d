@@ -37,6 +37,7 @@ namespace Linq2d.CodeGen
         protected override Expression VisitConstant(ConstantExpression node)
         {
             if (node.Type == typeof(int) ||
+                node.Type == typeof(uint) ||
                 node.Type == typeof(short) ||
                 node.Type == typeof(sbyte) ||
                 node.Type == typeof(byte) ||

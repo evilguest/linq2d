@@ -8,6 +8,7 @@ namespace Linq2d.CodeGen
 {
     public static class VectorData
     {
+        public static readonly object Lock = new();
         static VectorData() => Init();
         private static IEnumerable<(int size, IVectorInfo info)> GetInfos()
         {
@@ -20,10 +21,13 @@ namespace Linq2d.CodeGen
 
         public static void Init()
         {
-            var avis = (from i in GetInfos() where i.info.Available select i).ToList();
-            MinStep = (from vi in avis select vi.size).Min();
-            MaxStep = (from vi in avis select vi.size).Max();
-            VectorInfo = new Dictionary<int, IVectorInfo>(from vi in avis select KeyValuePair.Create(vi.size, vi.info));
+            lock (Lock)
+            {
+                var avis = (from i in GetInfos() where i.info.Available select i).ToList();
+                MinStep = (from vi in avis select vi.size).Min();
+                MaxStep = (from vi in avis select vi.size).Max();
+                VectorInfo = new Dictionary<int, IVectorInfo>(from vi in avis select KeyValuePair.Create(vi.size, vi.info));
+            }
         }
 
         public static int MinStep { get; private set; }

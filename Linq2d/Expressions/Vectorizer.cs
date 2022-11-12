@@ -3,14 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Numerics;
 using System.Reflection;
 using System.Runtime.Intrinsics;
-using System.Threading.Tasks.Dataflow;
-using Linq.Expressions.Deconstruct;
 using Linq2d.CodeGen;
 using Linq2d.CodeGen.Fake;
-using static Linq.Expressions.Deconstruct.Expr;
 
 namespace Linq2d.Expressions
 {
@@ -20,7 +16,7 @@ namespace Linq2d.Expressions
         public static VectorizationResult Vectorize(int vectorSize, Expression expression, IReadOnlyList<ParameterExpression> resultVars, IReadOnlyList<ParameterExpression> sourceArgs)
         {
             var v = new Vectorizer(vectorSize, resultVars, sourceArgs);
-            var vectorizedExpression = expression is ConstantExpression ce 
+            var vectorizedExpression = expression is ConstantExpression ce
                 ? v.HandleConstant(ce)
                 : v.Visit(expression);
             return new VectorizationResult(v._success, vectorSize, vectorizedExpression, v._blockedBy, v._reason);
@@ -78,10 +74,9 @@ namespace Linq2d.Expressions
                     else
                         return Fail(ifFalse, $"Failed to lift the {ifFalse.Type} expression to vector of size {_vectorSize}");
                 }
-                if (VectorInfo.ConditionalOperations.ContainsKey((test.Type, ifTrue.Type)))
-                    return Expression.Call(VectorInfo.ConditionalOperations[(test.Type, ifTrue.Type)], test, ifTrue, ifFalse);
-                else
-                    return Fail(node, $"Failed to find a conditional operation over {test.Type} vector of size {_vectorSize}");
+                return VectorInfo.ConditionalOperations.TryGetValue((test.Type, ifTrue.Type), out var compare)
+                    ? Expression.Call(compare, ifFalse, ifTrue, test)
+                    : Fail(node, $"Failed to find a conditional operation over {test.Type} vector of size {_vectorSize}");
             }
             else
                 return node.Update(test, ifTrue, ifFalse);
@@ -144,30 +139,35 @@ namespace Linq2d.Expressions
 
         protected override Expression VisitUnary(UnaryExpression node)
         {
-            // first things first: if the node operand is an index and we're trying to convert...
-            if(node.Operand is IndexExpression ieo && ieo.Indexer == ArrayItem(ieo.Type))
-            {
-                return VectorInfo.LoadAndConvertOperations.ContainsKey((ieo.Type, node.Type))
-                    ? Expression.Call(GetLoadSubstitute(ieo.Type, node.Type), ieo.Object, ieo.Arguments[0], ieo.Arguments[1], Expression.Constant(_vectorSize))
-                    : Fail(node, $"Failed to find a load-and-convert operation from type {ieo.Type} to {node.Type} vector of size {_vectorSize}");
-            }
-            var operand = Visit(node.Operand);
-
             if (!_success)
                 return node;
-
-            if (IsVector(operand.Type))
+            switch (node.NodeType)
             {
-                var operandElementType = operand.Type.GetGenericArguments()[0];
-                return node.NodeType == ExpressionType.Convert
-                    ? VectorInfo.Vector.ContainsKey(node.Type) && VectorInfo.ConvertOperations.TryGetValue((operand.Type, VectorInfo.Vector[node.Type]), out var convertMethod)
-                        ? Expression.Call(convertMethod, operand)
-                        : Fail(node, $"Failed to find a suitable convert operation from {operand.Type} to {node.Type} for vector of size {_vectorSize}")
-                    : VectorInfo.UnaryOperations.TryGetValue((node.NodeType, operandElementType), out var unaryMethod)
-                        ? Expression.Call(unaryMethod, operand)
-                        : Fail(node, $"Failed to find a {node.NodeType} operation for {operandElementType} vector of size {_vectorSize}");
+                case ExpressionType.Convert:
+                    // first things first: if the node operand is an index and we're trying to convert...
+                    if (node.Operand is IndexExpression ieo && ieo.Indexer == ArrayItem(ieo.Type))
+                    {
+                        return VectorInfo.LoadAndConvertOperations.ContainsKey((ieo.Type, node.Type))
+                            ? Expression.Call(GetLoadSubstitute(ieo.Type, node.Type), ieo.Object, ieo.Arguments[0], ieo.Arguments[1], Expression.Constant(_vectorSize))
+                            : Fail(node, $"Failed to find a load-and-convert operation from type {ieo.Type} to {node.Type} vector of size {_vectorSize}");
+                    }
+
+                    var operand = Visit(node.Operand);
+                    if (IsVector(operand.Type))
+                    {
+                        var operandElementType = operand.Type.GetGenericArguments()[0];
+                        return node.NodeType == ExpressionType.Convert
+                            ? VectorInfo.Vector.ContainsKey(node.Type) && VectorInfo.ConvertOperations.TryGetValue((operand.Type, VectorInfo.Vector[node.Type]), out var convertMethod)
+                                ? Expression.Call(convertMethod, operand)
+                                : Fail(node, $"Failed to find a suitable convert operation from {operand.Type} to {node.Type} for vector of size {_vectorSize}")
+                            : VectorInfo.UnaryOperations.TryGetValue((node.NodeType, operandElementType), out var unaryMethod)
+                                ? Expression.Call(unaryMethod, operand)
+                                : Fail(node, $"Failed to find a {node.NodeType} operation for {operandElementType} vector of size {_vectorSize}");
+                    }
+                    return node.Update(operand);
+                default:
+                    return base.VisitUnary(node);
             }
-            else return node.Update(operand);
         }
 
         private Expression ConvertToVector(Expression scalar)
@@ -240,8 +240,8 @@ namespace Linq2d.Expressions
                 right = right;
             }
 
-            if (VectorInfo.BinaryOperations.ContainsKey((node.NodeType, left.Type, right.Type)))
-                return Expression.MakeBinary(node.NodeType, left, right, false, VectorInfo.BinaryOperations[(node.NodeType, left.Type, right.Type)]);
+            if (VectorInfo.BinaryOperations.TryGetValue((node.NodeType, left.Type, right.Type), out var operation))
+                return Expression.MakeBinary(node.NodeType, left, right, false, operation);
 
             return Fail(node, $"Failed to find a vector {node.NodeType} operation over {left.Type} and {right.Type}");
         }

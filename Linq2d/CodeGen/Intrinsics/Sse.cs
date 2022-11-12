@@ -34,6 +34,7 @@ namespace Linq2d.CodeGen.Intrinsics
         internal static unsafe void Store(float* address, Vector128<float> data) => Base.Store(address, data);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static Vector128<float> Subtract(Vector128<float> arg1, Vector128<float> arg2) => Base.Subtract(arg1, arg2);  
+        internal static Vector128<float> Subtract(Vector128<float> arg1, Vector128<float> arg2) => Base.Subtract(arg1, arg2);
+        internal static Vector128<float> CompareEqual(Vector128<float> arg1, Vector128<float> arg2) => Base.CompareEqual(arg1, arg2);
     }
 }

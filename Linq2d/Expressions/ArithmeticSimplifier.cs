@@ -83,9 +83,10 @@ namespace Linq2d.Expressions
                 Expr ret = expr switch
                 {
                     #region Universal arithmetics
+                    Expr.Convert(var t, Expr.Convert(var e)) when t == ((Expression)e).Type => e,
                     Negate(Negate(var e)) => e,                                     // - -e => e
                     Not(Not(var e)) => e,                                           // !!e => e
-                    Expr.Convert(var to, Constant(var v, var iv, var from))
+                    Expr.Convert(var to, Constant(var v, var iv))
                             => Constant(Convert.ChangeType(v, to), to),
                     Negate(Subtract(var e1, var e2)) => Subtract(e2, e1),           // -(a-b)=>b-a;
 
@@ -264,7 +265,7 @@ namespace Linq2d.Expressions
                     #endregion
 
                     _ => expr
-                };
+                };;
                 return ret;
             };
             Expr Reconvert(Expr expr) =>

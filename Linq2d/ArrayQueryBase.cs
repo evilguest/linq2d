@@ -259,6 +259,7 @@ namespace Linq2d
                     ilg.Stloc(j);
 
                     // Vector part
+                    lock(VectorData.Lock)
                     {
                         var vectorizable = Array2d.TryVectorize;
                         var coreKernels = new Expression[Results.Count];
@@ -285,7 +286,9 @@ namespace Linq2d
                                     break;
                                 }
                             }
-                            vectorizable = false;
+
+                            if(!VectorizationResults[c].Success)
+                                vectorizable = false;
                         }
                        
                         if (vectorizable)

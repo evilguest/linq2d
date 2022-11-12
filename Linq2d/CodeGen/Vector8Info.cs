@@ -43,6 +43,10 @@ namespace Linq2d.CodeGen
 
             InitBinary128<short>(ExpressionType.Or, Sse2.Or);
             InitBinary128<ushort>(ExpressionType.Or, Sse2.Or);
+
+            InitBinary128<short, byte>(ExpressionType.Equal, Sse2.CompareEqual);
+            InitBinary128<ushort, byte>(ExpressionType.Equal, Sse2.CompareEqual);
+
             InitBinary128Forced<short, byte, int>(ExpressionType.RightShift, Sse2.ShiftRightArithmetic);
             InitBinary128Forced<ushort, byte, int>(ExpressionType.RightShift, Sse2.ShiftRightLogical);
             InitBinary128Forced<short, byte, int>(ExpressionType.LeftShift, Sse2.ShiftLeftLogical);

@@ -58,8 +58,8 @@ namespace Linq2d.CodeGen.Intrinsics
         internal static Vector256<long> ShiftLeftLogical(Vector256<long> arg1, byte arg2) => Base.ShiftLeftLogical(arg1, arg2);
         internal static Vector256<ulong> ShiftLeftLogical(Vector256<ulong> arg1, byte arg2) => Base.ShiftLeftLogical(arg1, arg2);
 
-        internal static Vector256<long> BlendVariable(Vector256<long> arg1, Vector256<long> arg2, Vector256<long> arg3) => Base.BlendVariable(arg1, arg2, arg3);
-        internal static Vector256<ulong> BlendVariable(Vector256<ulong> arg1, Vector256<ulong> arg2, Vector256<ulong> arg3) => Base.BlendVariable(arg1, arg2, arg3);
+        internal static Vector256<long> BlendVariable(Vector256<long> arg1, Vector256<long> arg2, Vector256<byte> arg3) => Base.BlendVariable(arg1, arg2, arg3.AsInt64());
+        internal static Vector256<ulong> BlendVariable(Vector256<ulong> arg1, Vector256<ulong> arg2, Vector256<byte> arg3) => Base.BlendVariable(arg1, arg2, arg3.AsUInt64());
 
         internal static unsafe Vector256<int> ConvertToVector256Int32(byte* address) => Base.ConvertToVector256Int32(address);
         internal static unsafe Vector256<int> ConvertToVector256Int32(sbyte* address) => Base.ConvertToVector256Int32(address);
