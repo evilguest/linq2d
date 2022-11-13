@@ -261,7 +261,7 @@ namespace Linq2d.Expressions
                     #endregion
 
                     #region Const Array Access
-                    Constant(Array value) when value.Rank == 1 => NewArrayInit(value.GetType().GetElementType(), from object v in (IEnumerable)value select Constant(v)),
+                    Constant(Array value) when value.Rank == 1 => NewArrayInit(value.GetType().GetElementType(), from object v in value select Constant(v)),
                     #endregion
 
                     _ => expr

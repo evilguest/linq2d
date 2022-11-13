@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Xml.Linq;
 
 namespace Linq2d.CodeGen
 {

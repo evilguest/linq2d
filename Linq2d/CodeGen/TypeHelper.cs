@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -7,6 +8,12 @@ namespace Linq2d.CodeGen
 {
     public static class TypeHelper
     {
+        internal static bool TryGetConditionalMethod(this IReadOnlyDictionary<Type, MethodInfo> conditionals, Type resultType, out MethodInfo method, out Type testType)
+        {
+            var found = conditionals.TryGetValue(resultType, out method);
+            testType = found ? method.GetParameters()[2].ParameterType : default;
+            return found;
+        } 
         private static ConcurrentDictionary<Type, bool> cachedTypes = new ConcurrentDictionary<Type, bool>();
         public static bool IsUnmanaged(this Type t)
         {

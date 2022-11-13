@@ -74,8 +74,12 @@ namespace Linq2d.Expressions
                     else
                         return Fail(ifFalse, $"Failed to lift the {ifFalse.Type} expression to vector of size {_vectorSize}");
                 }
-                return VectorInfo.ConditionalOperations.TryGetValue((test.Type, ifTrue.Type), out var compare)
-                    ? Expression.Call(compare, ifFalse, ifTrue, test)
+                return VectorInfo.ConditionalOperations.TryGetConditionalMethod(ifTrue.Type, out var conditionalMethod, out var testType)
+                    ? (testType == test.Type)                                       // we found an exact match
+                        ? Expression.Call(conditionalMethod, ifFalse, ifTrue, test) // so we just call the comparison
+                        : VectorInfo.ConvertOperations.TryGetValue((test.Type, testType), out var conversionMethod) // else we try finding a conversion
+                            ? Expression.Call(conditionalMethod, ifFalse, ifTrue, Expression.Call(conversionMethod, test))
+                            : Fail(node, $"Failed to find a conversion from the conditional operation test result {test.Type} to the expected conditional input type {testType} for the vector of size {_vectorSize}")
                     : Fail(node, $"Failed to find a conditional operation over {test.Type} vector of size {_vectorSize}");
             }
             else

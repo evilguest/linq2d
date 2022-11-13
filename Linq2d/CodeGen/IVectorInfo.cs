@@ -18,6 +18,6 @@ namespace Linq2d.CodeGen
         IReadOnlyDictionary<(ExpressionType ex, Type o), MethodInfo> UnaryOperations { get; }
         IReadOnlyDictionary<MethodInfo, MethodInfo> MethodTable { get; }
         IReadOnlyDictionary<Type, Type> Vector { get; }
-        IReadOnlyDictionary<(Type, Type), MethodInfo> ConditionalOperations { get; }
+        IReadOnlyDictionary<Type, MethodInfo> ConditionalOperations { get; }
     }
 }

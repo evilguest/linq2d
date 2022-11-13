@@ -42,15 +42,15 @@ namespace Linq2d.CodeGen
         }
         public bool Available { get;protected set; }
         #region fields
-        private readonly Dictionary<(Type sourceType, Type targetType), MethodInfo> _loadAndConvertOperations = new Dictionary<(Type sourceType, Type targetType), MethodInfo>();
-        private readonly Dictionary<(Type sourceType, Type targetType), MethodInfo> _convertOperations = new Dictionary<(Type sourceType, Type targetType), MethodInfo>();
-        private readonly Dictionary<(ExpressionType ex, Type l, Type r), MethodInfo> _binaryOperations = new Dictionary<(ExpressionType ex, Type l, Type r), MethodInfo>();
-        private readonly Dictionary<(ExpressionType ex, Type o), MethodInfo> _unaryOperations = new Dictionary<(ExpressionType ex, Type o), MethodInfo>();
-        private readonly Dictionary<Type, MethodInfo> _storeOperations = new Dictionary<Type, MethodInfo>();
-        private readonly Dictionary<Type, MethodInfo> _liftOperations = new Dictionary<Type, MethodInfo>();
-        private readonly Dictionary<MethodInfo, MethodInfo> _methodTable = new Dictionary<MethodInfo, MethodInfo>();
-        private readonly Dictionary<Type, Type> _vectorTable = new Dictionary<Type, Type>();
-        private readonly Dictionary<(Type, Type), MethodInfo> _conditionalTable = new Dictionary<(Type, Type), MethodInfo>();
+        private readonly Dictionary<(Type sourceType, Type targetType), MethodInfo> _loadAndConvertOperations = new();
+        private readonly Dictionary<(Type sourceType, Type targetType), MethodInfo> _convertOperations = new();
+        private readonly Dictionary<(ExpressionType ex, Type l, Type r), MethodInfo> _binaryOperations = new();
+        private readonly Dictionary<(ExpressionType ex, Type o), MethodInfo> _unaryOperations = new();
+        private readonly Dictionary<Type, MethodInfo> _storeOperations = new();
+        private readonly Dictionary<Type, MethodInfo> _liftOperations = new();
+        private readonly Dictionary<MethodInfo, MethodInfo> _methodTable = new();
+        private readonly Dictionary<Type, Type> _vectorTable = new();
+        private readonly Dictionary<Type, MethodInfo> _conditionalTable = new();
         #endregion
 
         #region IVectorInfo
@@ -62,19 +62,19 @@ namespace Linq2d.CodeGen
         public IReadOnlyDictionary<(ExpressionType ex, Type o), MethodInfo> UnaryOperations => _unaryOperations;
         public IReadOnlyDictionary<MethodInfo, MethodInfo> MethodTable => _methodTable;
         public IReadOnlyDictionary<Type, Type> Vector => _vectorTable;
-        public IReadOnlyDictionary<(Type, Type), MethodInfo> ConditionalOperations => _conditionalTable;
+        public IReadOnlyDictionary<Type, MethodInfo> ConditionalOperations => _conditionalTable;
         #endregion
 
         #region Init
         #region Types
         public void InitType32<T>()
-            where T : struct
+            where T : unmanaged
             => _vectorTable[typeof(T)] = typeof(Vector32<T>);
         public void InitType128<T>()
-            where T : struct
+            where T : unmanaged
             => _vectorTable[typeof(T)] = typeof(Vector128<T>);
         public void InitType256<T>()
-            where T : struct
+            where T : unmanaged
             => _vectorTable[typeof(T)] = typeof(Vector256<T>);
         #endregion
         #region Store
@@ -126,29 +126,34 @@ namespace Linq2d.CodeGen
             => _convertOperations[(typeof(T), typeof(R))] = method.Method;
 
         public void InitConvert<T, R>(Func<Vector128<T>, Vector256<R>> method)
-            where T : struct
-            where R : struct
+            where T : unmanaged
+            where R : unmanaged
             => InitConvert<Vector128<T>, Vector256<R>>(method);
         public void InitConvert<T, R>(Func<Vector256<T>, Vector128<R>> method)
-            where T : struct
-            where R : struct
+            where T : unmanaged
+            where R : unmanaged
             => InitConvert<Vector256<T>, Vector128<R>>(method);
         public void InitConvert128<T, R>(Func<Vector128<T>, Vector128<R>> method)
-            where T : struct
-            where R : struct
+            where T : unmanaged
+            where R : unmanaged
             => InitConvert(method);
         public void InitConvert256<T, R>(Func<Vector256<T>, Vector256<R>> method)
-            where T : struct
-            where R : struct
+            where T : unmanaged
+            where R : unmanaged
             => InitConvert(method);
+        public void InitConvert256to128<T, R>(Func<Vector256<T>, Vector128<R>> method)
+            where T : unmanaged
+            where R : unmanaged
+            => InitConvert(method);
+
         public void InitLift<T>(Func<T, Vector32<T>> method)
-            where T : struct
+            where T : unmanaged
             => _liftOperations[typeof(T)] = method.Method;
         public void InitLift<T>(Func<T, Vector128<T>> method)
-            where T : struct
+            where T : unmanaged
             => _liftOperations[typeof(T)] = method.Method;
         public void InitLift<T>(Func<T, Vector256<T>> method)
-            where T : struct
+            where T : unmanaged
             => _liftOperations[typeof(T)] = method.Method;
         #endregion
 
@@ -226,12 +231,14 @@ namespace Linq2d.CodeGen
         #endregion
         #region Conditional
         public void InitConditional<T, A>(Func<A, A, T, A> conditional)
-            => _conditionalTable[(typeof(T), typeof(A))] = conditional.Method;
-        public void InitConditional128<T>(Func<Vector128<T>, Vector128<T>, Vector128<byte>, Vector128<T>> conditional)
+            => _conditionalTable[typeof(A)] = conditional.Method;
+        public void InitConditional128<T, R>(Func<Vector128<T>, Vector128<T>, Vector128<R>, Vector128<T>> conditional)
             where T : unmanaged
+            where R : unmanaged
             => InitConditional(conditional);
-        public void InitConditional256<T>(Func<Vector256<T>, Vector256<T>, Vector256<byte>, Vector256<T>> conditional)
+        public void InitConditional256<T, R>(Func<Vector256<T>, Vector256<T>, Vector256<R>, Vector256<T>> conditional)
             where T : unmanaged
+            where R : unmanaged
             => InitConditional(conditional);
 
         #endregion

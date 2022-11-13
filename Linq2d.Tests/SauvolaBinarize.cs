@@ -1,10 +1,11 @@
 ﻿using System;
 using Xunit;
-using square = System.Int64;
+using Linq2d.Tests.Vectorization;
+using Square = System.Int64;
 
 namespace Linq2d.Tests
 {
-    public class SauvolaBinarize
+    public class SauvolaBinarize: IClassFixture<VectorizationStateFixture>
     {
 
         [Theory]
@@ -15,9 +16,9 @@ namespace Linq2d.Tests
         public void TestSauvolaSynthetic(int h, int w, byte seed)
         {
             var data = ArrayHelper.InitAllRand(h, w, seed);
-            Array2d.SaveDynamicCode = true;
+            //Array2d.SaveDynamicCode = true;
             TestHelper.AssertEqual(BaseBinarize(data), LinqBinarize(data));
-            Array2d.SaveDynamicCode = false;
+            //Array2d.SaveDynamicCode = false;
         }
 
         [Theory]
@@ -57,7 +58,7 @@ namespace Linq2d.Tests
 
             var integral = from g in grayImage
                            from ri in Result.InitWith(0)
-                           from rq in Result.InitWith((square)0)
+                           from rq in Result.InitWith((Square)0)
                            select ValueTuple.Create(
                                ri[-1, 0] + ri[0, -1] - ri[-1, -1] + g,
                                rq[-1, 0] + rq[0, -1] - rq[-1, -1] + g * g);
@@ -154,7 +155,7 @@ namespace Linq2d.Tests
             return result;
         }
 
-        private double[,] CalculateStd(square[,] sqdiff, int[,] diff, int[,] area, double[,] mean)
+        private double[,] CalculateStd(Square[,] sqdiff, int[,] diff, int[,] area, double[,] mean)
         {
             var (h, w) = ArrayHelper.EnsureSize(0, 0, sqdiff, diff, area, mean);
             var result = new double[h, w];
@@ -192,9 +193,9 @@ namespace Linq2d.Tests
             return result;
         }
 
-        private static square[,] CalculateDiff(square[,] integralImage, int whalf)
+        private static Square[,] CalculateDiff(Square[,] integralImage, int whalf)
         {
-            var result = new square[integralImage.Height(), integralImage.Width()];
+            var result = new Square[integralImage.Height(), integralImage.Width()];
             for (int i = 0; i < result.Height(); i++)
                 for (int j = 0; j < result.Width(); j++)
                 {
@@ -237,10 +238,10 @@ namespace Linq2d.Tests
             return result;
         }
 
-        private static (int[,], square[,]) DoubleIntegrateSlow(int h, int w, byte[,] grayImage)
+        private static (int[,], Square[,]) DoubleIntegrateSlow(int h, int w, byte[,] grayImage)
         {
             var integral_image = new int[h, w];
-            var integral_sqimg = new square[h, w];
+            var integral_sqimg = new Square[h, w];
             integral_image[0, 0] = grayImage[0, 0];
             integral_sqimg[0, 0] = grayImage[0, 0] * grayImage[0, 0];
 

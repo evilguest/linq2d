@@ -22,11 +22,11 @@ namespace Linq2d.CodeGen
 
             InitLift<float>(Vector128.Create);
 
+            InitBinary128<float, uint>(ExpressionType.Equal, Sse.CompareEqual);
             InitBinary128<float>(ExpressionType.Add, Sse.Add);
             InitBinary128<float>(ExpressionType.Subtract, Sse.Subtract);
             InitBinary128<float>(ExpressionType.Multiply, Sse.Multiply);
             InitBinary128<float>(ExpressionType.Divide, Sse.Divide);
-            InitBinary128<float>(ExpressionType.Equal, Sse.CompareEqual);
         }
 
         protected override void InitSse2()
@@ -63,8 +63,8 @@ namespace Linq2d.CodeGen
             InitBinary128<int>(ExpressionType.And, Sse2.And);
             InitBinary128<uint>(ExpressionType.And, Sse2.And);
 
-            InitBinary128<int, byte>(ExpressionType.Equal, Sse2.CompareEqual);
-            InitBinary128<uint, byte>(ExpressionType.Equal, Sse2.CompareEqual);
+            InitBinary128<int, uint>(ExpressionType.Equal, Sse2.CompareEqual);
+            InitBinary128<uint>(ExpressionType.Equal, Sse2.CompareEqual);
 
             InitBinary128Forced<int, byte, int>(ExpressionType.RightShift, Sse2.ShiftRightArithmetic);
             InitBinary128Forced<uint, byte, int>(ExpressionType.RightShift, Sse2.ShiftRightLogical);
@@ -93,9 +93,9 @@ namespace Linq2d.CodeGen
             InitBinary128<uint>(Math.Max, Sse41.Max);
             InitBinary128<uint>(Math.Min, Sse41.Min);
 
-            InitConditional128<int>(Sse41.BlendVariable);
-            InitConditional128<uint>(Sse41.BlendVariable);
-            InitConditional128<float>(Sse41.BlendVariable);
+            InitConditional128<int, uint>(Sse41.BlendVariable);
+            InitConditional128<uint, uint>(Sse41.BlendVariable);
+            InitConditional128<float, uint>(Sse41.BlendVariable);
         }
         protected override void InitAvx()
         {
@@ -134,15 +134,16 @@ namespace Linq2d.CodeGen
             InitBinary256<double>(ExpressionType.Multiply, Avx.Multiply);
             InitBinary256<double>(ExpressionType.Divide, Avx.Divide);
 
-            InitBinary256<double, byte>(ExpressionType.LessThan, LessThan);
-            InitBinary256<double, byte>(ExpressionType.LessThanOrEqual, LessThanOrEqual);
-            InitBinary256<double, byte>(ExpressionType.GreaterThan, GreaterThan);
-            InitBinary256<double, byte>(ExpressionType.GreaterThanOrEqual, GreaterThanOrEqual);
+            InitBinary256<double, ulong>(ExpressionType.Equal, Avx.CompareEqual);
+            InitBinary256<double, ulong>(ExpressionType.LessThan, LessThan);
+            InitBinary256<double, ulong>(ExpressionType.LessThanOrEqual, LessThanOrEqual);
+            InitBinary256<double, ulong>(ExpressionType.GreaterThan, GreaterThan);
+            InitBinary256<double, ulong>(ExpressionType.GreaterThanOrEqual, GreaterThanOrEqual);
 
             InitBinary256<double>(Math.Max, Avx.Max);
             InitBinary256<double>(Math.Min, Avx.Min);
 
-            InitConditional256<double>(Avx.BlendVariable);
+            InitConditional256<double, ulong>(Avx.BlendVariable);
             InitConditional<Vector256<byte>, Vector32<byte>>(Vector32.DoubleConditional);
 
             InitUnary256<double>(ExpressionType.Negate, Negate);
@@ -175,14 +176,17 @@ namespace Linq2d.CodeGen
             InitBinary256<long>(ExpressionType.And, Avx2.And);
             InitBinary256<ulong>(ExpressionType.And, Avx2.And);
 
+            InitBinary256<long, ulong>(ExpressionType.Equal, Avx2.CompareEqual);
+            InitBinary256<ulong>(ExpressionType.Equal, Avx2.CompareEqual);
+
             InitBinary256Forced<long, byte, int>(ExpressionType.RightShift, Avx2.ShiftRightArithmetic); 
             InitBinary256Forced<ulong, byte, int>(ExpressionType.RightShift, Avx2.ShiftRightLogical);
 
             InitBinary256Forced<long, byte, int>(ExpressionType.LeftShift, Avx2.ShiftLeftLogical);
             InitBinary256Forced<ulong, byte, int>(ExpressionType.LeftShift, Avx2.ShiftLeftLogical);
 
-            InitConditional256<long>(Avx2.BlendVariable);
-            InitConditional256<ulong>(Avx2.BlendVariable);
+            InitConditional256<long, ulong>(Avx2.BlendVariable);
+            InitConditional256<ulong, ulong>(Avx2.BlendVariable);
         }
 
         public Vector4Info()
@@ -194,17 +198,17 @@ namespace Linq2d.CodeGen
             InitLoadAndConvert<byte>(Vector32.Load);
             Available = true;
         }
-        public static Vector256<byte> LessThan(Vector256<double> l, Vector256<double> r)
-            => Avx.Compare(l, r, FloatComparisonMode.OrderedLessThanSignaling).AsByte();
+        public static Vector256<ulong> LessThan(Vector256<double> l, Vector256<double> r)
+            => Avx.Compare(l, r, FloatComparisonMode.OrderedLessThanSignaling).AsUInt64();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector256<byte> GreaterThan(Vector256<double> l, Vector256<double> r)
-            => Avx.Compare(l, r, FloatComparisonMode.OrderedGreaterThanSignaling).AsByte();
+        public static Vector256<ulong> GreaterThan(Vector256<double> l, Vector256<double> r)
+            => Avx.Compare(l, r, FloatComparisonMode.OrderedGreaterThanSignaling).AsUInt64();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector256<byte> LessThanOrEqual(Vector256<double> l, Vector256<double> r)
-            => Avx.Compare(l, r, FloatComparisonMode.OrderedLessThanOrEqualSignaling).AsByte();
+        public static Vector256<ulong> LessThanOrEqual(Vector256<double> l, Vector256<double> r)
+            => Avx.Compare(l, r, FloatComparisonMode.OrderedLessThanOrEqualSignaling).AsUInt64();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector256<byte> GreaterThanOrEqual(Vector256<double> l, Vector256<double> r)
-            => Avx.Compare(l, r, FloatComparisonMode.OrderedGreaterThanOrEqualSignaling).AsByte();
+        public static Vector256<ulong> GreaterThanOrEqual(Vector256<double> l, Vector256<double> r)
+            => Avx.Compare(l, r, FloatComparisonMode.OrderedGreaterThanOrEqualSignaling).AsUInt64();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector256<double> ConvertToVector256Double(byte* address)
             => Avx.ConvertToVector256Double(Sse41.ConvertToVector128Int32(address));

@@ -49,6 +49,10 @@ namespace Linq2d.CodeGen
             InitBinary128<long>(ExpressionType.And, Sse2.And);
             InitBinary128<ulong>(ExpressionType.And, Sse2.And);
 
+            InitBinary128<long, ulong>(ExpressionType.Equal, Sse2.CompareEqual);
+            InitBinary128<ulong, ulong>(ExpressionType.Equal, Sse2.CompareEqual);
+            InitBinary128<double, ulong>(ExpressionType.Equal, Sse2.CompareEqual);
+
             InitBinary128Forced<long, byte, int>(ExpressionType.RightShift, Sse2.ShiftRightArithmetic); // ?? should be arithmetic
             InitBinary128Forced<ulong, byte, int>(ExpressionType.RightShift, Sse2.ShiftRightLogical);
 
@@ -64,9 +68,9 @@ namespace Linq2d.CodeGen
             InitLoadAndConvert<int, long>(Sse41.ConvertToVector128Int64);
             InitLoadAndConvert<uint, long>(Sse41.ConvertToVector128Int64);
 
-            InitConditional128<double>(Sse41.BlendVariable);
-            InitConditional128<long>(Sse41.BlendVariable);
-            InitConditional128<ulong>(Sse41.BlendVariable);
+            InitConditional128<double, ulong>(Sse41.BlendVariable);
+            InitConditional128<long, ulong>(Sse41.BlendVariable);
+            InitConditional128<ulong, ulong>(Sse41.BlendVariable);
         }
 
     }

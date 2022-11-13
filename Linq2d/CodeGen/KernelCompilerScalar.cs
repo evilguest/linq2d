@@ -52,6 +52,11 @@ namespace Linq2d.CodeGen
                 Generator.Emit(OpCodes.Ldc_I8, (long)node.Value);
                 return node;
             }
+            if (node.Type == typeof(ulong))
+            {
+                Generator.Emit(OpCodes.Ldc_I8, (long)(ulong)node.Value);
+                return node;
+            }
 
             if (node.Type == typeof(float))
             {
