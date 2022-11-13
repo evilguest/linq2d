@@ -16,7 +16,7 @@ namespace Linq2d.CodeGen.Intrinsics
                 VectorData.Init();
             }
         }
-        public static bool IsSupported { get => Base.IsSupported && !Suppress & Sse2.IsSupported; }
+        public static bool IsSupported { get => Base.IsSupported && !Suppress & Ssse3.IsSupported; }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 

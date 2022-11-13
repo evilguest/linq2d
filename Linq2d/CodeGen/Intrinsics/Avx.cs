@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using Base = System.Runtime.Intrinsics.X86.Avx;
@@ -76,6 +77,9 @@ namespace Linq2d.CodeGen.Intrinsics
 
         internal static Vector256<float> Multiply(Vector256<float> left, Vector256<float> right) => Base.Multiply(left, right);
         internal static Vector256<double> Multiply(Vector256<double> left, Vector256<double> right) => Base.Multiply(left, right);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static Vector256<float> Negate(Vector256<float> a) => Base.Subtract(Vector256<float>.Zero, a);
 
         internal static Vector256<double> Sqrt(Vector256<double> arg) => Base.Sqrt(arg);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

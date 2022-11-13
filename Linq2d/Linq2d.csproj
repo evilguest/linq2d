@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Version>0.1</Version>
@@ -16,6 +16,7 @@
     <Compile Remove="Array2d - Copy.Single.Array.cs" />
     <Compile Remove="Array2d - Copy.Two.Array.cs" />
     <Compile Remove="ArrayQuery - Copy.cs" />
+    <Compile Remove="CodeGen\Fake\Vector64.cs" />
     <Compile Remove="CodeGen\KernelCompilerVector.cs" />
     <Compile Remove="Expressions\VectorVerify.cs" />
     <Compile Remove="IArrayQuery - Copy.cs" />

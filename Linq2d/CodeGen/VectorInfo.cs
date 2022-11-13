@@ -24,6 +24,11 @@ namespace Linq2d.CodeGen
                 InitSse2();
                 Available = true;
             }
+            if (Ssse3.IsSupported)
+            {
+                InitSse3();
+                Available = true; 
+            }
             if (Sse41.IsSupported)
             {
                 InitSse41();
@@ -247,6 +252,7 @@ namespace Linq2d.CodeGen
         #region Overridables
         protected virtual void InitSse() { }
         protected virtual void InitSse2() { }
+        protected virtual void InitSse3() { }
         protected virtual void InitSse41() { }
         protected virtual void InitAvx2() { }
         protected virtual void InitAvx() { }

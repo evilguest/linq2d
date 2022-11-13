@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using Base = System.Runtime.Intrinsics.X86.Sse2;
 

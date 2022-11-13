@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Linq2d.Tests.Vectorization
+﻿namespace Linq2d.Tests.Vectorization
 {
     internal class SuppressVectorizationFixture: VectorizationStateFixture
     {

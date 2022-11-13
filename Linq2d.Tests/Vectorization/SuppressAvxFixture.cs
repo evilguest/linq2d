@@ -1,10 +1,10 @@
-﻿using System;
-
+﻿
 namespace Linq2d.Tests.Vectorization
 {
     internal class SuppressAvxFixture: VectorizationStateFixture
     {
-        public SuppressAvxFixture() {
+        public SuppressAvxFixture() 
+        {
             CodeGen.Intrinsics.Avx.Suppress = true;
         }
 

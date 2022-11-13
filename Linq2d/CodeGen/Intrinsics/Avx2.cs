@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using Base = System.Runtime.Intrinsics.X86.Avx2;
 
@@ -79,5 +80,8 @@ namespace Linq2d.CodeGen.Intrinsics
         internal static Vector128<ushort> ConvertToVector128Int16(Vector256<uint> arg) => Base.Shuffle(arg.AsByte(), _shuffle).GetLower().AsUInt16();
         internal static Vector256<int> MultiplyLow(Vector256<int> left, Vector256<int> right) => Base.MultiplyLow(left, right);
         internal static Vector256<uint> MultiplyLow(Vector256<uint> left, Vector256<uint> right) => Base.MultiplyLow(left, right);
+        internal static Vector256<sbyte> Negate(Vector256<sbyte> arg) => Base.Sign(arg, arg);
+
+        internal static Vector256<int> Negate(Vector256<int> arg) => Base.Sign(arg, arg);
     }
 }

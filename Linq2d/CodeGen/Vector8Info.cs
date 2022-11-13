@@ -50,7 +50,10 @@ namespace Linq2d.CodeGen
             InitBinary128Forced<ushort, byte, int>(ExpressionType.RightShift, Sse2.ShiftRightLogical);
             InitBinary128Forced<short, byte, int>(ExpressionType.LeftShift, Sse2.ShiftLeftLogical);
             InitBinary128Forced<ushort, byte, int>(ExpressionType.LeftShift, Sse2.ShiftLeftLogical);
-
+        }
+        protected override void InitSse3()
+        {
+            InitUnary128<short>(ExpressionType.Negate, Ssse3.Negate);
         }
         protected override void InitSse41()
         {
@@ -91,7 +94,7 @@ namespace Linq2d.CodeGen
             InitConditional256<int, uint>(Avx.BlendVariable);
             InitConditional256<uint, uint>(Avx.BlendVariable);
 
-            InitUnary256<float>(ExpressionType.Negate, Negate);
+            InitUnary256<float>(ExpressionType.Negate, Avx.Negate);
         }
 
         protected override void InitAvx2()
@@ -115,7 +118,7 @@ namespace Linq2d.CodeGen
             InitBinary256<int>(ExpressionType.Multiply, Avx2.MultiplyLow);
             InitBinary256<uint>(ExpressionType.Multiply, Avx2.MultiplyLow);
 
-            InitUnary256<int>(ExpressionType.Negate, Negate);
+            InitUnary256<int>(ExpressionType.Negate, Avx2.Negate);
 
             InitConvert256to128<uint, ushort>(Avx2.ConvertToVector128Int16);
 
@@ -125,9 +128,6 @@ namespace Linq2d.CodeGen
             InitBinary256Forced<int, byte, int>(ExpressionType.LeftShift, Avx2.ShiftLeftLogical);
             InitBinary256Forced<uint, byte, int>(ExpressionType.LeftShift, Avx2.ShiftLeftLogical);
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector256<int> Negate(Vector256<int> a) => Avx2.MultiplyLow(a, Vector256.Create(-1));
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector256<float> Negate(Vector256<float> a) => Avx.Multiply(a, Vector256.Create(-1.0f));
+
     }
 }
