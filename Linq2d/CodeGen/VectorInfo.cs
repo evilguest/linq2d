@@ -26,7 +26,7 @@ namespace Linq2d.CodeGen
             }
             if (Ssse3.IsSupported)
             {
-                InitSse3();
+                InitSsse3();
                 Available = true; 
             }
             if (Sse41.IsSupported)
@@ -184,11 +184,11 @@ namespace Linq2d.CodeGen
 
         public void InitBinary<T1, T2, R>(ExpressionType ex, Func<T1, T2, R> method)
             => _binaryOperations[(ex, typeof(T1), typeof(T2))] = method.Method;
-        public void InitBinary128<T1, T2, R>(ExpressionType ex, Func<Vector128<T1>, Vector128<T2>, Vector128<R>> method)
-            where T1 : unmanaged
-            where T2 : unmanaged
-            where R : unmanaged
-            => InitBinary(ex, method);
+        //public void InitBinary128<T1, T2, R>(ExpressionType ex, Func<Vector128<T1>, Vector128<T2>, Vector128<R>> method)
+        //    where T1 : unmanaged
+        //    where T2 : unmanaged
+        //    where R : unmanaged
+        //    => InitBinary(ex, method);
         public void InitBinary128<T, R>(ExpressionType ex, Func<Vector128<T>, Vector128<T>, Vector128<R>> method)
             where T : unmanaged
             where R : unmanaged
@@ -196,9 +196,9 @@ namespace Linq2d.CodeGen
         public void InitBinary128<T>(ExpressionType ex, Func<Vector128<T>, Vector128<T>, Vector128<T>> method)
             where T : unmanaged
             => InitBinary(ex, method);
-        public void InitBinary128<T1, T2>(ExpressionType ex, Func<Vector128<T1>, T2, Vector128<T1>> method)
-            where T1 : unmanaged
-            => InitBinary(ex, method);
+        //public void InitBinary128<T1, T2>(ExpressionType ex, Func<Vector128<T1>, T2, Vector128<T1>> method)
+        //    where T1 : unmanaged
+        //    => InitBinary(ex, method);
         public void InitBinary128Forced<T1, T2N, T2A>(ExpressionType ex, Func<Vector128<T1>, T2N, Vector128<T1>> method)
             where T1 : unmanaged
             => _binaryOperations[(ex, typeof(Vector128<T1>), typeof(T2A))] = method.Method;
@@ -207,11 +207,11 @@ namespace Linq2d.CodeGen
             where T : unmanaged
             where R : unmanaged
             => InitBinary(ex, method);
-        public void InitBinary256<T1, T2, R>(ExpressionType ex, Func<Vector256<T1>, Vector256<T2>, Vector256<R>> method)
-            where T1 : unmanaged
-            where T2 : unmanaged
-            where R : unmanaged
-            => InitBinary(ex, method);
+        //public void InitBinary256<T1, T2, R>(ExpressionType ex, Func<Vector256<T1>, Vector256<T2>, Vector256<R>> method)
+        //    where T1 : unmanaged
+        //    where T2 : unmanaged
+        //    where R : unmanaged
+        //    => InitBinary(ex, method);
         public void InitBinary256<T>(ExpressionType ex, Func<Vector256<T>, Vector256<T>, Vector256<T>> method)
             where T : unmanaged
             => InitBinary(ex, method);
@@ -252,7 +252,7 @@ namespace Linq2d.CodeGen
         #region Overridables
         protected virtual void InitSse() { }
         protected virtual void InitSse2() { }
-        protected virtual void InitSse3() { }
+        protected virtual void InitSsse3() { }
         protected virtual void InitSse41() { }
         protected virtual void InitAvx2() { }
         protected virtual void InitAvx() { }

@@ -17,6 +17,6 @@ namespace Linq2d.CodeGen.Intrinsics
         }
         public static bool IsSupported { get => Base.IsSupported && !Suppress && Sse2.IsSupported; }
 
-        internal static Vector128<short> Negate(Vector128<short> arg) => Base.Sign(arg, arg);
+        internal static Vector128<short> Negate(Vector128<short> arg) => Base.Sign(arg, Vector128<short>.AllBitsSet);
     }
 }

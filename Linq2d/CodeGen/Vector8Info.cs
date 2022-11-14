@@ -51,9 +51,9 @@ namespace Linq2d.CodeGen
             InitBinary128Forced<short, byte, int>(ExpressionType.LeftShift, Sse2.ShiftLeftLogical);
             InitBinary128Forced<ushort, byte, int>(ExpressionType.LeftShift, Sse2.ShiftLeftLogical);
         }
-        protected override void InitSse3()
+        protected override void InitSsse3()
         {
-            InitUnary128<short>(ExpressionType.Negate, Ssse3.Negate);
+            InitUnary128<short>(Fast.Negate, Ssse3.Negate); // native short negation isn't supported by C#
         }
         protected override void InitSse41()
         {
