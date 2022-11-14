@@ -1,4 +1,6 @@
-﻿namespace Linq2d.MathHelpers
+﻿using System;
+
+namespace Linq2d.MathHelpers
 {
     public static class Fast
     {
@@ -8,5 +10,7 @@
         public static ushort Subtract(ushort left, ushort right) => (ushort)(left - right);
         public static short Multiply(short left, short right) => (short)(left * right);
         public static ushort Multiply(ushort left, ushort right) => (ushort)(left * right);
+
+        internal static short Negate(short s) => (short)-s;
     }
 }

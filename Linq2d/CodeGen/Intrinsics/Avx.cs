@@ -2,6 +2,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
+using System.Runtime.Intrinsics.X86;
 using Base = System.Runtime.Intrinsics.X86.Avx;
 
 namespace Linq2d.CodeGen.Intrinsics
@@ -59,6 +60,10 @@ namespace Linq2d.CodeGen.Intrinsics
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static unsafe Vector256<sbyte> LoadVector256(sbyte* address) => Base.LoadVector256(address);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static unsafe Vector256<short> LoadVector256(short* address) => Base.LoadVector256(address);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static unsafe Vector256<ushort> LoadVector256(ushort* address) => Base.LoadVector256(address);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static unsafe Vector256<int> LoadVector256(int* address) => Base.LoadVector256(address);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static unsafe Vector256<uint> LoadVector256(uint* address) => Base.LoadVector256(address);
@@ -87,6 +92,10 @@ namespace Linq2d.CodeGen.Intrinsics
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static unsafe void Store(sbyte* address, Vector256<sbyte> data) => Base.Store(address, data);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static unsafe void Store(short* address, Vector256<short> data) => Base.Store(address, data);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static unsafe void Store(ushort* address, Vector256<ushort> data) => Base.Store(address, data);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static unsafe void Store(int* address, Vector256<int> data) => Base.Store(address, data);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static unsafe void Store(uint* address, Vector256<uint> data) => Base.Store(address, data);
@@ -101,5 +110,27 @@ namespace Linq2d.CodeGen.Intrinsics
         internal static Vector256<float> Subtract(Vector256<float> left, Vector256<float> right) => Base.Subtract(left, right);
 
         internal static Vector256<double> Subtract(Vector256<double> left, Vector256<double> right) => Base.Subtract(left, right);
+        public static Vector256<ulong> LessThan(Vector256<double> left, Vector256<double> right) => Base.CompareLessThan(left, right).AsUInt64();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector256<ulong> GreaterThan(Vector256<double> left, Vector256<double> right) => Base.CompareGreaterThan(left, right).AsUInt64();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector256<ulong> LessThanOrEqual(Vector256<double> left, Vector256<double> right) => Base.CompareLessThanOrEqual(left, right).AsUInt64();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector256<ulong> GreaterThanOrEqual(Vector256<double> left, Vector256<double> right) => Base.CompareGreaterThanOrEqual(left, right).AsUInt64();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe static Vector256<double> ConvertToVector256Double(byte* address) => Base.ConvertToVector256Double(Sse41.ConvertToVector128Int32(address));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector256<double> ConvertToVector256Double(Vector256<long> data) => Vector256.Create((double)data.GetElement(0), data.GetElement(1), data.GetElement(2), data.GetElement(3));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe static Vector256<double> ConvertToVector256Double(sbyte* address) => Base.ConvertToVector256Double(Sse41.ConvertToVector128Int32(address));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe static Vector256<double> ConvertToVector256Double(short* address) => Base.ConvertToVector256Double(Sse41.ConvertToVector128Int32(address));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe static Vector256<double> ConvertToVector256Double(ushort* address) => Base.ConvertToVector256Double(Sse41.ConvertToVector128Int32(address));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe static Vector256<double> ConvertToVector256Double(int* address) => Base.ConvertToVector256Double(Sse2.LoadVector128(address));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector256<double> Negate(Vector256<double> a) => Subtract(Vector256<double>.Zero, a);
     }
 }

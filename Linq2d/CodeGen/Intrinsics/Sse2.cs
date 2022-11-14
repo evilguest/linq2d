@@ -37,6 +37,10 @@ namespace Linq2d.CodeGen.Intrinsics
         internal static Vector128<double> Divide(Vector128<double> left, Vector128<double> right) => Base.Divide(left, right);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static unsafe Vector128<byte> LoadVector128(byte* address) => Base.LoadVector128(address);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static unsafe Vector128<sbyte> LoadVector128(sbyte* address) => Base.LoadVector128(address);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static unsafe Vector128<short> LoadVector128(short* address) => Base.LoadVector128(address);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static unsafe Vector128<ushort> LoadVector128(ushort* address) => Base.LoadVector128(address);
@@ -99,6 +103,8 @@ namespace Linq2d.CodeGen.Intrinsics
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static unsafe void Store(double* address, Vector128<double> data) => Base.Store(address, data);
+        internal static unsafe void Store(byte* address, Vector128<byte> data) => Base.Store(address, data);
+        internal static unsafe void Store(sbyte* address, Vector128<sbyte> data) => Base.Store(address, data);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static Vector128<short> Subtract(Vector128<short> left, Vector128<short> right) => Base.Subtract(left, right);

@@ -1,9 +1,6 @@
 ﻿using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.X86;
-
-
-using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
+using Linq2d.CodeGen.Intrinsics;
+using Linq2d.MathHelpers;
 
 namespace Linq2d.CodeGen
 {
@@ -42,9 +39,7 @@ namespace Linq2d.CodeGen
         {
             InitLoadAndConvert<byte, short>(Avx2.ConvertToVector256Int16);
             InitLoadAndConvert<sbyte, short>(Avx2.ConvertToVector256Int16);
-            InitUnary256<short>(ExpressionType.Negate, Negate);
+            InitUnary256<short>(Fast.Negate, Avx2.Negate); // native short negation isn't supported by C#
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector256<short> Negate(Vector256<short> a) => Avx2.MultiplyLow(a, Vector256.Create((short)-1));
     }
 }

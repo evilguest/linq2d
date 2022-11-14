@@ -24,13 +24,12 @@ namespace Linq2d.Expressions
         //        default: throw new ArgumentException($"Cannot find construction in the expression passed");
         //    }
         //}
-        public static MethodCallExpression Call<T, R>(this Expression<Func<T, R>> call, params Expression[] arguments)
+        public static MethodCallExpression Call<T, R>(this Expression<Func<T, R>> callExpression, Expression argument)
             =>
-            call.Body switch
+            callExpression.Body switch
             {
-                MethodCallExpression mce => mce.Update(mce.Object, arguments),
-                BlockExpression b when b.Expressions[0] is MethodCallExpression mce => mce.Update(mce.Object, arguments),
-                _ => throw new ArgumentException($"Cannot find a method call in the expression passed")
+                MethodCallExpression mce => mce.Update(mce.Object, new[] { argument }),
+                _ => throw new ArgumentException($"Cannot find a method call in the expression passed", nameof(callExpression))
             };
 
 
@@ -66,8 +65,7 @@ namespace Linq2d.Expressions
             => construct.Body switch
             {
                 NewExpression ne => ne.Update(new[] { argument }),
-                BlockExpression b when b.Expressions[0] is NewExpression ne => ne.Update(new[] { argument }),
-                _ => throw new ArgumentException($"Cannot find construction in the expression passed")
+                _ => throw new ArgumentException($"Cannot find construction in the expression passed", nameof(construct))
             };
 
         //public static bool IsConstant<T>(this Expression e, T constant)

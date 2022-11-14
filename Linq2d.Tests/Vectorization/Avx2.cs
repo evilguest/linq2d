@@ -1,4 +1,5 @@
 ﻿using Linq2d.CodeGen.Intrinsics;
+using Linq2d.MathHelpers;
 using System;
 using Xunit;
 
@@ -86,5 +87,16 @@ namespace Linq2d.Tests.Vectorization
         [Fact]
         public void TestUShortConditional256() => TestConditionalInt256<ushort>(7, 42, sizeof(ushort));
 
+        [Fact]
+        public void ShortNegation()
+        {
+            var source = ArrayHelper.InitAllRand(100, 110, 42, x => (short)x);
+            var expect = ArrayHelper.InitAllRand(100, 110, 42, s => Fast.Negate((short)s));
+            var q = from s in source
+                    select Fast.Negate(s);
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorised(iv.VectorizationResult, 16);
+        }
     }
 }
