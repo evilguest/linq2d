@@ -83,6 +83,7 @@ namespace Linq2d.Expressions
         private static readonly PropertyInfo CellY = typeof(Cell).GetProperty(nameof(Cell.Y));
         private static readonly PropertyInfo CellH = typeof(Cell).GetProperty(nameof(Cell.H));
         private static readonly PropertyInfo CellW = typeof(Cell).GetProperty(nameof(Cell.W));
+
         //private static readonly MethodInfo Window = typeof(Array2d).GetMethod(nameof(Array2d.Window));
         //private static readonly MethodInfo Area = typeof(Array2d).GetMethod(nameof(Array2d.Area));
 
@@ -195,6 +196,9 @@ namespace Linq2d.Expressions
             if (node.Member == CellW)
                 return _w; //Call(to, ArrayLength(arrayType), Constant(1));
 
+            if (node.Member == CellValue(node.Type))
+                return Visit(node.Expression);
+
             var expression = Visit(node.Expression);
             if (expression is MethodCallExpression mce && mce.Method == CellOffset(mce.Type.GetGenericArguments()[0]))
             {
@@ -214,13 +218,11 @@ namespace Linq2d.Expressions
                                 Condition(Not(LessThan(_j, Subtract(_w, dy))), oobStrategy.YAbove.Coordinate(y, _w),
                                     y));
 
-                if (node.Member == CellValue(node.Type))
-                    return CheckBounds(node.Type, dx, dy, to, oobStrategy);
             }
 
             if(ShouldReplace(expression))
             {
-                var (_, to, oobStrategy) = _replacements[expression];
+                var (_, to, _) = _replacements[expression];
                 if (node.Member == CellX)
                     return _i;
 
@@ -229,7 +231,7 @@ namespace Linq2d.Expressions
                 if (node.Member == CellValue(node.Type))
                     return MakeIndex(to, ArrayItem(node.Type), new[] { _i, _j });
             }
-            return MakeMemberAccess(expression, node.Member);
+            return node;//MakeMemberAccess(expression, node.Member);
         }
     }
 }

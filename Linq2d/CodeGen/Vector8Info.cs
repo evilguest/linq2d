@@ -6,10 +6,10 @@ using System.Runtime.CompilerServices;
 namespace Linq2d.CodeGen
 {
     using Intrinsics;
-    using Linq2d.MathHelpers;
+
     using System;
 
-    public unsafe class Vector8Info : VectorInfo
+    public unsafe class Vector8Info : VectorInfoNet8
     {
         protected override void InitSse2()
         {
@@ -25,13 +25,6 @@ namespace Linq2d.CodeGen
             InitLoadAndConvert<short>(Sse2.LoadVector128);
             InitLoadAndConvert<ushort>(Sse2.LoadVector128);
 
-            InitBinary128<short>(Fast.Add, Sse2.Add);  // C# does not generate the + expressions for short 
-            InitBinary128<ushort>(Fast.Add, Sse2.Add); // C# does not generate the + expressions for ushort 
-
-            InitBinary128<short>(Fast.Subtract, Sse2.Subtract);
-            InitBinary128<ushort>(Fast.Subtract, Sse2.Subtract);
-
-            InitBinary128<short>(Fast.Multiply, Sse2.MultiplyLow);
             InitBinary128<ushort>(ExpressionType.Multiply, Sse2.MultiplyLow);
 
             InitBinary128<short>(ExpressionType.ExclusiveOr, Sse2.Xor);
@@ -51,10 +44,7 @@ namespace Linq2d.CodeGen
             InitBinary128Forced<short, byte, int>(ExpressionType.LeftShift, Sse2.ShiftLeftLogical);
             InitBinary128Forced<ushort, byte, int>(ExpressionType.LeftShift, Sse2.ShiftLeftLogical);
         }
-        protected override void InitSsse3()
-        {
-            InitUnary128<short>(Fast.Negate, Ssse3.Negate); // native short negation isn't supported by C#
-        }
+
         protected override void InitSse41()
         {
             InitConditional128<short, ushort>(Sse41.BlendVariable);
@@ -128,6 +118,14 @@ namespace Linq2d.CodeGen
             InitBinary256Forced<int, byte, int>(ExpressionType.LeftShift, Avx2.ShiftLeftLogical);
             InitBinary256Forced<uint, byte, int>(ExpressionType.LeftShift, Avx2.ShiftLeftLogical);
         }
-
+        protected override void InitAvx512F()
+        {
+            InitBinary512<long>(ExpressionType.Add, Avx512F.Add);
+            InitBinary512<ulong>(ExpressionType.Add, Avx512F.Add);
+            InitBinary512<double>(ExpressionType.Add, Avx512F.Add);
+            InitBinary512<long>(ExpressionType.Subtract, Avx512F.Subtract);
+            InitBinary512<ulong>(ExpressionType.Subtract, Avx512F.Subtract);
+            InitBinary512<double>(ExpressionType.Subtract, Avx512F.Subtract);
+        }
     }
 }

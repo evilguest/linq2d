@@ -1,10 +1,22 @@
 ﻿using Linq2d.CodeGen.Intrinsics;
-using Linq2d.MathHelpers;
 using System;
 using Xunit;
 
 namespace Linq2d.Tests.Vectorization
 {
+    public class Avx512F:Base, IClassFixture<VectorizationStateFixture>
+    {
+        [Fact]
+        public void IntArithmetics()
+        {
+            var source = ArrayHelper.InitAllRand(100, 110, 42);
+            var expect = ArrayHelper.InitAllRand(100, 110, 42, s => s + s - 3);
+            var q = from s in source select s + s - 3;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorised(iv.VectorizationResult, 16);
+        }
+    }
     public class Avx2:Base, IClassFixture<VectorizationStateFixture>
     {
         [Fact]
@@ -38,6 +50,7 @@ namespace Linq2d.Tests.Vectorization
             return (from s in source select Math.Sqrt(s)).ToArray();
         }
 
+        [Fact]
         public void TestByteLiftOptimization()
         {
             byte a = 42;
@@ -91,9 +104,21 @@ namespace Linq2d.Tests.Vectorization
         public void ShortNegation()
         {
             var source = ArrayHelper.InitAllRand(100, 110, 42, x => (short)x);
-            var expect = ArrayHelper.InitAllRand(100, 110, 42, s => Fast.Negate((short)s));
+            var expect = ArrayHelper.InitAllRand(100, 110, 42, s => (short)-s);
             var q = from s in source
-                    select Fast.Negate(s);
+                    select (short)-s;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorised(iv.VectorizationResult, 16);
+        }
+
+        [Fact]
+        public void ShortAddition()
+        {
+            var source = ArrayHelper.InitAllRand(100, 110, 42, x => (short)x);
+            var expect = ArrayHelper.InitAllRand(100, 110, 42, s => (short)(s+s));
+            var q = from s in source
+                    select (short)(s + s);
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
             AssertVectorised(iv.VectorizationResult, 16);

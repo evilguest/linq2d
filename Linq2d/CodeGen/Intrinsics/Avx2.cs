@@ -22,6 +22,9 @@ namespace Linq2d.CodeGen.Intrinsics
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static Vector256<byte> Add(Vector256<byte> left, Vector256<byte> right) => Base.Add(left, right);
+        internal static Vector256<sbyte> Add(Vector256<sbyte> left, Vector256<sbyte> right) => Base.Add(left, right);
+        internal static Vector256<short> Add(Vector256<short> left, Vector256<short> right) => Base.Add(left, right);
+        internal static Vector256<ushort> Add(Vector256<ushort> left, Vector256<ushort> right) => Base.Add(left, right);
         internal static Vector256<int> Add(Vector256<int> left, Vector256<int> right) => Base.Add(left, right);
         internal static Vector256<uint> Add(Vector256<uint> left, Vector256<uint> right) => Base.Add(left, right);
         internal static Vector256<long> Add(Vector256<long> left, Vector256<long> right) => Base.Add(left, right);

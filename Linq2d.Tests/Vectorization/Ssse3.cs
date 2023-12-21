@@ -1,5 +1,4 @@
-﻿using Linq2d.MathHelpers;
-using Xunit;
+﻿using Xunit;
 
 namespace Linq2d.Tests.Vectorization
 {
@@ -9,9 +8,9 @@ namespace Linq2d.Tests.Vectorization
         public void ShortNegation()
         {
             var source = ArrayHelper.InitAllRand(100, 110, 42, x => (short)x);
-            var expect = ArrayHelper.InitAllRand(100, 110, 42, s => Fast.Negate((short)s));
+            var expect = ArrayHelper.InitAllRand(100, 110, 42, s => (short) -(short)s);
             var q = from s in source
-                    select Fast.Negate(s);
+                    select (short)-s;
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
             AssertVectorised(iv.VectorizationResult, 8);

@@ -72,6 +72,5 @@ namespace Linq2d.CodeGen
             InitConditional128<long, ulong>(Sse41.BlendVariable);
             InitConditional128<ulong, ulong>(Sse41.BlendVariable);
         }
-
     }
 }

@@ -1,10 +1,10 @@
-﻿using System.Runtime.Intrinsics;
+﻿using System.Linq.Expressions;
+using System.Runtime.Intrinsics;
 using Linq2d.CodeGen.Intrinsics;
-using Linq2d.MathHelpers;
 
 namespace Linq2d.CodeGen
 {
-    public unsafe class Vector16Info : VectorInfo
+    public unsafe class Vector16Info : VectorInfoNet8
     {
         protected override void InitSse2()
         {
@@ -32,6 +32,7 @@ namespace Linq2d.CodeGen
             InitStore<ushort, Vector256<ushort>>(Avx.Store);
 
             InitLoadAndConvert<short>(Avx.LoadVector256);
+
             InitLoadAndConvert<ushort>(Avx.LoadVector256);
         }
 
@@ -39,7 +40,18 @@ namespace Linq2d.CodeGen
         {
             InitLoadAndConvert<byte, short>(Avx2.ConvertToVector256Int16);
             InitLoadAndConvert<sbyte, short>(Avx2.ConvertToVector256Int16);
-            InitUnary256<short>(Fast.Negate, Avx2.Negate); // native short negation isn't supported by C#
+
+            InitBinary256<short>(ExpressionType.Add, Avx2.Add);
+
         }
+        protected override void InitAvx512F()
+        {
+            InitBinary512<int>(ExpressionType.Add, Avx512F.Add);
+            InitBinary512<uint>(ExpressionType.Add, Avx512F.Add);
+            InitBinary512<float>(ExpressionType.Add, Avx512F.Add);
+            InitBinary512<int>(ExpressionType.Subtract, Avx512F.Subtract);
+            InitBinary512<uint>(ExpressionType.Subtract, Avx512F.Subtract);
+        }
+
     }
 }

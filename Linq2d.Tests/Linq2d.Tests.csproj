@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <LangVersion>preview</LangVersion>
     <IsPackable>false</IsPackable>
 
@@ -43,7 +43,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Linq2d\Linq2d.csproj" />
-    <ProjectReference Include="..\SauvolaBinarizeCPP\SauvolaBinarizeCPP.vcxproj" />
+    <ProjectReference Include="..\SauvolaBinarizeCPP\SauvolaBinarizeCPP.vcxproj">
+      <Private>True</Private>
+      <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
@@ -81,7 +84,7 @@
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Condition="'$(OS)' == 'Unix'" Command="cp $(ProjectDir)../SauvolaBinarizeCPP/x64/$(ConfigurationName)/SauvolaBinarizeCPP.so $(targetDir)" />
-    <Exec Condition="'$(OS)' == 'Windows_NT'" Command="copy /Y $(ProjectDir)..\x64\$(ConfigurationName)\SauvolaBinarizeCPP.dll $(targetDir)" />
+    <Exec Condition="'$(OS)' == 'Windows _NT'" Command="copy /Y $(ProjectDir)..\x64\$(ConfigurationName)\SauvolaBinarizeCPP.dll $(targetDir)" />
   </Target>
 
 </Project>

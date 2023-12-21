@@ -21,10 +21,9 @@ namespace Linq2d
 for(int k=1; k<=maxRes; k++)
 {
 #>
-		// final select of <#= k#> result
+		// final select of <#= k#> <#= Plural("result", k)#>
         public static <#= TypeName(k==1?"IArrayQuery":"IArrayTransform", 1, k)#> Select<#= TemplateArgs(1, k)#>(this T[,] source, Expression<Func<Cell<T>, <#= ReturnTuple(k)#>>> resultSelector) 
             => new <#= TypeName("ArrayQuery", 1, k)#>(source.Wrap(), resultSelector);
-
 
         // final-recurrent select of <#= k#> results
         public static <#= TypeName("IArrayTransform", 1, k)#> SelectMany<#= TemplateArgs(1, k)#>(this T[,] source, Func<object, Result<R<#= k>1?1:""#>>> recurrentResult1Selector, Expression<Func<Cell<T>, RelativeCell<R<#= k>1?1:""#>>, <#= ReturnTuple(k)#>>> resultSelector) 

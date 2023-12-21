@@ -254,8 +254,8 @@ namespace Linq2d.CodeGen
         protected virtual void InitSse2() { }
         protected virtual void InitSsse3() { }
         protected virtual void InitSse41() { }
-        protected virtual void InitAvx2() { }
         protected virtual void InitAvx() { }
+        protected virtual void InitAvx2() { }
         #endregion
     }
 }

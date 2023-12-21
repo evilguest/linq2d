@@ -1,8 +1,5 @@
-﻿
-using System;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.X86;
 using Base = System.Runtime.Intrinsics.X86.Avx;
 
 namespace Linq2d.CodeGen.Intrinsics

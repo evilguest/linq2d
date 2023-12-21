@@ -13,12 +13,17 @@
         "packagesPath": "C:\\Users\\Zlygo\\.nuget\\packages\\",
         "projectStyle": "ProjectJson",
         "validateRuntimeAssets": true,
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
           "C:\\Users\\Zlygo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Users\\Zlygo\\source\\LocalPackages": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -28,7 +33,7 @@
         }
       },
       "dependencies": {
-        "GCCBuildTargets": "[1.*, )"
+        "GCCBuildTargets": "[1.22.77.8, )"
       },
       "frameworks": {
         "net6.0": {}
