@@ -12,7 +12,7 @@ namespace Linq2d.Tests.Vectorization
             var q = from s in source select s * 2;
             Assert.Equal(ArrayHelper.InitAll(100, 110, 2), q.ToArray());
             IVectorizable iv = ((IVectorizable)q);
-            Assert.False(iv.VectorizationResult.Success);
+            Assert.False(iv.Vectorized);
         }
 
         [Fact]
@@ -25,9 +25,8 @@ namespace Linq2d.Tests.Vectorization
             Assert.Equal(source, r1);
             Assert.Equal(Sqrt(source), r2);
 
-            IVectorizable2 iv = (IVectorizable2)q;
-            Assert.False(iv.VectorizationResults.Item1.Success);
-            Assert.False(iv.VectorizationResults.Item2.Success);
+            IVectorizable iv = (IVectorizable)q;
+            Assert.False(iv.Vectorized);
         }
 
         private static double[,] Sqrt(int[,] source) => (from s in source select Math.Sqrt(s)).ToArray();
@@ -40,7 +39,7 @@ namespace Linq2d.Tests.Vectorization
 
             Assert.Equal(source, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv.VectorizationResult, 4);
+            AssertVectorised(iv, 4);
         }
         [Fact]
         public void TestByteLiftOptimization32()
@@ -52,7 +51,7 @@ namespace Linq2d.Tests.Vectorization
             Assert.Equal(source, q.ToArray());
 
             var iv = (IVectorizable)q;
-            AssertVectorised(iv.VectorizationResult, 4);
+            AssertVectorised(iv, 4);
         }
     }
 }

@@ -138,7 +138,7 @@ namespace Linq2d.Expressions
             if (!type.IsGenericType)
                 return false;
             var g = type.GetGenericTypeDefinition();
-            return g == typeof(Vector256<>) || g == typeof(Vector128<>) || g == typeof(Vector32<>);
+            return g == typeof(Vector256<>) || g == typeof(Vector128<>) || g == typeof(Vector64<>) || g == typeof(Vector32<>);
         }
 
         protected override Expression VisitUnary(UnaryExpression node)
@@ -151,11 +151,12 @@ namespace Linq2d.Expressions
                     // first things first: if the node operand is an index and we're trying to convert...
                     if (node.Operand is IndexExpression ieo && ieo.Indexer == ArrayItem(ieo.Type))
                     {
-                        return VectorInfo.LoadAndConvertOperations.ContainsKey((ieo.Type, node.Type))
-                            ? Expression.Call(GetLoadSubstitute(ieo.Type, node.Type), ieo.Object, ieo.Arguments[0], ieo.Arguments[1], Expression.Constant(_vectorSize))
-                            : Fail(node, $"Failed to find a load-and-convert operation from type {ieo.Type} to {node.Type} vector of size {_vectorSize}");
+                        if (VectorInfo.LoadAndConvertOperations.ContainsKey((ieo.Type, node.Type)))
+                            return Expression.Call(GetLoadSubstitute(ieo.Type, node.Type), ieo.Object, ieo.Arguments[0], ieo.Arguments[1], Expression.Constant(_vectorSize));
+                            //: Fail(node, $"Failed to find a load-and-convert operation from type {ieo.Type} to {node.Type} vector of size {_vectorSize}");
                     }
-
+                    goto default;
+                default:
                     var operand = Visit(node.Operand);
                     if (IsVector(operand.Type))
                     {
@@ -164,13 +165,11 @@ namespace Linq2d.Expressions
                             ? VectorInfo.Vector.ContainsKey(node.Type) && VectorInfo.ConvertOperations.TryGetValue((operand.Type, VectorInfo.Vector[node.Type]), out var convertMethod)
                                 ? Expression.Call(convertMethod, operand)
                                 : Fail(node, $"Failed to find a suitable convert operation from {operand.Type} to {node.Type} for vector of size {_vectorSize}")
-                            : VectorInfo.UnaryOperations.TryGetValue((node.NodeType, operandElementType), out var unaryMethod)
+                            : VectorInfo.UnaryOperations.TryGetValue((node.NodeType, operand.Type), out var unaryMethod)
                                 ? Expression.Call(unaryMethod, operand)
                                 : Fail(node, $"Failed to find a {node.NodeType} operation for {operandElementType} vector of size {_vectorSize}");
                     }
                     return node.Update(operand);
-                default:
-                    return base.VisitUnary(node);
             }
         }
 

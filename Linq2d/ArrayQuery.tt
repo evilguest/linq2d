@@ -16,7 +16,7 @@ for(int k=1; k <= maxRes; k++)
 #>
     #region <#= k#> <#= Plural("result", k)#>
 
-    internal abstract partial class <#= TypeName("ArrayQuery", 0, k)#> : ArrayQueryBase, IVectorizable<#= k>1?k:""#>
+    internal abstract partial class <#= TypeName("ArrayQuery", 0, k)#> : ArrayQueryBase
     {
         protected ArrayQuery<#=k>1?k:""#>(ArraySource source, LambdaExpression kernel) : base(source, kernel) { }
         protected ArrayQuery<#=k>1?k:""#>(IArrayQuery sources, LambdaExpression kernel) : base(sources, kernel) { }
@@ -40,7 +40,6 @@ for(int k=1; k <= maxRes; k++)
                 _result = GetResult();
             return _result<#= k>1?".Value":""#>;
         }
-        <#= VecResultTuple(k)#> IVectorizable<#= k>1?k:""#>.<#=Plural("VectorizationResult",k)#> { get => (VectorizationResults[0]<#for(var l=1; l<k; l++){#>, VectorizationResults[<#=l#>]<#}#>); }
     }
 
 <#

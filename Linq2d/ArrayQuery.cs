@@ -6,7 +6,7 @@ namespace Linq2d
 {
     #region 1 result
 
-    internal abstract partial class ArrayQuery<R> : ArrayQueryBase, IVectorizable
+    internal abstract partial class ArrayQuery<R> : ArrayQueryBase
     {
         protected ArrayQuery(ArraySource source, LambdaExpression kernel) : base(source, kernel) { }
         protected ArrayQuery(IArrayQuery sources, LambdaExpression kernel) : base(sources, kernel) { }
@@ -23,7 +23,6 @@ namespace Linq2d
                 _result = GetResult();
             return _result;
         }
-        VectorizationResult IVectorizable.VectorizationResult { get => (VectorizationResults[0]); }
     }
 
 
@@ -370,7 +369,7 @@ namespace Linq2d
     #endregion
     #region 2 results
 
-    internal abstract partial class ArrayQuery2<R1, R2> : ArrayQueryBase, IVectorizable2
+    internal abstract partial class ArrayQuery2<R1, R2> : ArrayQueryBase
     {
         protected ArrayQuery2(ArraySource source, LambdaExpression kernel) : base(source, kernel) { }
         protected ArrayQuery2(IArrayQuery sources, LambdaExpression kernel) : base(sources, kernel) { }
@@ -388,7 +387,6 @@ namespace Linq2d
                 _result = GetResult();
             return _result.Value;
         }
-        (VectorizationResult, VectorizationResult) IVectorizable2.VectorizationResults { get => (VectorizationResults[0], VectorizationResults[1]); }
     }
 
 
@@ -791,7 +789,7 @@ namespace Linq2d
     #endregion
     #region 3 results
 
-    internal abstract partial class ArrayQuery3<R1, R2, R3> : ArrayQueryBase, IVectorizable3
+    internal abstract partial class ArrayQuery3<R1, R2, R3> : ArrayQueryBase
     {
         protected ArrayQuery3(ArraySource source, LambdaExpression kernel) : base(source, kernel) { }
         protected ArrayQuery3(IArrayQuery sources, LambdaExpression kernel) : base(sources, kernel) { }
@@ -810,7 +808,6 @@ namespace Linq2d
                 _result = GetResult();
             return _result.Value;
         }
-        (VectorizationResult, VectorizationResult, VectorizationResult) IVectorizable3.VectorizationResults { get => (VectorizationResults[0], VectorizationResults[1], VectorizationResults[2]); }
     }
 
 
@@ -1269,7 +1266,7 @@ namespace Linq2d
     #endregion
     #region 4 results
 
-    internal abstract partial class ArrayQuery4<R1, R2, R3, R4> : ArrayQueryBase, IVectorizable4
+    internal abstract partial class ArrayQuery4<R1, R2, R3, R4> : ArrayQueryBase
     {
         protected ArrayQuery4(ArraySource source, LambdaExpression kernel) : base(source, kernel) { }
         protected ArrayQuery4(IArrayQuery sources, LambdaExpression kernel) : base(sources, kernel) { }
@@ -1289,7 +1286,6 @@ namespace Linq2d
                 _result = GetResult();
             return _result.Value;
         }
-        (VectorizationResult, VectorizationResult, VectorizationResult, VectorizationResult) IVectorizable4.VectorizationResults { get => (VectorizationResults[0], VectorizationResults[1], VectorizationResults[2], VectorizationResults[3]); }
     }
 
 

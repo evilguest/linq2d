@@ -14,7 +14,7 @@ using static System.Linq.Expressions.Expression;
 
 namespace Linq2d
 {
-    internal class ArrayQueryBase
+    internal class ArrayQueryBase: IVectorizable
     {
         public LambdaExpression Kernel { get; }
         public List<ArraySource> Sources { get; } = new List<ArraySource>();
@@ -54,7 +54,8 @@ namespace Linq2d
 
         protected ArrayQueryBase(IArrayQuery left, ArraySource right, LambdaExpression kernel) : this(left, kernel) => Sources.Add(right);
         public bool Vectorized { get; private set; } = false;
-        public VectorizationResult[] VectorizationResults { get; private set; }
+        public List<VectorizationResult> VectorizationResults { get; } = new List<VectorizationResult>();
+        IEnumerable<VectorizationResult> IVectorizable.VectorizationResults { get =>  VectorizationResults; }
 
         protected D BuildTransform<D>()
             where D : Delegate
@@ -268,7 +269,7 @@ namespace Linq2d
                         var argTypes = (from s in Sources select s.Type).Union(Results);
 //                        var stepSizes = new int[Results.Count];
                         var vectorKernels = new Expression[Results.Count];
-                        VectorizationResults = new VectorizationResult[Results.Count];
+                        var vectorizationResults = new VectorizationResult[Results.Count];
                         for (int c = 0; c < Results.Count; c++)
                         {
                             if (!Array2d.PoolCSEVariables)  // if the user disabled pooling, then
@@ -279,7 +280,8 @@ namespace Linq2d
                             // try smaller step sizes until it works
                             foreach (var step in VectorData.StepSizesDesc)
                             {
-                                var v = VectorizationResults[c] = Vectorizer.Vectorize(step, coreKernels[c], resultVars, sourceArgs);
+                                var v = vectorizationResults[c] = Vectorizer.Vectorize(step, coreKernels[c], resultVars, sourceArgs);
+                                VectorizationResults.Add(v);
                                 if (v.Success)
                                 {
                                     vectorKernels[c] = v.Expression;
@@ -287,14 +289,14 @@ namespace Linq2d
                                 }
                             }
 
-                            if(!VectorizationResults[c].Success)
+                            if(!vectorizationResults[c].Success)
                                 vectorizable = false;
                         }
                        
                         if (vectorizable)
                         {
                             Vectorized = true;
-                            var stepSizes = from vr in VectorizationResults select vr.Step;
+                            var stepSizes = from vr in vectorizationResults select vr.Step;
                             var maxStep = stepSizes.Max();
                             var minStep = stepSizes.Min();
 
@@ -313,12 +315,12 @@ namespace Linq2d
                                 {
                                     for (int c = 0; c < Results.Count; c++)
                                     {
-                                        if (minStep * unroll % VectorizationResults[c].Step == 0)
+                                        if (minStep * unroll % vectorizationResults[c].Step == 0)
                                         {
                                             ilg.Ldloc(pTrgs[c]);
                                             kcs.Load2dPointerOffset(Results[c], iVar, jVar);
                                             kcs.Compile(vectorKernels[c]);
-                                            ilg.Call(VectorData.VectorInfo[VectorizationResults[c].Step].StoreOperations[Results[c]]);
+                                            ilg.Call(VectorData.VectorInfo[vectorizationResults[c].Step].StoreOperations[Results[c]]);
                                         }
                                     }
                                     ilg.Increment(j, minStep);

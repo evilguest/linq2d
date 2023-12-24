@@ -25,6 +25,7 @@ namespace Linq2d.CodeGen
             InitLoadAndConvert<short>(Sse2.LoadVector128);
             InitLoadAndConvert<ushort>(Sse2.LoadVector128);
 
+            InitBinary128<short>(ExpressionType.Multiply, Sse2.MultiplyLow);
             InitBinary128<ushort>(ExpressionType.Multiply, Sse2.MultiplyLow);
 
             InitBinary128<short>(ExpressionType.ExclusiveOr, Sse2.Xor);
@@ -43,6 +44,12 @@ namespace Linq2d.CodeGen
             InitBinary128Forced<ushort, byte, int>(ExpressionType.RightShift, Sse2.ShiftRightLogical);
             InitBinary128Forced<short, byte, int>(ExpressionType.LeftShift, Sse2.ShiftLeftLogical);
             InitBinary128Forced<ushort, byte, int>(ExpressionType.LeftShift, Sse2.ShiftLeftLogical);
+        }
+
+        protected override void InitSsse3()
+        {
+
+            InitUnary128<short>(ExpressionType.Negate, Ssse3.Negate);
         }
 
         protected override void InitSse41()
@@ -95,6 +102,8 @@ namespace Linq2d.CodeGen
             InitLoadAndConvert<ushort, int>(Avx2.ConvertToVector256Int32);
 
 
+            InitConvert256to128<uint, ushort>(Avx2.ConvertToVector128Int16);
+            InitConvert256to128<int, short>(Avx2.ConvertToVector128Int16);
 
             InitBinary256<int, uint>(ExpressionType.Equal, Avx2.CompareEqual);
             InitBinary256<uint>(ExpressionType.Equal, Avx2.CompareEqual);
@@ -109,8 +118,6 @@ namespace Linq2d.CodeGen
             InitBinary256<uint>(ExpressionType.Multiply, Avx2.MultiplyLow);
 
             InitUnary256<int>(ExpressionType.Negate, Avx2.Negate);
-
-            InitConvert256to128<uint, ushort>(Avx2.ConvertToVector128Int16);
 
             InitBinary256Forced<int, byte, int>(ExpressionType.RightShift, Avx2.ShiftRightArithmetic);
             InitBinary256Forced<uint, byte, int>(ExpressionType.RightShift, Avx2.ShiftRightLogical);

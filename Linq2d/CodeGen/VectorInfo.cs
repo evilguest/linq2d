@@ -75,6 +75,9 @@ namespace Linq2d.CodeGen
         public void InitType32<T>()
             where T : unmanaged
             => _vectorTable[typeof(T)] = typeof(Vector32<T>);
+        public void InitType64<T>()
+            where T : unmanaged
+            => _vectorTable[typeof(T)] = typeof(Vector64<T>);
         public void InitType128<T>()
             where T : unmanaged
             => _vectorTable[typeof(T)] = typeof(Vector128<T>);
@@ -88,6 +91,9 @@ namespace Linq2d.CodeGen
         public void InitStore<T>(Store<T, Vector32<T>> method)
             where T : unmanaged
             => InitStore<T, Vector32<T>>(method);
+        public void InitStore<T>(Store<T, Vector64<T>> method)
+            where T : unmanaged
+            => InitStore<T, Vector64<T>>(method);
         public void InitStore<T>(Store<T, Vector128<T>> method)
             where T : unmanaged
             => InitStore<T, Vector128<T>>(method);
@@ -104,12 +110,19 @@ namespace Linq2d.CodeGen
             where T : unmanaged
             where R : unmanaged
             => _loadAndConvertOperations[(typeof(T), typeof(R))] = method.Method;
+        public void InitLoadAndConvert<T, R>(Load<T, Vector64<R>> method)
+            where T : unmanaged
+            where R : unmanaged
+            => _loadAndConvertOperations[(typeof(T), typeof(R))] = method.Method;
         public void InitLoadAndConvert<T, R>(Load<T, Vector128<R>> method)
             where T : unmanaged
             where R : unmanaged
             => _loadAndConvertOperations[(typeof(T), typeof(R))] = method.Method;
 
         public void InitLoadAndConvert<T>(Load<T, Vector32<T>> method)
+            where T : unmanaged
+            => InitLoadAndConvert<T, T>(method);
+        public void InitLoadAndConvert<T>(Load<T, Vector64<T>> method)
             where T : unmanaged
             => InitLoadAndConvert<T, T>(method);
         public void InitLoadAndConvert<T>(Load<T, Vector128<T>> method)
@@ -130,6 +143,10 @@ namespace Linq2d.CodeGen
         private void InitConvert<T, R>(Func<T, R> method)
             => _convertOperations[(typeof(T), typeof(R))] = method.Method;
 
+        public void InitConvert<T, R>(Func<Vector64<T>, Vector128<R>> method)
+            where T : unmanaged
+            where R : unmanaged
+            => InitConvert<Vector64<T>, Vector128<R>>(method);
         public void InitConvert<T, R>(Func<Vector128<T>, Vector256<R>> method)
             where T : unmanaged
             where R : unmanaged
@@ -150,8 +167,15 @@ namespace Linq2d.CodeGen
             where T : unmanaged
             where R : unmanaged
             => InitConvert(method);
+        public void InitConvert128to64<T, R>(Func<Vector128<T>, Vector64<R>> method)
+            where T : unmanaged
+            where R : unmanaged
+            => InitConvert(method);
 
         public void InitLift<T>(Func<T, Vector32<T>> method)
+            where T : unmanaged
+            => _liftOperations[typeof(T)] = method.Method;
+        public void InitLift<T>(Func<T, Vector64<T>> method)
             where T : unmanaged
             => _liftOperations[typeof(T)] = method.Method;
         public void InitLift<T>(Func<T, Vector128<T>> method)

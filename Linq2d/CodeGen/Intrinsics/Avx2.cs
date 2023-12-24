@@ -80,8 +80,16 @@ namespace Linq2d.CodeGen.Intrinsics
         internal static unsafe Vector256<int> ConvertToVector256Int32(sbyte* address) => Base.ConvertToVector256Int32(address);
         internal static unsafe Vector256<int> ConvertToVector256Int32(short* address) => Base.ConvertToVector256Int32(address);
         internal static unsafe Vector256<int> ConvertToVector256Int32(ushort* address) => Base.ConvertToVector256Int32(address);
-        private static readonly Vector256<byte> _shuffle = Vector256.Create(2, 3, 6, 7, 10, 11, 14, 15, 18, 19, 22, 23, 26, 27, 30, 31, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0);
-        internal static Vector128<ushort> ConvertToVector128Int16(Vector256<uint> arg) => Base.Shuffle(arg.AsByte(), _shuffle).GetLower().AsUInt16();
+//        private static readonly Vector256<byte> _shuffle = Vector256.Create(2, 3, 6, 7, 10, 11, 14, 15, 18, 19, 22, 23, 26, 27, 30, 31, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0);
+
+        private static readonly Vector128<byte> _shuffle128 = Vector128.Create(0, 1, 4, 5, 8, 9, 12, 13, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0);
+        internal static Vector128<short> ConvertToVector128Int16(Vector256<int> arg)
+                => Vector128.Create(Base.Shuffle(arg.GetLower().AsByte(), _shuffle128).GetLower(),
+                                    Base.Shuffle(arg.GetUpper().AsByte(), _shuffle128).GetLower()).AsInt16();
+        internal static Vector128<ushort> ConvertToVector128Int16(Vector256<uint> arg)
+            => Vector128.Create(Base.Shuffle(arg.GetLower().AsByte(), _shuffle128).GetLower(),
+                                Base.Shuffle(arg.GetUpper().AsByte(), _shuffle128).GetLower()).AsUInt16();
+        //internal static Vector128<ushort> ConvertToVector128Int16(Vector256<uint> arg) => Base.Shuffle(arg.AsByte(), _shuffle).GetLower().AsUInt16();
         internal static Vector256<int> MultiplyLow(Vector256<int> left, Vector256<int> right) => Base.MultiplyLow(left, right);
         internal static Vector256<uint> MultiplyLow(Vector256<uint> left, Vector256<uint> right) => Base.MultiplyLow(left, right);
         internal static Vector256<sbyte> Negate(Vector256<sbyte> arg) => Base.Sign(arg, Vector256<sbyte>.AllBitsSet);

@@ -13,7 +13,20 @@ namespace Linq2d.Tests.Vectorization
                     select (short)-s;
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv.VectorizationResult, 8);
+            AssertVectorised(iv, 4);
         }
+
+        [Fact]
+        public void IntToShortConversion()
+        {
+            var source = ArrayHelper.InitAllRand(100, 110, 42);
+            var expect = ArrayHelper.InitAllRand(100, 110, 42, x => (short)x);
+            var q = from s in source
+                    select (short)s;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorised(iv, 4);
+        }
+
     }
 }

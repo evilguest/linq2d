@@ -14,7 +14,7 @@ namespace Linq2d.Tests.Vectorization
             var q = from s in source select s * 2f;
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv.VectorizationResult, 8);
+            AssertVectorised(iv, 8);
         }
 
         [Fact]
@@ -27,9 +27,8 @@ namespace Linq2d.Tests.Vectorization
             Assert.Equal(source, r1);
             Assert.Equal(Sqrt(source), r2);
 
-            IVectorizable2 iv = (IVectorizable2)q;
-            AssertVectorised(iv.VectorizationResults.Item1, 8);
-            AssertVectorised(iv.VectorizationResults.Item2, 4);
+            IVectorizable iv = (IVectorizable)q;
+            AssertVectorised(iv, 8);
         }
 
         private static double[,] Sqrt(int[,] source)
@@ -45,7 +44,7 @@ namespace Linq2d.Tests.Vectorization
 
             Assert.Equal(source, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv.VectorizationResult, 32);
+            AssertVectorised(iv, 32);
         }
         [Fact]
         public void TestByteLiftOptimization()
@@ -57,7 +56,7 @@ namespace Linq2d.Tests.Vectorization
             Assert.Equal(source, q.ToArray());
 
             var iv = (IVectorizable)q;
-            AssertVectorised(iv.VectorizationResult, 32);
+            AssertVectorised(iv, 32);
         }
         private void TestConditionalInt256<T>(T t, T f, int sizeOfT)
             where T : unmanaged
@@ -68,7 +67,7 @@ namespace Linq2d.Tests.Vectorization
             var expect = ArrayHelper.InitAllRand(16, 16, 42, x => x == a ? t : f);
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv.VectorizationResult, 16 / Math.Max(sizeOfT, sizeof(int)));
+            AssertVectorised(iv, 16 / Math.Max(sizeOfT, sizeof(int)));
         }
         private void TestConditionalLong256<T>(T t, T f, int sizeOfT)
             where T : unmanaged
@@ -79,7 +78,7 @@ namespace Linq2d.Tests.Vectorization
             var expect = ArrayHelper.InitAllRand(16, 16, 42, x => x == a ? t : f);
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv.VectorizationResult, 16 / sizeOfT);
+            AssertVectorised(iv, 16 / sizeOfT);
         }
 
         [Fact]

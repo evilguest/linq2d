@@ -1,5 +1,4 @@
-﻿using Linq2d.CodeGen.Intrinsics;
-using System;
+﻿using System;
 using Xunit;
 
 namespace Linq2d.Tests.Vectorization
@@ -14,7 +13,7 @@ namespace Linq2d.Tests.Vectorization
             var q = from s in source select s + s - 3;
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv.VectorizationResult, 16);
+            AssertVectorised(iv, 16);
         }
     }
     public class Avx2:Base, IClassFixture<VectorizationStateFixture>
@@ -27,7 +26,7 @@ namespace Linq2d.Tests.Vectorization
             var q = from s in source select s + s * 2 - 3;
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv.VectorizationResult, 8);
+            AssertVectorised(iv, 8);
         }
 
         [Fact]
@@ -40,9 +39,8 @@ namespace Linq2d.Tests.Vectorization
             Assert.Equal(source, r1);
             Assert.Equal(Sqrt(source), r2);
 
-            IVectorizable2 iv = (IVectorizable2)q;
-            AssertVectorised(iv.VectorizationResults.Item1, 8);
-            AssertVectorised(iv.VectorizationResults.Item2, 4);
+            IVectorizable iv = (IVectorizable)q;
+            AssertVectorised(iv, 8);
         }
 
         private static double[,] Sqrt(int[,] source)
@@ -55,14 +53,14 @@ namespace Linq2d.Tests.Vectorization
         {
             byte a = 42;
             var source = ArrayHelper.InitAll(17, 17, a);
-            Sse.Suppress = true;
+            CodeGen.Intrinsics.Sse.Suppress = true;
             var q = from s in source select a;
 
             Assert.Equal(source, q.ToArray());
-            Sse.Suppress = false;
+            CodeGen.Intrinsics.Sse.Suppress = false;
 
             var iv = (IVectorizable)q;
-            AssertVectorised(iv.VectorizationResult, 32);
+            AssertVectorised(iv, 32);
         }
         private void TestConditionalInt256<T>(T t, T f, int sizeOfT)
             where T : unmanaged
@@ -73,7 +71,7 @@ namespace Linq2d.Tests.Vectorization
             var expect = ArrayHelper.InitAllRand(16, 16, 42, x => x == a ? t : f);
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv.VectorizationResult, 32 / Math.Max(sizeOfT, sizeof(int)));
+            AssertVectorised(iv, 32 / Math.Max(sizeOfT, sizeof(int)));
         }
         private void TestConditionalLong256<T>(T t, T f, int sizeOfT)
             where T : unmanaged
@@ -84,7 +82,7 @@ namespace Linq2d.Tests.Vectorization
             var expect = ArrayHelper.InitAllRand(16, 16, 42, x => x == a ? t : f);
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv.VectorizationResult, 32 / sizeOfT);
+            AssertVectorised(iv, 32 / sizeOfT);
         }
 
         [Fact]
@@ -101,6 +99,18 @@ namespace Linq2d.Tests.Vectorization
         public void TestUShortConditional256() => TestConditionalInt256<ushort>(7, 42, sizeof(ushort));
 
         [Fact]
+        public void ShortToIntConversion()
+        {
+            var source = ArrayHelper.InitAllRand(100, 110, 42, x => (short)x);
+            var expect = ArrayHelper.InitAllRand(100, 110, 42, x=> (int)(short)x);
+            var q = from s in source
+                    select (int)s;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorised(iv, 8);
+        }
+
+        [Fact]
         public void ShortNegation()
         {
             var source = ArrayHelper.InitAllRand(100, 110, 42, x => (short)x);
@@ -109,7 +119,7 @@ namespace Linq2d.Tests.Vectorization
                     select (short)-s;
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv.VectorizationResult, 16);
+            AssertVectorised(iv, 16);
         }
 
         [Fact]
@@ -121,7 +131,7 @@ namespace Linq2d.Tests.Vectorization
                     select (short)(s + s);
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv.VectorizationResult, 16);
+            AssertVectorised(iv, 16);
         }
     }
 }

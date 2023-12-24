@@ -1,7 +1,6 @@
 ﻿using System;
 
 using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.X86;
 
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
@@ -19,6 +18,17 @@ namespace Linq2d.CodeGen
 
             InitStore<float>(Sse.Store);
             InitLoadAndConvert<float>(Sse.LoadVector128);
+
+            InitType64<short>();
+            InitLoadAndConvert<short>(Sse.LoadVector64);
+            InitLift<short>(Vector64.Create);
+            InitConvert<short, int>(Sse.ConvertToVector128Int16);
+            InitConvert128to64<int, short>(Sse.ConvertToVector64Int16);
+            InitStore<short>(Sse.Store);
+
+            InitType64<ushort>();
+            InitLoadAndConvert<ushort>(Sse.LoadVector64);
+            InitLift<ushort>(Vector64.Create);
 
             InitLift<float>(Vector128.Create);
 
@@ -47,7 +57,7 @@ namespace Linq2d.CodeGen
             InitConvert128<float, int>(Sse2.ConvertToVector128Int32);
 
 
-            //InitUnary128<int, uint>(Math.Abs, Avx2.Abs)
+            InitUnary128<int>(ExpressionType.Negate, Sse2.Negate);
 
             InitBinary128<int>(ExpressionType.Add, Sse2.Add);
             InitBinary128<uint>(ExpressionType.Add, Sse2.Add);
@@ -71,6 +81,13 @@ namespace Linq2d.CodeGen
 
             InitBinary128Forced<int, byte, int>(ExpressionType.LeftShift, Sse2.ShiftLeftLogical);
             InitBinary128Forced<uint, byte, int>(ExpressionType.LeftShift, Sse2.ShiftLeftLogical);
+        }
+
+        protected override void InitSsse3()
+        {
+            InitConvert128to64<uint, ushort>(Ssse3.ConvertToVector64Int16);
+            InitConvert128to64<int, short>(Ssse3.ConvertToVector64Int16);
+
         }
         protected override void InitSse41()
         {
