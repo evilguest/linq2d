@@ -73,7 +73,8 @@ namespace Linq2d.Expressions
                 if (node.Method.GetParameters()[1].ParameterType != right.Type)
                     right = Convert(right, node.Method.GetParameters()[0].ParameterType);
             }
-            return node.Update(left, node.Conversion, right);
+            return MakeBinary(node.NodeType, left, right);
+           // return node.Update(left, node.Conversion, right);
         }
         private static MethodInfo CellItemGet(Type t) => typeof(RelativeCell<>).MakeGenericType(t).GetProperty("Item").GetGetMethod();
         private static PropertyInfo CellValue(Type t) => typeof(Cell<>).MakeGenericType(t).GetProperty("Value");

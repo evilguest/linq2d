@@ -1,8 +1,8 @@
-﻿using System;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using Base = System.Runtime.Intrinsics.X86.Sse2;
+
+#pragma warning disable CA1857
 
 namespace Linq2d.CodeGen.Intrinsics
 {
@@ -70,6 +70,26 @@ namespace Linq2d.CodeGen.Intrinsics
         #endregion
 
         #region Vector-4
+
+        internal static unsafe Vector64<short> LoadVector64(short* address) => Vector64.Create(*(long*)address).AsInt16();
+        internal static unsafe Vector64<ushort> LoadVector64(ushort* address) => Vector64.Create(*(long*)address).AsUInt16();
+        internal static unsafe void Store(short* destination, Vector64<short> data) => data.Store(destination);
+        internal static unsafe void Store(ushort* address, Vector64<ushort> data) => data.Store(address);
+        internal static Vector128<int> ConvertToVector128Int32(Vector64<short> v) => Vector128.Create(v[0], v[1], v[2], v[3]);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static Vector64<short> ConvertToVector64Int16(Vector128<int> v)
+        {
+            var t = v.AsInt16();
+            return Vector64.Create(t[0], t[2], t[4], t[6]);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static Vector64<ushort> ConvertToVector64Int16(Vector128<uint> v)
+        {
+            var t = v.AsUInt16();
+            return Vector64.Create(t[0], t[2], t[4], t[6]);
+        }
 
         internal static Vector128<int> Add(Vector128<int> left, Vector128<int> right) => Base.Add(left, right);
         

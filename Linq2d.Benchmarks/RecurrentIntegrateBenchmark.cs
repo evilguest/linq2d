@@ -1,12 +1,11 @@
 ﻿using BenchmarkDotNet.Attributes;
-using ImageHelpers;
-using Microsoft.Diagnostics.Tracing.Parsers.Clr;
-using Mono.Linq.Expressions;
+using Linq2d.Tests.Vectorization;
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.X86;
 
+using Avx = System.Runtime.Intrinsics.X86.Avx;
+using Avx2 = System.Runtime.Intrinsics.X86.Avx2;
 namespace Linq2d.Benchmarks
 {
     [InProcess]
@@ -21,10 +20,10 @@ namespace Linq2d.Benchmarks
             var vectorIntegrate = GetIntegrate();
             var _ = vectorIntegrate.Transform; // force compilation
             IVectorizable ev = ((IVectorizable)vectorIntegrate);
-            if (!ev.VectorizationResult.Success)
+            if (!ev.Vectorized)
             {
-                Console.Error.Write("Recurrent integration failed");
-                Console.Error.WriteLine($" due to the expression\n{ev.VectorizationResult.BlockedBy.ToCSharpCode()}:\n  {ev.VectorizationResult.Reason}");
+                Console.Error.WriteLine("Recurrent integration failed:");
+                Console.Error.WriteLine(ev.Report());
             }
             else 
               _integrateVector = vectorIntegrate.Transform;
@@ -245,8 +244,8 @@ namespace Linq2d.Benchmarks
         {
             Array2d.TryVectorize = true;
             var q = GetIntegrate();
-            if (q is IVectorizable v && !v.VectorizationResult.Success)
-                throw new InvalidOperationException($"Vectorization failed due to {v.VectorizationResult.Reason}");
+            if (q is IVectorizable v && !v.Vectorized)
+                throw new InvalidOperationException($"Vectorization failed due to {v.Report()}");
             return q.ToArray();
         }
 

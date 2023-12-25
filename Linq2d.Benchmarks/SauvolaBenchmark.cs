@@ -1,5 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Linq2d.Tests;
+using Linq2d.Tests.Vectorization;
 using Mono.Linq.Expressions;
 using System;
 
@@ -24,8 +25,8 @@ namespace Linq2d.Benchmarks
             var edgeDetectVector = GetDetect(new int[0, 0], new long[0, 0]);
             _edgeDetectVector = edgeDetectVector.Transform;
             IVectorizable ev = ((IVectorizable)edgeDetectVector);
-            if (!ev.VectorizationResult.Success)
-                Console.Error.WriteLine($"Sauvola Edge Detect vectorization failed due to the expression\n{ev.VectorizationResult.BlockedBy.ToCSharpCode()}:\n  {ev.VectorizationResult.Reason}");
+            if (!ev.Vectorized)
+                Console.Error.WriteLine($"Sauvola Edge Detect vectorization failed:\n{ev.Report}");
             Array2d.TryVectorize = false; // force scalar
             _preIntegrateScalar = GetIntegral().Transform;
             _edgeDetectScalar = GetDetect(new int[0, 0], new long[0, 0]).Transform;

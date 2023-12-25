@@ -91,12 +91,21 @@ namespace Linq2d.CodeGen
         public void InitStore<T>(Store<T, Vector32<T>> method)
             where T : unmanaged
             => InitStore<T, Vector32<T>>(method);
-        public void InitStore<T>(Store<T, Vector64<T>> method)
+
+        public void InitStore64<T>(Store<T, Vector64<T>> method)
             where T : unmanaged
             => InitStore<T, Vector64<T>>(method);
-        public void InitStore<T>(Store<T, Vector128<T>> method)
+
+        public void InitStore<T>(Store<T, Vector64<T>> method)
+            where T : unmanaged
+            => InitStore64(method);
+        public void InitStore128<T>(Store<T, Vector128<T>> method)
             where T : unmanaged
             => InitStore<T, Vector128<T>>(method);
+
+        public void InitStore<T>(Store<T, Vector128<T>> method)
+            where T : unmanaged
+            => InitStore128(method);
         public void InitStore256<T>(Store<T, Vector256<T>> method)
             where T : unmanaged
             => InitStore(method);

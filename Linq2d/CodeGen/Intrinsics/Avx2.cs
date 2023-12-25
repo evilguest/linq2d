@@ -1,9 +1,8 @@
-﻿using Linq2d.CodeGen.Fake;
-using System;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using Base = System.Runtime.Intrinsics.X86.Avx2;
 
+#pragma warning disable CA1857
 namespace Linq2d.CodeGen.Intrinsics
 {
     static class Avx2

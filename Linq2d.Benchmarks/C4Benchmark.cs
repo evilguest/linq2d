@@ -1,5 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Linq2d.Tests;
+using Linq2d.Tests.Vectorization;
 using Mono.Linq.Expressions;
 using System;
 
@@ -21,8 +22,8 @@ namespace Linq2d.Benchmarks
             var q = GetQuery();
             _integrateVector = q.Transform;
             var ev = (IVectorizable)q;
-            if(!ev.VectorizationResult.Success)
-                Console.Error.WriteLine($"C4 vectorization failed due to the expression\n{ev.VectorizationResult.BlockedBy.ToCSharpCode()}:\n  {ev.VectorizationResult.Reason}");
+            if(!ev.Vectorized)
+                Console.Error.WriteLine($"C4 vectorization failed:\n{ev.Report()}");
 
             Array2d.TryVectorize = false;
             _integrateScalar = GetQuery().Transform;

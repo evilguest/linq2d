@@ -19,8 +19,8 @@ namespace Linq2d.CodeGen
             InitLift<short>(Vector128.Create);
             InitLift<ushort>(Vector128.Create);
 
-            InitStore<short>(Sse2.Store);
-            InitStore<ushort>(Sse2.Store);
+            InitStore128<short>(Sse2.Store);
+            InitStore128<ushort>(Sse2.Store);
 
             InitLoadAndConvert<short>(Sse2.LoadVector128);
             InitLoadAndConvert<ushort>(Sse2.LoadVector128);

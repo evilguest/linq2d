@@ -16,18 +16,46 @@ namespace Linq2d.Tests.Vectorization
             var iv = (IVectorizable)q;
             AssertVectorised(iv, 4);
         }
-        //[Fact]
-        //public void ShortArithmetics()
-        //{
-        //    var source = ArrayHelper.InitAllRand(100, 110, 42, x => (short)x);
-        //    var expect = ArrayHelper.InitAllRand(100, 110, 42, s => (short)(2 + s * 2 - s));
-        //    var q = from s1 in source
-        //            from s2 in source
-        //            select (short)(2 + s2 * 2 - s1);
-        //    Assert.Equal(expect, q.ToArray());
-        //    var iv = (IVectorizable)q;
-        //    Assert.False(iv.VectorizationResult.Success);
-        //}
+        [Fact]
+        public void UShortArithmetics()
+        {
+            var source = ArrayHelper.InitAllRand(100, 110, 42, x => (ushort)x);
+            var expect = ArrayHelper.InitAllRand(100, 110, 42, s => (ushort)((ushort)(2 + (ushort)((ushort)s + 2)) - (ushort)s));
+            var q = from s1 in source
+                    from s2 in source
+                    select (ushort)((ushort)(2 + (ushort)(s2 + 2)) - s1);
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorised(iv, 4);
+        }
+        [Fact]
+        public void ShortConversion()
+        {
+            unchecked
+            {
+                var source = ArrayHelper.InitAllRand(100, 110, 42);
+                var expect = ArrayHelper.InitAllRand(100, 110, 42, x => (short)x);
+                var q = from s in source
+                        select (short)s;
+                Assert.Equal(expect, q.ToArray());
+                var iv = (IVectorizable)q;
+                AssertVectorised(iv, 4);
+            }
+        }
+        [Fact]
+        public void UShortConversion()
+        {
+            unchecked
+            {
+                var source = ArrayHelper.InitAllRand(100, 110, 42, x => (uint)x);
+                var expect = ArrayHelper.InitAllRand(100, 110, 42, x => (ushort)x);
+                var q = from s in source
+                        select (ushort)s;
+                Assert.Equal(expect, q.ToArray());
+                var iv = (IVectorizable)q;
+                AssertVectorised(iv, 4);
+            }
+        }
         [Fact]
         public void ShortNegation()
         {

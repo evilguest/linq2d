@@ -1,6 +1,8 @@
 ﻿using System.Runtime.Intrinsics;
 using Base = System.Runtime.Intrinsics.X86.Avx512F;
 
+#pragma warning disable CA1857
+
 namespace Linq2d.CodeGen.Intrinsics
 {
     static partial class Avx512F
