@@ -54,7 +54,7 @@ namespace Linq2d.Tests.Vectorization
             AssertVectorised(iv, 4);
         }
         [Fact]
-        public void FloatComparison()
+        public void FloatEquality()
         {
             var source1 = ArrayHelper.InitAllRand(100, 110, 42, x => x / 3f);
             var source2 = ArrayHelper.InitAllRand(100, 110, 42, x => x / 5f);

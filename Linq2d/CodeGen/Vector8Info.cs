@@ -21,6 +21,8 @@ namespace Linq2d.CodeGen
 
             InitStore128<short>(Sse2.Store);
             InitStore128<ushort>(Sse2.Store);
+            InitStore<bool, Vector128<ushort>>(Sse2.Store);
+            InitLift<bool, Vector128<ushort>>(Sse2.Create);
 
             InitLoadAndConvert<short>(Sse2.LoadVector128);
             InitLoadAndConvert<ushort>(Sse2.LoadVector128);
@@ -36,6 +38,8 @@ namespace Linq2d.CodeGen
 
             InitBinary128<short>(ExpressionType.Or, Sse2.Or);
             InitBinary128<ushort>(ExpressionType.Or, Sse2.Or);
+
+            InitUnary128<ushort>(ExpressionType.Not, Sse2.Not);
 
             InitBinary128<short, ushort>(ExpressionType.Equal, Sse2.CompareEqual);
             InitBinary128<ushort>(ExpressionType.Equal, Sse2.CompareEqual);

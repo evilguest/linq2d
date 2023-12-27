@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using Base = System.Runtime.Intrinsics.X86.Sse2;
 
@@ -31,7 +32,9 @@ namespace Linq2d.CodeGen.Intrinsics
         #endregion
 
         #region Vector-8
-        
+        internal static unsafe void Store(bool* address, Vector128<ushort> data) => Base.Store((ushort*)address, data);
+        internal static Vector128<ushort> Create(bool arg) => Vector128.Create(arg ? ushort.MaxValue : ushort.MinValue);
+
         internal static Vector128<short> Add(Vector128<short> left, Vector128<short> right) => Base.Add(left, right);
         
         internal static Vector128<ushort> Add(Vector128<ushort> left, Vector128<ushort> right) => Base.Add(left, right);
@@ -48,7 +51,8 @@ namespace Linq2d.CodeGen.Intrinsics
         internal static Vector128<short> And(Vector128<short> left, Vector128<short> right) => Base.And(left, right);
         
         internal static Vector128<ushort> And(Vector128<ushort> left, Vector128<ushort> right) => Base.And(left, right);
-        
+        internal static Vector128<ushort> Not(Vector128<ushort> v) => Base.AndNot(v, Vector128.Create((ushort)0xFFFF));
+
         internal static unsafe void Store(ushort* address, Vector128<ushort> data) => Base.Store(address, data);
         
         internal static unsafe void Store(short* address, Vector128<short> data) => Base.Store(address, data);
@@ -76,6 +80,7 @@ namespace Linq2d.CodeGen.Intrinsics
         internal static unsafe void Store(short* destination, Vector64<short> data) => data.Store(destination);
         internal static unsafe void Store(ushort* address, Vector64<ushort> data) => data.Store(address);
         internal static Vector128<int> ConvertToVector128Int32(Vector64<short> v) => Vector128.Create(v[0], v[1], v[2], v[3]);
+        internal static Vector128<int> ConvertToVector128Int32(Vector64<ushort> v) => Vector128.Create(v[0], v[1], v[2], v[3]);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static Vector64<short> ConvertToVector64Int16(Vector128<int> v)
@@ -85,7 +90,13 @@ namespace Linq2d.CodeGen.Intrinsics
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static Vector64<ushort> ConvertToVector64Int16(Vector128<uint> v)
+        internal static Vector64<ushort> ConvertToVector64UInt16(Vector128<int> v)
+        {
+            var t = v.AsUInt16();
+            return Vector64.Create(t[0], t[2], t[4], t[6]);
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static Vector64<ushort> ConvertToVector64UInt16(Vector128<uint> v)
         {
             var t = v.AsUInt16();
             return Vector64.Create(t[0], t[2], t[4], t[6]);
@@ -114,7 +125,7 @@ namespace Linq2d.CodeGen.Intrinsics
         internal static Vector128<int> Subtract(Vector128<int> left, Vector128<int> right) => Base.Subtract(left, right);
         internal static Vector128<uint> Subtract(Vector128<uint> left, Vector128<uint> right) => Base.Subtract(left, right);
 
-        internal static Vector128<int> Negate(Vector128<int> vector) => Base.Subtract(Vector128.CreateScalar(0), vector);
+        internal static Vector128<int> Negate(Vector128<int> vector) => Base.Subtract(Vector128.Create(0), vector);
 
         internal static Vector128<int> Xor(Vector128<int> left, Vector128<int> right) => Base.Xor(left, right);
         internal static Vector128<uint> Xor(Vector128<uint> left, Vector128<uint> right) => Base.Xor(left, right);
@@ -189,6 +200,7 @@ namespace Linq2d.CodeGen.Intrinsics
         internal static Vector128<long> ShiftLeftLogical(Vector128<long> left, byte right) => Base.ShiftLeftLogical(left, right);
 
         internal static Vector128<ulong> ShiftLeftLogical(Vector128<ulong> left, byte right) => Base.ShiftLeftLogical(left, right);
+
 
         #endregion
 

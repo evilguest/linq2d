@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Intrinsics;
+using System.Runtime.Intrinsics.X86;
 using Base = System.Runtime.Intrinsics.X86.Avx512F;
 
 #pragma warning disable CA1857
@@ -17,7 +18,7 @@ namespace Linq2d.CodeGen.Intrinsics
                 VectorData.Init();
             }
         }
-        public static bool IsSupported { get => Base.IsSupported && !Suppress; }
+        public static bool IsSupported { get => Base.IsSupported && !Suppress && Avx2.IsSupported; }
 
         #region Vector-8
         internal static Vector512<double> Add(Vector512<double> left, Vector512<double> right) => Base.Add(left, right);

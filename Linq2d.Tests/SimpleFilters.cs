@@ -260,7 +260,7 @@ namespace Linq2d.Tests
         [Fact]
             public void TestPrimitiveC4Nn()
         {
-            Array2d.SaveDynamicCode = Debugger.IsAttached;
+            //Array2d.SaveDynamicCode = Debugger.IsAttached;
             var sample = new[,] { { 4, 4, 4 }, { 4, 4, 4 }, { 4, 4, 4 } };
             var q = from s in sample.With(OutOfBoundsStrategy.NearestNeighbour)
                     select (s[-1, 0] + s[1, 0] + s[0, -1] + s[0, 1]) / 4;
@@ -274,7 +274,7 @@ namespace Linq2d.Tests
         [InlineData(500, 7, 42)]
         public void TestC4NearestNeighbour(int h, int w, byte v)
         {
-            Array2d.SaveDynamicCode = Debugger.IsAttached;
+            //Array2d.SaveDynamicCode = Debugger.IsAttached;
             var data = ArrayHelper.InitDiagonal(h, w, v);
             var q = from d in data.With(OutOfBoundsStrategy.NearestNeighbour)
                     select (d[-1, 0] + d[0, -1] + d[1, 0] + d[0, 1]) / 4;

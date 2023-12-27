@@ -17,7 +17,7 @@ namespace Linq2d.CodeGen.Intrinsics
                 VectorData.Init();
             }
         } 
-        public static bool IsSupported { get => Base.IsSupported && !Suppress & Avx.IsSupported; }
+        public static bool IsSupported { get => Base.IsSupported && !Suppress && Avx.IsSupported; }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static Vector256<byte> Add(Vector256<byte> left, Vector256<byte> right) => Base.Add(left, right);

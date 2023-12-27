@@ -17,7 +17,7 @@ namespace Linq2d.Tests
         {
             var data = ArrayHelper.InitAllRand(h, w, seed);
             //Array2d.SaveDynamicCode = true;
-            TestHelper.AssertEqual(BaseBinarize(data), LinqBinarize(data));
+            Assert.Equal(BaseBinarize(data), LinqBinarize(data));
             //Array2d.SaveDynamicCode = false;
         }
 
@@ -27,7 +27,7 @@ namespace Linq2d.Tests
         {
             var data = ArrayHelper.InitAllRand(h, w, seed);
             Array2d.PoolCSEVariables = false;
-            TestHelper.AssertEqual(BaseBinarize(data), LinqBinarize(data));
+            Assert.Equal(BaseBinarize(data), LinqBinarize(data));
             Array2d.PoolCSEVariables = true;
         }
 
@@ -43,7 +43,7 @@ namespace Linq2d.Tests
 
             var cs = DoubleIntegrateSlow(h, w, data);
 
-            TestHelper.AssertEqual(BaseBinarize(data), UnmanagedSauvola.Transform(data, W / 2, K));
+            Assert.Equal(BaseBinarize(data), UnmanagedSauvola.Transform(data, W / 2, K));
         }
 
 
@@ -67,8 +67,8 @@ namespace Linq2d.Tests
 
             var (integral_image, integral_sqimg) = DoubleIntegrateSlow(h, w, grayImage);
 
-            TestHelper.AssertEqual(integral_image, integral_image_linq);
-            TestHelper.AssertEqual(integral_sqimg, integral_sqimg_linq);
+            Assert.Equal(integral_image, integral_image_linq);
+            Assert.Equal(integral_sqimg, integral_sqimg_linq);
 
             var whalf = W / 2;
             var area = from i in integral_image_linq.With(OutOfBoundsStrategy.Integral(0))
@@ -76,7 +76,7 @@ namespace Linq2d.Tests
                        let br = i.Offset(whalf, whalf)
                        select (br.X - tl.X) * (br.Y - tl.Y);
             var areaA = area.ToArray();
-            TestHelper.AssertEqual(CalculateArea(grayImage, whalf), area.ToArray());
+            Assert.Equal(CalculateArea(grayImage, whalf), area.ToArray());
             var diff = from i in integral_image_linq.With(OutOfBoundsStrategy.Integral(0))
                        let tl = i.Offset(-whalf - 1, -whalf - 1)
                        let tr = i.Offset(-whalf - 1, whalf)
@@ -84,7 +84,7 @@ namespace Linq2d.Tests
                        let br = i.Offset(whalf, whalf)
                        select br.Value + tl.Value - tr.Value - bl.Value;
             var diffA = diff.ToArray();
-            TestHelper.AssertEqual(CalculateDiff(integral_image_linq, whalf), diff.ToArray());
+            Assert.Equal(CalculateDiff(integral_image_linq, whalf), diff.ToArray());
 
             var sqdiff = from i in integral_sqimg_linq.With(OutOfBoundsStrategy.Integral(0L))
                          let tl = i.Offset(-whalf - 1, -whalf - 1)
@@ -92,13 +92,13 @@ namespace Linq2d.Tests
                          let bl = i.Offset(whalf, -whalf - 1)
                          let br = i.Offset(whalf, whalf)
                          select br.Value + tl.Value - tr.Value - bl.Value;
-            TestHelper.AssertEqual(CalculateDiff(integral_sqimg_linq, whalf), sqdiff.ToArray());
+            Assert.Equal(CalculateDiff(integral_sqimg_linq, whalf), sqdiff.ToArray());
 
             var mean = from d in diffA
                        from a in areaA
                        select (double)d / a;
 
-            TestHelper.AssertEqual(CalculateMean(diffA, areaA), mean.ToArray());
+            Assert.Equal(CalculateMean(diffA, areaA), mean.ToArray());
 
             var std = from sqd in sqdiff.ToArray()
                       from d in diffA
@@ -106,12 +106,12 @@ namespace Linq2d.Tests
                       from m in mean.ToArray()
                       select Math.Sqrt((sqd - d * m) / (a - 1));
 
-            TestHelper.AssertEqual(CalculateStd(sqdiff.ToArray(), diffA, areaA, mean.ToArray()), std.ToArray());
+            Assert.Equal(CalculateStd(sqdiff.ToArray(), diffA, areaA, mean.ToArray()), std.ToArray());
 
             var thresh = from m in mean.ToArray()
                          from s in std.ToArray()
                          select m * (1 + K * ((s / 128) - 1));
-            TestHelper.AssertEqual(CalculateThreshold(mean.ToArray(), std.ToArray()), thresh.ToArray());
+            Assert.Equal(CalculateThreshold(mean.ToArray(), std.ToArray()), thresh.ToArray());
 
         }
         [Fact]

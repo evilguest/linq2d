@@ -39,9 +39,10 @@ namespace Linq2d.CodeGen
             if (node.Type == typeof(int) ||
                 node.Type == typeof(uint) ||
                 node.Type == typeof(short) ||
+                node.Type == typeof(ushort) ||
                 node.Type == typeof(sbyte) ||
                 node.Type == typeof(byte) ||
-                node.Type == typeof(ushort))
+                node.Type == typeof(bool))
             {
                 var value = Convert.ToInt32(node.Value);
                 Generator.Ldc(value);

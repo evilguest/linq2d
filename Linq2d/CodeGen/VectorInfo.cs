@@ -181,18 +181,22 @@ namespace Linq2d.CodeGen
             where R : unmanaged
             => InitConvert(method);
 
+        public void InitLift<T, R>(Func<T, R> method)
+            where T : unmanaged
+            => _liftOperations[typeof(T)] = method.Method;
+
         public void InitLift<T>(Func<T, Vector32<T>> method)
             where T : unmanaged
-            => _liftOperations[typeof(T)] = method.Method;
+            => InitLift<T, Vector32<T>>(method);
         public void InitLift<T>(Func<T, Vector64<T>> method)
             where T : unmanaged
-            => _liftOperations[typeof(T)] = method.Method;
+            => InitLift<T, Vector64<T>>(method);
         public void InitLift<T>(Func<T, Vector128<T>> method)
             where T : unmanaged
-            => _liftOperations[typeof(T)] = method.Method;
+            => InitLift<T, Vector128<T>>(method);
         public void InitLift<T>(Func<T, Vector256<T>> method)
             where T : unmanaged
-            => _liftOperations[typeof(T)] = method.Method;
+            => InitLift<T, Vector256<T>>(method);
         #endregion
 
         #region Unary

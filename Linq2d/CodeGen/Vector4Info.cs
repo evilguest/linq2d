@@ -31,7 +31,7 @@ namespace Linq2d.CodeGen
             InitBinary128<float>(ExpressionType.Divide, Sse.Divide);
 
             InitType128<int>();
-            InitLift<int>(Vector128.CreateScalar);
+            InitLift<int>(Vector128.Create);
         }
 
         protected override void InitSse2()
@@ -40,12 +40,14 @@ namespace Linq2d.CodeGen
             InitLoadAndConvert<short>(Sse2.LoadVector64);
             InitLift<short>(Vector64.Create);
             InitConvert<short, int>(Sse2.ConvertToVector128Int32);
+            InitConvert<ushort, int>(Sse2.ConvertToVector128Int32);
             InitConvert128to64<int, short>(Sse2.ConvertToVector64Int16);
             InitStore64<short>(Sse2.Store);
 
             InitType64<ushort>();
             InitLoadAndConvert<ushort>(Sse2.LoadVector64);
-            InitConvert128to64<uint, ushort>(Sse2.ConvertToVector64Int16);
+            InitConvert128to64<int, ushort>(Sse2.ConvertToVector64UInt16);
+            InitConvert128to64<uint, ushort>(Sse2.ConvertToVector64UInt16);
             InitLift<ushort>(Vector64.Create);
             InitStore64<ushort>(Sse2.Store);
             InitType128<int>();
@@ -94,7 +96,6 @@ namespace Linq2d.CodeGen
         {
             InitConvert128to64<uint, ushort>(Ssse3.ConvertToVector64Int16);
             InitConvert128to64<int, short>(Ssse3.ConvertToVector64Int16);
-
         }
         protected override void InitSse41()
         {

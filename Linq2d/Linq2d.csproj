@@ -9,6 +9,8 @@
     <Company></Company>
     <Copyright>evilguest</Copyright>
     <Configurations>Debug;Release;LinuxRelease</Configurations>
+    <RepositoryUrl>https://github.com/evilguest/linq2d</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Linq.Expressions.Deconstruct" Version="1.0.6" />
+    <PackageReference Include="Linq.Expressions.Deconstruct" Version="1.0.7" />
     <PackageReference Include="Lokad.ILPack" Version="0.2.0" />
     <PackageReference Include="Mono.Linq.Expressions" Version="2.0.0" />
     <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
@@ -242,5 +244,10 @@
       <LastGenOutput>IVectorizable.cs</LastGenOutput>
     </None>
   </ItemGroup>
-
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>Linq2d.Tests.Vectorization</_Parameter1>
+      <!-- The name of the project that you want the Internal class to be visible To it -->
+    </AssemblyAttribute>
+  </ItemGroup>
 </Project>

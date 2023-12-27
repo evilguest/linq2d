@@ -155,22 +155,47 @@ namespace Linq2d.Expressions
                             return Expression.Call(GetLoadSubstitute(ieo.Type, node.Type), ieo.Object, ieo.Arguments[0], ieo.Arguments[1], Expression.Constant(_vectorSize));
                             //: Fail(node, $"Failed to find a load-and-convert operation from type {ieo.Type} to {node.Type} vector of size {_vectorSize}");
                     }
-                    goto default;
+                    //if (node.Operand is BinaryExpression be
+                    //    && be.Left is UnaryExpression lue 
+                    //    && lue.NodeType == ExpressionType.Convert 
+                    //    && lue.Operand.Type == node.Type
+                    //    && be.Right is UnaryExpression rue
+                    //    && rue.NodeType == ExpressionType.Convert
+                    //    && rue.Operand.Type == node.Type
+                    //    && VectorInfo
+                    //    )
+                        goto default;
                 default:
+                    // check if we have an unconverted operation available
+                    if (node.Operand is UnaryExpression oue && oue.NodeType == ExpressionType.Convert)
+                    {
+                        var innerOperand = Visit(oue.Operand);
+                        if (VectorInfo.UnaryOperations.TryGetValue((node.NodeType, innerOperand.Type), out var unaryMethod))
+                            return Expression.Call(unaryMethod, innerOperand);
+                    }
                     var operand = Visit(node.Operand);
                     if (IsVector(operand.Type))
                     {
-                        var operandElementType = operand.Type.GetGenericArguments()[0];
                         return node.NodeType == ExpressionType.Convert
-                            ? VectorInfo.Vector.ContainsKey(node.Type) && VectorInfo.ConvertOperations.TryGetValue((operand.Type, VectorInfo.Vector[node.Type]), out var convertMethod)
-                                ? Expression.Call(convertMethod, operand)
-                                : Fail(node, $"Failed to find a suitable convert operation from {operand.Type} to {node.Type} for vector of size {_vectorSize}")
+                            ? ConvertToNodeType(operand, node)
                             : VectorInfo.UnaryOperations.TryGetValue((node.NodeType, operand.Type), out var unaryMethod)
                                 ? Expression.Call(unaryMethod, operand)
-                                : Fail(node, $"Failed to find a {node.NodeType} operation for {operandElementType} vector of size {_vectorSize}");
+                                : Fail(node, $"Failed to find a {node.NodeType} operation for {operand.Type.GetGenericArguments()[0]} vector of size {_vectorSize}");
                     }
                     return node.Update(operand);
             }
+        }
+
+        private Expression ConvertToNodeType(Expression operand, Expression targetNode)
+        {
+            if (VectorInfo.Vector.ContainsKey(targetNode.Type))
+            {
+                if (operand.Type == VectorInfo.Vector[targetNode.Type]) //already converted
+                    return operand;
+                if (VectorInfo.ConvertOperations.TryGetValue((operand.Type, VectorInfo.Vector[targetNode.Type]), out var convertMethod))
+                    return Expression.Call(convertMethod, operand);
+            }
+            return Fail(targetNode, $"Failed to find a suitable convert operation from {operand.Type} to {targetNode.Type} for vector of size {_vectorSize}");
         }
 
         private Expression ConvertToVector(Expression scalar)
@@ -186,8 +211,31 @@ namespace Linq2d.Expressions
                 ? replacement 
                 : base.VisitParameter(node);
 
+        private static Expression ConvertTo(Expression e, Type targetType)
+        {
+            if (e.Type == targetType)
+                return e;
+            if (e is UnaryExpression ue && ue.NodeType == ExpressionType.Convert && ue.Operand.Type == targetType)
+                return ue.Operand;
+            return Expression.Convert(e, targetType);
+        }
         protected override Expression VisitBinary(BinaryExpression node)
         {
+            // check if we can perform the operation without conversions
+            if (node.Left is UnaryExpression lue && lue.NodeType == ExpressionType.Convert
+                && node.Right is UnaryExpression rue && rue.NodeType == ExpressionType.Convert)
+            {
+                var lo = Visit(lue.Operand);
+                var ro = Visit(rue.Operand);
+                if (VectorInfo.BinaryOperations.ContainsKey((node.NodeType, lo.Type, ro.Type)))
+                {
+                    var vectorOp = VectorInfo.BinaryOperations[(node.NodeType, lo.Type, ro.Type)];
+                    var rightType = vectorOp.GetParameters()[1].ParameterType;
+                    ro = ConvertTo(ro, rightType);
+
+                    return Expression.MakeBinary(node.NodeType, lo, ro, false, vectorOp);
+                }
+            }
             var left = Visit(node.Left);
             var right = Visit(node.Right);
             if (!_success)
@@ -200,10 +248,7 @@ namespace Linq2d.Expressions
             if (VectorInfo.BinaryOperations.ContainsKey((node.NodeType, left.Type, right.Type)))
             {
                 var vectorOp = VectorInfo.BinaryOperations[(node.NodeType, left.Type, right.Type)];
-                var rightType = vectorOp.GetParameters()[1].ParameterType;
-                if (rightType != right.Type)
-                    right = Arithmetic.Simplify(Expression.Convert(right, rightType), Ranges.No);
-
+                right = ConvertTo(right, vectorOp.GetParameters()[1].ParameterType);
                 return Expression.MakeBinary(node.NodeType, left, right, false, vectorOp);
             }
 
