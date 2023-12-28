@@ -27,6 +27,17 @@ namespace Linq2d.Tests.Vectorization
             var iv = (IVectorizable)q;
             AssertVectorized(iv, 4);
         }
+        [Fact]
+        public void UIntToUShortConversion()
+        {
+            var source = ArrayHelper.InitAllRand(100, 110, 42, x=>(uint)x);
+            var expect = ArrayHelper.InitAllRand(100, 110, 42, x => (ushort)x);
+            var q = from s in source
+                    select (ushort)s;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 4);
+        }
 
     }
 }
