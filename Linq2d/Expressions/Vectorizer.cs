@@ -132,6 +132,14 @@ namespace Linq2d.Expressions
             _reason = reason;
             return node;
         }
+        private Expression Success(Expression node)
+        {
+            _blockedBy = null;
+            _success = true;
+            _reason = "";
+            return node;
+        }
+
 
         private static bool IsVector(Type type)
         {
@@ -198,11 +206,10 @@ namespace Linq2d.Expressions
             return Fail(targetNode, $"Failed to find a suitable convert operation from {operand.Type} to {targetNode.Type} for vector of size {_vectorSize}");
         }
 
-        private Expression ConvertToVector(Expression scalar)
-        {
-            var convertMethod = VectorInfo.LiftOperations[scalar.Type];
-            return Expression.Convert(scalar, convertMethod.ReturnType, convertMethod);
-        }
+        private Expression ConvertToVector(Expression scalar) 
+            => VectorInfo.LiftOperations.TryGetValue(scalar.Type, out var convertMethod)
+                ? Expression.Convert(scalar, convertMethod.ReturnType, convertMethod)
+                : scalar;
 
         private Dictionary<ParameterExpression, ParameterExpression> _variableReplacements = new();
 
@@ -222,76 +229,104 @@ namespace Linq2d.Expressions
         protected override Expression VisitBinary(BinaryExpression node)
         {
             // check if we can perform the operation without conversions
-            if (node.Left is UnaryExpression lue && lue.NodeType == ExpressionType.Convert
-                && node.Right is UnaryExpression rue && rue.NodeType == ExpressionType.Convert)
+            if (node.Left is UnaryExpression lue && lue.NodeType == ExpressionType.Convert)
             {
                 var lo = Visit(lue.Operand);
-                var ro = Visit(rue.Operand);
-                if (VectorInfo.BinaryOperations.ContainsKey((node.NodeType, lo.Type, ro.Type)))
+                if (node.Right is UnaryExpression rue && rue.NodeType == ExpressionType.Convert)
                 {
-                    var vectorOp = VectorInfo.BinaryOperations[(node.NodeType, lo.Type, ro.Type)];
-                    var rightType = vectorOp.GetParameters()[1].ParameterType;
-                    ro = ConvertTo(ro, rightType);
-
-                    return Expression.MakeBinary(node.NodeType, lo, ro, false, vectorOp);
+                    var ro = Visit(rue.Operand);
+                    if (VectorInfo.BinaryOperations.TryGetValue((node.NodeType, lo.Type, ro.Type), out var vectorOp))
+                        return (Expression.MakeBinary(node.NodeType, lo, ConvertTo(ro, vectorOp.GetParameters()[1].ParameterType), false, vectorOp));
+                    if (!IsVector(ro.Type))
+                        ro = ConvertToVector(ro);
+                    if (VectorInfo.BinaryOperations.TryGetValue((node.NodeType, lo.Type, ro.Type), out var vectorOp2))
+                        return (Expression.MakeBinary(node.NodeType, lo, ConvertTo(ro, vectorOp.GetParameters()[1].ParameterType), false, vectorOp2));
+                }
+                {
+                    var right = Visit(node.Right);
+                    if (VectorInfo.BinaryOperations.TryGetValue((node.NodeType, lo.Type, right.Type), out var vectorOp))
+                        return (Expression.MakeBinary(node.NodeType, lo, ConvertTo(right, vectorOp.GetParameters()[1].ParameterType), false, vectorOp));
+                    if (!IsVector(right.Type))
+                        right = ConvertToVector(right);
+                    if (VectorInfo.BinaryOperations.TryGetValue((node.NodeType, lo.Type, right.Type), out var vectorOp2))
+                        return (Expression.MakeBinary(node.NodeType, lo, ConvertTo(right, vectorOp.GetParameters()[1].ParameterType), false, vectorOp2));
                 }
             }
-            var left = Visit(node.Left);
-            var right = Visit(node.Right);
-            if (!_success)
-                return node;
-
-            if (!IsVector(left.Type) && !IsVector(right.Type))
-                return node.Update(left, node.Conversion, right);
-
-            // try the operation without promotion:
-            if (VectorInfo.BinaryOperations.ContainsKey((node.NodeType, left.Type, right.Type)))
             {
-                var vectorOp = VectorInfo.BinaryOperations[(node.NodeType, left.Type, right.Type)];
-                right = ConvertTo(right, vectorOp.GetParameters()[1].ParameterType);
-                return Expression.MakeBinary(node.NodeType, left, right, false, vectorOp);
-            }
-
-            // promote both operands as necessary
-            if (!IsVector(left.Type))
-            {
-                if (node.NodeType == ExpressionType.Assign)
+                if (node.Right is UnaryExpression rue && rue.NodeType == ExpressionType.Convert)
                 {
-                    var lParam = left as ParameterExpression;
-                    var newLParam = Expression.Variable(VectorInfo.Vector[lParam.Type], lParam.Name);
-                    _variableReplacements[lParam] = newLParam;
-                    return node.Update(newLParam, null, right);
+                    var ro = Visit(rue.Operand);
+                    var left = Visit(node.Left);
+                    if (VectorInfo.BinaryOperations.TryGetValue((node.NodeType, left.Type, ro.Type), out var vectorOp))
+                        return (Expression.MakeBinary(node.NodeType, left, ConvertTo(ro, vectorOp.GetParameters()[1].ParameterType), false, vectorOp));
+                    if (!IsVector(left.Type))
+                        left = ConvertToVector(left);
+                    if (VectorInfo.BinaryOperations.TryGetValue((node.NodeType, left.Type, ro.Type), out var vectorOp2))
+                        return (Expression.MakeBinary(node.NodeType, left, ConvertTo(ro, vectorOp.GetParameters()[1].ParameterType), false, vectorOp2));
+                    if(!IsVector(ro.Type))
+                        ro  = ConvertToVector(ro);
+                    if (VectorInfo.BinaryOperations.TryGetValue((node.NodeType, left.Type, ro.Type), out var vectorOp3))
+                        return (Expression.MakeBinary(node.NodeType, left, ConvertTo(ro, vectorOp.GetParameters()[1].ParameterType), false, vectorOp3));
                 }
-                else if(node.NodeType == ExpressionType.ArrayIndex)
+            }
+            {
+                var left = Visit(node.Left);
+                var right = Visit(node.Right);
+                if (!_success)
+                    return node;
+
+                if (!IsVector(left.Type) && !IsVector(right.Type))
+                    return node.Update(left, node.Conversion, right);
+
+                // try the operation without promotion:
+                if (VectorInfo.BinaryOperations.ContainsKey((node.NodeType, left.Type, right.Type)))
                 {
-                    // todo: try looking for a SIMD gather operation... 
-                    return Fail(node, $"Failed to find a vector operation for array access {left}[{right}]");
+                    var vectorOp = VectorInfo.BinaryOperations[(node.NodeType, left.Type, right.Type)];
+                    right = ConvertTo(right, vectorOp.GetParameters()[1].ParameterType);
+                    return Expression.MakeBinary(node.NodeType, left, right, false, vectorOp);
                 }
-                else
-                    left = ConvertToVector(left);
+
+                // promote both operands as necessary
+                if (!IsVector(left.Type))
+                {
+                    if (node.NodeType == ExpressionType.Assign)
+                    {
+                        var lParam = left as ParameterExpression;
+                        var newLParam = Expression.Variable(VectorInfo.Vector[lParam.Type], lParam.Name);
+                        _variableReplacements[lParam] = newLParam;
+                        return node.Update(newLParam, null, right);
+                    }
+                    else if (node.NodeType == ExpressionType.ArrayIndex)
+                    {
+                        // todo: try looking for a SIMD gather operation... 
+                        return Fail(node, $"Failed to find a vector operation for array access {left}[{right}]");
+                    }
+                    else
+                        left = ConvertToVector(left);
+                }
+                if (!IsVector(right.Type))
+                    right = ConvertToVector(right);
+
+                // check if any of the nodes accesses the sameRow recursive
+                var lro = RecursiveOverlap(left);
+                if (lro.HasValue) // A-ha! 
+                {
+                    // do the smart stuff with the left node.
+                    left = left;
+                }
+
+                var rro = RecursiveOverlap(left);
+                if (rro.HasValue) // A-ha! 
+                {
+                    // do the smart stuff with the right node.
+                    right = right;
+                }
+
+                if (VectorInfo.BinaryOperations.TryGetValue((node.NodeType, left.Type, right.Type), out var operation))
+                    return Expression.MakeBinary(node.NodeType, left, right, false, operation);
+
+                return Fail(node, $"Failed to find a vector {node.NodeType} operation over {left.Type} and {right.Type}");
             }
-            if (!IsVector(right.Type))
-                right = ConvertToVector(right);
-
-            // check if any of the nodes accesses the sameRow recursive
-            var lro = RecursiveOverlap(left);
-            if (lro.HasValue) // A-ha! 
-            {
-                // do the smart stuff with the left node.
-                left = left;
-            }
-
-            var rro = RecursiveOverlap(left);
-            if (rro.HasValue) // A-ha! 
-            {
-                // do the smart stuff with the right node.
-                right = right;
-            }
-
-            if (VectorInfo.BinaryOperations.TryGetValue((node.NodeType, left.Type, right.Type), out var operation))
-                return Expression.MakeBinary(node.NodeType, left, right, false, operation);
-
-            return Fail(node, $"Failed to find a vector {node.NodeType} operation over {left.Type} and {right.Type}");
         }
 
         protected override Expression VisitMethodCall(MethodCallExpression node)

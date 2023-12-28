@@ -65,15 +65,10 @@ namespace Linq2d
                     result[i, j] = value;
             return result;
         }
+        public static long[,] InitAllRand(int h, int w, long seed)
+            => InitAllRand(h, w, seed, x => x);
         public static int[,] InitAllRand(int h, int w, int seed)
-        {
-            var r = new Random(seed);
-            var result = new int[h, w];
-            for (var i = 0; i < h; i++)
-                for (var j = 0; j < w; j++)
-                    result[i, j] = r.Next();
-            return result;
-        }
+            => InitAllRand(h, w, seed, x => x);
         public static T[,] InitAllRand<T>(int h, int w, int seed, Func<int, T> selector)
         {
             var r = new Random(seed);
@@ -81,6 +76,37 @@ namespace Linq2d
             for (var i = 0; i < h; i++)
                 for (var j = 0; j < w; j++)
                     result[i, j] = selector(r.Next());
+            return result;
+        }
+        public static T[,] InitAllRand<T>(int h, int w, long seed, Func<long, T> selector)
+        {
+            var r = new Random((int)seed);
+            var result = new T[h, w];
+            for (var i = 0; i < h; i++)
+                for (var j = 0; j < w; j++)
+                    result[i, j] = selector(r.NextInt64());
+            return result;
+        }
+
+        public static T[,] InitAllRand<T>(int h, int w, int seed1, int seed2, Func<int, int, T> selector)
+        {
+            var r1 = new Random(seed1);
+            var r2 = new Random(seed2);
+            var result = new T[h, w];
+            for (var i = 0; i < h; i++)
+                for (var j = 0; j < w; j++)
+                    result[i, j] = selector(r1.Next(), r2.Next());
+            return result;
+        }
+
+        public static T[,] InitAllRand<T>(int h, int w, long seed1, long seed2, Func<long, long, T> selector)
+        {
+            var r1 = new Random(seed1.GetHashCode());
+            var r2 = new Random(seed2.GetHashCode());
+            var result = new T[h, w];
+            for (var i = 0; i < h; i++)
+                for (var j = 0; j < w; j++)
+                    result[i, j] = selector(r1.NextInt64(), r2.NextInt64());
             return result;
         }
 

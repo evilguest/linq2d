@@ -3,13 +3,12 @@
 using System.Runtime.Intrinsics;
 
 using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
 using Linq2d.CodeGen.Fake;
 
 namespace Linq2d.CodeGen
 {
     using Intrinsics;
-    public unsafe class Vector4Info: VectorInfo
+    public unsafe class Vector4Info : VectorInfo
     {
         protected override void InitSse()
         {
@@ -63,7 +62,7 @@ namespace Linq2d.CodeGen
             InitLoadAndConvert<uint>(Sse2.LoadVector128);
 
             InitConvert128<int, float>(Sse2.ConvertToVector128Single);
-            InitConvert128<float, int>(Sse2.ConvertToVector128Int32);
+            InitConvert128<float, int>(Sse2.ConvertToVector128Int32WithTruncation);
 
 
             InitUnary128<int>(ExpressionType.Negate, Sse2.Negate);
@@ -148,7 +147,7 @@ namespace Linq2d.CodeGen
             InitConvert<double, float>(Avx.ConvertToVector128Single);
             InitConvert<float, double>(Avx.ConvertToVector256Double);
             InitConvert<int, double>(Avx.ConvertToVector256Double);
-            InitConvert<double, int>(Avx.ConvertToVector128Int32);
+            InitConvert<double, int>(Avx.ConvertToVector128Int32WithTruncation);
             //InitConvert256<long, double>(ConvertToVector256Double);
             // conversion from long to double requires the AVX-512 support
             // https://www.felixcloutier.com/x86/vcvtqq2pd
@@ -204,7 +203,7 @@ namespace Linq2d.CodeGen
             InitBinary256<long, ulong>(ExpressionType.Equal, Avx2.CompareEqual);
             InitBinary256<ulong>(ExpressionType.Equal, Avx2.CompareEqual);
 
-            InitBinary256Forced<long, byte, int>(ExpressionType.RightShift, Avx2.ShiftRightArithmetic); 
+            InitBinary256Forced<long, byte, int>(ExpressionType.RightShift, Avx2.ShiftRightArithmetic);
             InitBinary256Forced<ulong, byte, int>(ExpressionType.RightShift, Avx2.ShiftRightLogical);
 
             InitBinary256Forced<long, byte, int>(ExpressionType.LeftShift, Avx2.ShiftLeftLogical);
@@ -223,7 +222,5 @@ namespace Linq2d.CodeGen
             InitLoadAndConvert<byte>(Vector32.Load);
             Available = true;
         }
-
-
     }
 }

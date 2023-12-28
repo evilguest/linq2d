@@ -13,7 +13,7 @@ namespace Linq2d.Tests.Vectorization
                     select (short)-s;
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv, 4);
+            AssertVectorized(iv, 8);
         }
 
         [Fact]
@@ -25,7 +25,7 @@ namespace Linq2d.Tests.Vectorization
                     select (short)s;
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv, 4);
+            AssertVectorized(iv, 4);
         }
 
     }

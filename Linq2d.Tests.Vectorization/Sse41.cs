@@ -14,7 +14,7 @@ namespace Linq2d.Tests.Vectorization
             var q = from s in source select s + s * 2 - 3;
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv, 4);
+            AssertVectorized(iv, 4);
         }
         private static double[,] Sqrt(int[,] source)
         {
@@ -29,7 +29,7 @@ namespace Linq2d.Tests.Vectorization
 
             Assert.Equal(source, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv, 16);
+            AssertVectorized(iv, 16);
         }
         [Fact]
         public void TestByteLiftOptimization()
@@ -41,7 +41,7 @@ namespace Linq2d.Tests.Vectorization
             Assert.Equal(source, q.ToArray());
 
             var iv = (IVectorizable)q;
-            AssertVectorised(iv, 16);
+            AssertVectorized(iv, 16);
         }
         [Fact]
         public void TestIntComparison128()
@@ -52,7 +52,7 @@ namespace Linq2d.Tests.Vectorization
             var expect = ArrayHelper.InitAllRand(16, 16, 42, x => x == a ? 1 : -1);
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv, 4);
+            AssertVectorized(iv, 4);
         }
         [Fact]
         public void TestUIntComparison128()
@@ -63,7 +63,7 @@ namespace Linq2d.Tests.Vectorization
             var expect = ArrayHelper.InitAllRand(16, 16, 42, x => x == a ? (uint)1 : 7);
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv, 4);
+            AssertVectorized(iv, 4);
         }
 
 
@@ -76,7 +76,7 @@ namespace Linq2d.Tests.Vectorization
             var expect = ArrayHelper.InitAllRand(16, 16, 42, x => x == a ? t : f);
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv, 16/sizeOfT);
+            AssertVectorized(iv, 16/sizeOfT);
         }
         private void TestConditionalLong128<T>(T t, T f, int sizeOfT)
             where T : unmanaged
@@ -87,7 +87,7 @@ namespace Linq2d.Tests.Vectorization
             var expect = ArrayHelper.InitAllRand(16, 16, 42, x => x == a ? t : f);
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv, 16 / sizeOfT);
+            AssertVectorized(iv, 16 / sizeOfT);
         }
         [Fact]
         public void TestDoubleConditional128() => TestConditionalLong128(Math.PI, Math.E, sizeof(double));

@@ -13,7 +13,7 @@ namespace Linq2d.Tests.Vectorization
             var q = from s in source select s + s * 2 - 3;
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv, 8);
+            AssertVectorized(iv, 8);
         }
 
         [Fact]
@@ -27,7 +27,7 @@ namespace Linq2d.Tests.Vectorization
             Assert.Equal(Sqrt(source), r2);
 
             IVectorizable iv = (IVectorizable)q;
-            AssertVectorised(iv, 8);
+            AssertVectorized(iv, 8);
         }
 
         private static double[,] Sqrt(int[,] source)
@@ -47,7 +47,7 @@ namespace Linq2d.Tests.Vectorization
 //            CodeGen.Intrinsics.Sse.Suppress = false;
 
             var iv = (IVectorizable)q;
-            AssertVectorised(iv, 32);
+            AssertVectorized(iv, 32);
         }
         private void TestConditionalInt256<T>(T t, T f, int sizeOfT)
             where T : unmanaged
@@ -58,7 +58,7 @@ namespace Linq2d.Tests.Vectorization
             var expect = ArrayHelper.InitAllRand(16, 16, 42, x => x == a ? t : f);
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv, 32 / Math.Max(sizeOfT, sizeof(int)));
+            AssertVectorized(iv, 32 / Math.Max(sizeOfT, sizeof(int)));
         }
         private void TestConditionalLong256<T>(T t, T f, int sizeOfT)
             where T : unmanaged
@@ -69,7 +69,7 @@ namespace Linq2d.Tests.Vectorization
             var expect = ArrayHelper.InitAllRand(16, 16, 42, x => x == a ? t : f);
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv, 32 / sizeOfT);
+            AssertVectorized(iv, 32 / sizeOfT);
         }
 
         [Fact]
@@ -94,7 +94,7 @@ namespace Linq2d.Tests.Vectorization
                     select (int)s;
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv, 8);
+            AssertVectorized(iv, 8);
         }
 
         [Fact]
@@ -106,7 +106,7 @@ namespace Linq2d.Tests.Vectorization
                     select (short)-s;
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv, 8);
+            AssertVectorized(iv, 8);
         }
 
         [Fact]
@@ -120,7 +120,7 @@ namespace Linq2d.Tests.Vectorization
                     select (short)(s1 + s2);
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv, 16);
+            AssertVectorized(iv, 16);
         }
     }
 }

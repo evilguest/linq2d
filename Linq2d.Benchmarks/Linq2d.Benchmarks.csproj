@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ImageHelpers\ImageHelpers.csproj" />
+    <ProjectReference Include="..\Linq2d.Tests.Vectorization\Linq2d.Tests.Vectorization.csproj" />
     <ProjectReference Include="..\Linq2d.Tests\Linq2d.Tests.csproj" />
     <ProjectReference Include="..\Linq2d\Linq2d.csproj" />
     <ProjectReference Include="..\SauvolaBinarizeCPP\SauvolaBinarizeCPP.vcxproj">

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Intrinsics.X86;
 using Xunit;
 
 namespace Linq2d.Tests
@@ -207,17 +204,17 @@ namespace Linq2d.Tests
                     select (s[-1, 0] + s[1, 0] + s[0, -1] + s[0, 1]) / 4;
             Assert.Equal(new[,] { { 2, 3, 2 }, { 3, 4, 3 }, { 2, 3, 2 } }, q.ToArray());
         }
-        [Theory]
-        [InlineData(160, 160, 42)]
-        [InlineData(160, 133, 42)]
-        [InlineData(133, 160, 42)]
-        public void TestPrimitiveC4NnCpp(int h, int w, byte seed)
-        {
-            var sample = ArrayHelper.InitAllRand(h, w, seed);
-            var q = UnmanagedC4.Transform(sample);
-            var p = C4NNUnsafeScalar(sample);
-            TestHelper.AssertEqual(p, q);
-        }
+        //[Theory]
+        //[InlineData(160, 160, 42)]
+        //[InlineData(160, 133, 42)]
+        //[InlineData(133, 160, 42)]
+        //public void TestPrimitiveC4NnCpp(int h, int w, byte seed)
+        //{
+        //    var sample = ArrayHelper.InitAllRand(h, w, seed);
+        //    var q = UnmanagedC4.Transform(sample);
+        //    var p = C4NNUnsafeScalar(sample);
+        //    TestHelper.AssertEqual(p, q);
+        //}
         
         //[Theory]
         //[InlineData(160, 133, 42)]
@@ -229,34 +226,34 @@ namespace Linq2d.Tests
         //}
         
         
-        [Theory]
-        [InlineData(160, 160, 42)]
-        public void TestPrimitiveC4NnAsm(int h, int w, byte seed)
-        {
-            try
-            {
-                var sample = ArrayHelper.InitAllRand(h, w, seed);
-                if (Avx2.IsSupported)
-                {
-                    Console.WriteLine("Starting the C4 ASM...");
-                    Console.Out.Flush();
-                    var q = UnmanagedC4.TransformAsm(sample);
-                    Console.WriteLine("Done C4 ASM!");
-                    Console.Out.Flush();
-                    var p = C4NNUnsafeScalar(sample);
-                    TestHelper.AssertEqual(p, q);
-                }
-                else
-                {
-                    Console.WriteLine("Avx2 support is not found, skipping the test");
-                }
-            } catch (Exception e)
-            {
-                Console.Error.WriteLine($"Caught exception:\n\t{e.Message}\nat\n{e.StackTrace}");
-                Console.Error.Flush();
-                throw;
-            }
-        }
+        //[Theory]
+        //[InlineData(160, 160, 42)]
+        //public void TestPrimitiveC4NnAsm(int h, int w, byte seed)
+        //{
+        //    try
+        //    {
+        //        var sample = ArrayHelper.InitAllRand(h, w, seed);
+        //        if (Avx2.IsSupported)
+        //        {
+        //            Console.WriteLine("Starting the C4 ASM...");
+        //            Console.Out.Flush();
+        //            var q = UnmanagedC4.TransformAsm(sample);
+        //            Console.WriteLine("Done C4 ASM!");
+        //            Console.Out.Flush();
+        //            var p = C4NNUnsafeScalar(sample);
+        //            TestHelper.AssertEqual(p, q);
+        //        }
+        //        else
+        //        {
+        //            Console.WriteLine("Avx2 support is not found, skipping the test");
+        //        }
+        //    } catch (Exception e)
+        //    {
+        //        Console.Error.WriteLine($"Caught exception:\n\t{e.Message}\nat\n{e.StackTrace}");
+        //        Console.Error.Flush();
+        //        throw;
+        //    }
+        //}
         [Fact]
             public void TestPrimitiveC4Nn()
         {

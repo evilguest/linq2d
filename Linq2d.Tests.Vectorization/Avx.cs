@@ -14,7 +14,7 @@ namespace Linq2d.Tests.Vectorization
             var q = from s in source select s * 2f;
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv, 8);
+            AssertVectorized(iv, 8);
         }
 
         [Fact]
@@ -28,7 +28,7 @@ namespace Linq2d.Tests.Vectorization
             Assert.Equal(Sqrt(source), r2);
 
             IVectorizable iv = (IVectorizable)q;
-            AssertVectorised(iv, 8);
+            AssertVectorized(iv, 8);
         }
 
         private static double[,] Sqrt(int[,] source)
@@ -44,7 +44,7 @@ namespace Linq2d.Tests.Vectorization
 
             Assert.Equal(source, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv, 32);
+            AssertVectorized(iv, 32);
         }
         [Fact]
         public void TestByteLiftOptimization()
@@ -56,7 +56,7 @@ namespace Linq2d.Tests.Vectorization
             Assert.Equal(source, q.ToArray());
 
             var iv = (IVectorizable)q;
-            AssertVectorised(iv, 32);
+            AssertVectorized(iv, 32);
         }
         private void TestConditionalInt256<T>(T t, T f, int sizeOfT)
             where T : unmanaged
@@ -67,7 +67,7 @@ namespace Linq2d.Tests.Vectorization
             var expect = ArrayHelper.InitAllRand(16, 16, 42, x => x == a ? t : f);
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv, 16 / Math.Max(sizeOfT, sizeof(int)));
+            AssertVectorized(iv, 16 / Math.Max(sizeOfT, sizeof(int)));
         }
         private void TestConditionalLong256<T>(T t, T f, int sizeOfT)
             where T : unmanaged
@@ -78,7 +78,7 @@ namespace Linq2d.Tests.Vectorization
             var expect = ArrayHelper.InitAllRand(16, 16, 42, x => x == a ? t : f);
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv, 16 / sizeOfT);
+            AssertVectorized(iv, 16 / sizeOfT);
         }
 
         [Fact]

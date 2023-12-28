@@ -21,6 +21,7 @@ namespace Linq2d.CodeGen
             InitStore<long>(Sse2.Store);
             InitStore<ulong>(Sse2.Store);
             InitStore<double>(Sse2.Store);
+            InitStore<bool, Vector128<ulong>>(Sse2.Store);
 
             InitLoadAndConvert<long>(Sse2.LoadVector128);
             InitLoadAndConvert<ulong>(Sse2.LoadVector128);

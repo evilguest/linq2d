@@ -1,10 +1,35 @@
-﻿using System;
-using Xunit;
-
-namespace Linq2d.Tests.Vectorization
+﻿namespace Linq2d.Tests.Vectorization
 {
     public class None: Base, IClassFixture<SuppressVectorizationFixture>
     {
+        [Fact]
+        public void BooleanCopy()
+        {
+            var source = ArrayHelper.InitAll(40, 40, true);
+            var q = from b in source select (bool)b;
+            Assert.Equal(source, q.ToArray());
+            IVectorizable iv = ((IVectorizable)q);
+            Assert.False(iv.Vectorized);
+        }
+        [Fact]
+        public void BooleanNot()
+        {
+            var source = ArrayHelper.InitAll(40, 40, true);
+            var expect = ArrayHelper.InitAll(40, 40, false);
+            for (int i = 0; i < source.GetLength(0); i++)
+                for (int j = 0; j < source.GetLength(1); j++)
+                    expect[i, j] = !source[i, j];
+
+            var q = from b in source select !b;
+            Assert.Equal(expect, q.ToArray());
+            IVectorizable iv = ((IVectorizable)q);
+            Assert.False(iv.Vectorized);
+            var p = from b in expect select !b;
+            Assert.Equal(source, p.ToArray());
+            IVectorizable iv2 = ((IVectorizable)p);
+            Assert.False(iv2.Vectorized);
+        }
+
         [Fact]
         public void TestSuppressedVectorization()
         {
@@ -39,7 +64,7 @@ namespace Linq2d.Tests.Vectorization
 
             Assert.Equal(source, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv, 4);
+            AssertVectorized(iv, 4);
         }
         [Fact]
         public void TestByteLiftOptimization32()
@@ -51,7 +76,7 @@ namespace Linq2d.Tests.Vectorization
             Assert.Equal(source, q.ToArray());
 
             var iv = (IVectorizable)q;
-            AssertVectorised(iv, 4);
+            AssertVectorized(iv, 4);
         }
     }
 }

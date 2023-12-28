@@ -12,7 +12,7 @@ namespace Linq2d.Tests.Vectorization
             var q = from s in source select s + s - 3;
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorised(iv, 16);
+            AssertVectorized(iv, 16);
         }
     }
 }

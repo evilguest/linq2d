@@ -1,13 +1,9 @@
-﻿using System.Runtime.Intrinsics;
-
-using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
+﻿using System.Linq.Expressions;
+using System.Runtime.Intrinsics;
 
 namespace Linq2d.CodeGen
 {
     using Intrinsics;
-
-    using System;
 
     public unsafe class Vector8Info : VectorInfoNet8
     {
@@ -23,6 +19,7 @@ namespace Linq2d.CodeGen
             InitStore128<ushort>(Sse2.Store);
             InitStore<bool, Vector128<ushort>>(Sse2.Store);
             InitLift<bool, Vector128<ushort>>(Sse2.Create);
+            InitUnary128<ushort>(ExpressionType.Not, Sse2.Not);
 
             InitLoadAndConvert<short>(Sse2.LoadVector128);
             InitLoadAndConvert<ushort>(Sse2.LoadVector128);
@@ -39,15 +36,22 @@ namespace Linq2d.CodeGen
             InitBinary128<short>(ExpressionType.Or, Sse2.Or);
             InitBinary128<ushort>(ExpressionType.Or, Sse2.Or);
 
-            InitUnary128<ushort>(ExpressionType.Not, Sse2.Not);
+
+            InitBinary128<short>(ExpressionType.Add, Sse2.Add);
+            InitBinary128<ushort>(ExpressionType.Add, Sse2.Add);
+
+            InitBinary128<short>(ExpressionType.Subtract, Sse2.Subtract);
+            InitBinary128<ushort>(ExpressionType.Subtract, Sse2.Subtract);
 
             InitBinary128<short, ushort>(ExpressionType.Equal, Sse2.CompareEqual);
-            InitBinary128<ushort>(ExpressionType.Equal, Sse2.CompareEqual);
+            InitBinary128<ushort, ushort>(ExpressionType.Equal, Sse2.DoCompareEqual);
+
 
             InitBinary128Forced<short, byte, int>(ExpressionType.RightShift, Sse2.ShiftRightArithmetic);
             InitBinary128Forced<ushort, byte, int>(ExpressionType.RightShift, Sse2.ShiftRightLogical);
             InitBinary128Forced<short, byte, int>(ExpressionType.LeftShift, Sse2.ShiftLeftLogical);
             InitBinary128Forced<ushort, byte, int>(ExpressionType.LeftShift, Sse2.ShiftLeftLogical);
+
         }
 
         protected override void InitSsse3()
@@ -81,7 +85,7 @@ namespace Linq2d.CodeGen
             InitLoadAndConvert<float>(Avx.LoadVector256);
             InitLoadAndConvert<int, float>(Avx.ConvertToVector256Single);
             InitConvert256<int, float>(Avx.ConvertToVector256Single);
-            InitConvert256<float, int>(Avx.ConvertToVector256Int32);
+            InitConvert256<float, int>(Avx.ConvertToVector256Int32WithTruncation);
 
 
             InitBinary256<float, uint>(ExpressionType.Equal, Avx.CompareEqual);

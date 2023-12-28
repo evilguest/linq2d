@@ -11,6 +11,7 @@ namespace Linq2d.CodeGen
     public abstract class MethodBuilder<D> where D : Delegate 
     {
         public abstract ILGenerator GetIlGenerator();
+        public abstract void Flush();
         public abstract D CreateDelegate();
         public static MethodBuilder<D> Create(bool saveAssembly, string name) =>
             saveAssembly 
@@ -31,11 +32,16 @@ namespace Linq2d.CodeGen
         public override D CreateDelegate() => (D)_dynMethod.CreateDelegate(typeof(D));
 
         public override ILGenerator GetIlGenerator() => _dynMethod.GetILGenerator();
+        public override void Flush()
+        {
+            // nothing to flush
+        }
     }
 
     class SavingMethodBuilder<D>: MethodBuilder<D> where D: Delegate 
     {
         private readonly MethodBuilder _emiMethod;
+        private Type _t;
         public SavingMethodBuilder(string name) 
         {
             var a = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName { Name = Assembly.GetCallingAssembly().GetName().Name + "." + name }, AssemblyBuilderAccess.RunAndCollect);
@@ -48,18 +54,23 @@ namespace Linq2d.CodeGen
 
         public override D CreateDelegate()
         {
+            if (_t == null)
+                Flush();
+            return (D)_t.GetMethod(_emiMethod.Name).CreateDelegate(typeof(D));
+        }
+
+        public override void Flush()
+        {
             var tb = _emiMethod.DeclaringType as TypeBuilder;
-            var t = tb.CreateType();
-            var assembly = t.Assembly;
+            _t = tb.CreateType();
+            var assembly = _t.Assembly;
 
             var generator = new Lokad.ILPack.AssemblyGenerator();
 
             string path = Path.Combine(Directory.GetCurrentDirectory(), "Dynamic");
             Directory.CreateDirectory(path);
             generator.GenerateAssembly(assembly, Path.Combine(path, assembly.GetName().Name + ".dll"));
-            return (D)t.GetMethod(_emiMethod.Name).CreateDelegate(typeof(D));
         }
-
 
         public override ILGenerator GetIlGenerator() => _emiMethod.GetILGenerator();
     }

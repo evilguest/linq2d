@@ -94,31 +94,39 @@ namespace Linq2d.CodeGen
         protected override Expression VisitUnary(UnaryExpression node)
         {
             var expr = base.VisitUnary(node);
-            if(node.Method != null)
+            if (node.Method != null)
             {
                 Generator.Call(node.Method);
             }
             else switch (expr.NodeType)
-            {
-                case ExpressionType.Convert:
-                    try
-                    {
-                        Generator.Emit(_convertTable[expr.Type]);
-                    }
-                    catch (KeyNotFoundException knfe)
-                    {
-                        throw new NotSupportedException($"Unknown conversion target type {expr.Type.Name}", knfe);
-                    }
-                    break;
-                case ExpressionType.Negate:
-                    Generator.Emit(OpCodes.Neg); break;
-                case ExpressionType.Not:
-                    Generator.Emit(OpCodes.Not); break;
-                case ExpressionType.Throw:
-                    Generator.Emit(OpCodes.Throw); break;
-                default:
-                    throw new InvalidOperationException($"Unknown unary node type {expr.NodeType}");
-            }
+                {
+                    case ExpressionType.Convert:
+                        try
+                        {
+                            Generator.Emit(_convertTable[expr.Type]);
+                        }
+                        catch (KeyNotFoundException knfe)
+                        {
+                            throw new NotSupportedException($"Unknown conversion target type {expr.Type.Name}", knfe);
+                        }
+                        break;
+                    case ExpressionType.Negate:
+                        Generator.Emit(OpCodes.Neg); break;
+                    case ExpressionType.Not:
+                        // for booleans we need to compare the value against zero
+                        if (node.Type == typeof(bool))
+                        {
+                            Generator.Emit(OpCodes.Ldc_I4_0);
+                            Generator.Emit(OpCodes.Ceq);
+                        }
+                        else
+                            Generator.Emit(OpCodes.Not);
+                        break;
+                    case ExpressionType.Throw:
+                        Generator.Emit(OpCodes.Throw); break;
+                    default:
+                        throw new InvalidOperationException($"Unknown unary node type {expr.NodeType}");
+                }
             return expr;
         }
         protected override Expression VisitNew(NewExpression node)
@@ -142,6 +150,8 @@ namespace Linq2d.CodeGen
             {ExpressionType.Equal, OpCodes.Ceq },
             {ExpressionType.And, OpCodes.And },
             {ExpressionType.Or, OpCodes.Or },
+            {ExpressionType.ExclusiveOr, OpCodes.Xor },
+            {ExpressionType.LeftShift, OpCodes.Shl},
             {ExpressionType.RightShift, OpCodes.Shr },
             {ExpressionType.GreaterThanOrEqual, OpCodes.Bge },
             {ExpressionType.LessThanOrEqual, OpCodes.Ble },
@@ -202,13 +212,15 @@ namespace Linq2d.CodeGen
                 case ExpressionType.Equal:
                 case ExpressionType.And:
                 case ExpressionType.Or:
+                case ExpressionType.ExclusiveOr:
+                case ExpressionType.LeftShift:
                 case ExpressionType.RightShift:
                     ret = base.VisitBinary(node);
                     Generator.Emit(BinaryOpTable[node.NodeType]);
                     break;
                 case ExpressionType.ArrayIndex:
                     ret = base.VisitBinary(node);
-		    if(node.Type == typeof(byte) || node.Type == typeof(sbyte))
+		            if(node.Type == typeof(byte) || node.Type == typeof(sbyte))
                         Generator.Emit(OpCodes.Ldelem_I1); 
                     else if (node.Type == typeof(short) || node.Type == typeof(ushort))
                         Generator.Emit(OpCodes.Ldelem_I2); 

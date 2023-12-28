@@ -39,14 +39,14 @@ namespace Linq2d.CodeGen.Intrinsics
 
         internal static Vector256<uint> CompareEqual(Vector256<float> left, Vector256<float> right) => Base.CompareEqual(left, right).AsUInt32();
         internal static Vector256<ulong> CompareEqual(Vector256<double> left, Vector256<double> right) => Base.CompareEqual(left, right).AsUInt64();
-        internal static Vector128<int> ConvertToVector128Int32(Vector256<double> arg) => Base.ConvertToVector128Int32(arg);
+        internal static Vector128<int> ConvertToVector128Int32WithTruncation(Vector256<double> arg) => Base.ConvertToVector128Int32WithTruncation(arg);
 
         internal static Vector128<float> ConvertToVector128Single(Vector256<double> arg) => Base.ConvertToVector128Single(arg);
 
         internal static Vector256<double> ConvertToVector256Double(Vector128<float> arg) => Base.ConvertToVector256Double(arg);
         internal static Vector256<double> ConvertToVector256Double(Vector128<int> arg) => Base.ConvertToVector256Double(arg);
 
-        internal static Vector256<int> ConvertToVector256Int32(Vector256<float> arg) => Base.ConvertToVector256Int32(arg);
+        internal static Vector256<int> ConvertToVector256Int32WithTruncation(Vector256<float> arg) => Base.ConvertToVector256Int32WithTruncation(arg);
 
         internal static Vector256<float> ConvertToVector256Single(Vector256<int> arg) => Base.ConvertToVector256Single(arg);
         internal static unsafe Vector256<float> ConvertToVector256Single(int* address) => Base.ConvertToVector256Single(*(Vector256<int>*)address);

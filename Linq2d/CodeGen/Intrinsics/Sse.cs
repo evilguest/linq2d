@@ -19,7 +19,27 @@ namespace Linq2d.CodeGen.Intrinsics
         public static bool IsSupported { get => Base.IsSupported && !Suppress; }
 
         #region Vector-4
-        internal static unsafe void Store(bool* destination, Vector128<uint> data) => *(Vector128<uint>*)destination = data;
+        private static uint[] _ui2b =
+        [
+            0x00000000,
+            0x00000001,
+            0x00000100,
+            0x00000101,
+            0x00010000,
+            0x00010001,
+            0x00010100,
+            0x00010101,
+            0x01000000,
+            0x01000001,
+            0x01000100,
+            0x01000101,
+            0x01010000,
+            0x01010001,
+            0x01010100,
+            0x01010101
+        ];
+        internal static unsafe void Store(bool* destination, Vector128<uint> data) =>
+            *(uint*)destination = _ui2b[Base.MoveMask(data.AsSingle())];
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static Vector128<float> Add(Vector128<float> arg1, Vector128<float> arg2) => Base.Add(arg1, arg2);

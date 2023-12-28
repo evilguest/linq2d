@@ -99,10 +99,10 @@ namespace Linq2d
                         kernels[с] = ip.GetArgument(с);
                 }
                 else throw new InvalidOperationException($"Cannot recognize the selector function. Expect a ValueTuple construction call with the number of components equal to {Results.Count}");
-                  
+
             }
 
-            
+
             var km = new KernelMeasurer();
             km.Visit(simplifiedKernel);
 
@@ -111,11 +111,19 @@ namespace Linq2d
 
             var baseRanges = GetBaseRanges(hVar, wVar, maxX - minX, maxY - minY);
 
-            var dm = MethodBuilder<D>.Create(saveAssembly: Array2d.SaveDynamicCode, MethodName);
+            var mainDM = MethodBuilder<D>.Create(saveAssembly: false, MethodName);
+            SaveMethodIL<D>(resultVars, sourceArgs, iVar, jVar, hVar, wVar, kernels, minX, maxX, minY, maxY, baseRanges, mainDM.GetIlGenerator());
+            if(Array2d.SaveDynamicCode)
+            {
+                var saveDM = MethodBuilder<D>.Create(saveAssembly: true, MethodName);
+                SaveMethodIL<D>(resultVars, sourceArgs, iVar, jVar, hVar, wVar, kernels, minX, maxX, minY, maxY, baseRanges, saveDM.GetIlGenerator());
+                saveDM.Flush();
+            }
+            return mainDM.CreateDelegate();
+        }
 
-            // try to move common code out of the loop
-
-            var ilg = dm.GetIlGenerator();
+        private void SaveMethodIL<D>(ImmutableArray<ParameterExpression> resultVars, ImmutableArray<ParameterExpression> sourceArgs, ParameterExpression iVar, ParameterExpression jVar, ParameterExpression hVar, ParameterExpression wVar, Expression[] kernels, int minX, int maxX, int minY, int maxY, IReadOnlyDictionary<Expression, (Expression minVal, Expression maxVal)> baseRanges, ILGenerator ilg) where D : Delegate
+        {
             {
                 #region prolog
                 var kcs = new KernelCompilerScalar(ilg, wVar);
@@ -208,7 +216,7 @@ namespace Linq2d
                 while (lineCounter < -minX)
                 {
                     int colCounter;
-                    for(colCounter = 0; colCounter < -minY; colCounter++)
+                    for (colCounter = 0; colCounter < -minY; colCounter++)
                         for (int c = 0; c < Results.Count; c++)
                             HandleSingleResultElement(ilg, kernels[c], Results[c], resultVars, sourceArgs, hVar, wVar, baseRanges, kcs, pTrgs[c], Constant(lineCounter), Constant(colCounter));
 
@@ -252,7 +260,7 @@ namespace Linq2d
 
                     int colCounter;
                     var coreRanges = baseRanges.Add(iVar, Constant(-minX), Subtract(hVar, Constant(maxX + 1)));
-                    for (colCounter=0; colCounter < -minY; colCounter++)
+                    for (colCounter = 0; colCounter < -minY; colCounter++)
                         for (int c = 0; c < Results.Count; c++)
                             HandleSingleResultElement(ilg, kernels[c], Results[c], resultVars, sourceArgs, hVar, wVar, coreRanges, kcs, pTrgs[c], iVar, Constant(colCounter));
 
@@ -260,14 +268,14 @@ namespace Linq2d
                     ilg.Stloc(j);
 
                     // Vector part
-                    lock(VectorData.Lock)
+                    lock (VectorData.Lock)
                     {
                         var vectorizable = Array2d.TryVectorize;
                         var coreKernels = new Expression[Results.Count];
                         coreRanges = baseRanges.Add(iVar, Constant(-minX), Subtract(hVar, Constant(maxX + 1))).Add(jVar, Constant(-minY), Subtract(wVar, Constant(maxY + 1)));
 
                         var argTypes = (from s in Sources select s.Type).Union(Results);
-//                        var stepSizes = new int[Results.Count];
+                        //                        var stepSizes = new int[Results.Count];
                         var vectorKernels = new Expression[Results.Count];
                         var vectorizationResults = new VectorizationResult[Results.Count];
                         for (int c = 0; c < Results.Count; c++)
@@ -276,7 +284,7 @@ namespace Linq2d
                                 _variablePool = null;       // reset the pool on each iteration, suppressing the reuse
 
                             coreKernels[c] = vectorKernels[c] = InlineKernel(kernels[c], iVar, jVar, hVar, wVar, coreRanges, resultVars, sourceArgs, ref _variablePool);
-                            
+
                             // try smaller step sizes until it works
                             foreach (var step in VectorData.StepSizesDesc)
                             {
@@ -289,10 +297,10 @@ namespace Linq2d
                                 }
                             }
 
-                            if(!vectorizationResults[c].Success)
+                            if (!vectorizationResults[c].Success)
                                 vectorizable = false;
                         }
-                       
+
                         if (vectorizable)
                         {
                             Vectorized = true;
@@ -336,7 +344,7 @@ namespace Linq2d
                         }
 
                         // now we get to the scalar part
-                        var loopJStart = ilg.DefineLabel(); 
+                        var loopJStart = ilg.DefineLabel();
                         ilg.Br(loopJStart);
                         {
                             var loopJBody = ilg.DefineAndMarkLabel();
@@ -379,7 +387,7 @@ namespace Linq2d
                 {
                     int colCounter;
 
-                    for (colCounter=0; colCounter < -minY;colCounter++)
+                    for (colCounter = 0; colCounter < -minY; colCounter++)
                         for (int c = 0; c < Results.Count; c++)
                             HandleSingleResultElement(ilg, kernels[c], Results[c], resultVars, sourceArgs, hVar, wVar, baseRanges.Add(iVar, Constant(-minX), Subtract(hVar, Constant(maxX + 1))), kcs, pTrgs[c], Add(hVar, Constant(lineCounter)), Constant(colCounter));
 
@@ -428,9 +436,7 @@ namespace Linq2d
                 }
                 ilg.Ret();
             };
-            return dm.CreateDelegate();
         }
-
 
         private IEnumerable<ParameterExpression> _variablePool;
         private void HandleSingleResultElement(ILGenerator ilg, Expression kernel, Type resultType, IReadOnlyList<ParameterExpression> resultVars, IReadOnlyList<ParameterExpression> sourceArgs, ParameterExpression hVar, ParameterExpression wVar, IReadOnlyDictionary<Expression, (Expression minVal, Expression maxVal)> ranges, KernelCompilerScalar kcs, LocalBuilder pTarget, Expression i, Expression j)
