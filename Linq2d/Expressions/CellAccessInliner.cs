@@ -73,8 +73,15 @@ namespace Linq2d.Expressions
                 if (node.Method.GetParameters()[1].ParameterType != right.Type)
                     right = Convert(right, node.Method.GetParameters()[0].ParameterType);
             }
-            return MakeBinary(node.NodeType, left, right);
-           // return node.Update(left, node.Conversion, right);
+
+            try
+            {
+                return node.Update(left, node.Conversion, right);
+            }
+            catch (InvalidOperationException)
+            {
+                return MakeBinary(node.NodeType, left, right);
+            }
         }
         private static MethodInfo CellItemGet(Type t) => typeof(RelativeCell<>).MakeGenericType(t).GetProperty("Item").GetGetMethod();
         private static PropertyInfo CellValue(Type t) => typeof(Cell<>).MakeGenericType(t).GetProperty("Value");
@@ -197,8 +204,8 @@ namespace Linq2d.Expressions
             if (node.Member == CellW)
                 return _w; //Call(to, ArrayLength(arrayType), Constant(1));
 
-            if (node.Member == CellValue(node.Type))
-                return Visit(node.Expression);
+            //if (node.Member == CellValue(node.Type))
+            //    return Visit(node.Expression);
 
             var expression = Visit(node.Expression);
             if (expression is MethodCallExpression mce && mce.Method == CellOffset(mce.Type.GetGenericArguments()[0]))
@@ -218,6 +225,10 @@ namespace Linq2d.Expressions
                     return Condition(LessThan(_j, Negate(dy)), oobStrategy.YBelow.Coordinate (y, _w),
                                 Condition(Not(LessThan(_j, Subtract(_w, dy))), oobStrategy.YAbove.Coordinate(y, _w),
                                     y));
+                if (node.Member == CellValue(node.Type))
+                {
+                    return CheckBounds(node.Type, dx, dy, to, oobStrategy);
+                }
 
             }
 

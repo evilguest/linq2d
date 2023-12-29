@@ -1,9 +1,6 @@
-﻿using System;
-using Xunit;
-
-namespace Linq2d.Tests.Vectorization
+﻿namespace Linq2d.Tests.Vectorization
 {
-    [Collection("Vectorization")]
+    //[Collection("Vectorization")]
     public class Avx : Base, IClassFixture<SuppressAvx2Fixture>
     {
         [Fact]

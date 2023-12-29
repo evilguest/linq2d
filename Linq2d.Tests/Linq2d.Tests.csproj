@@ -79,7 +79,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Condition="'$(OS)' == 'Unix'" Command="cp $(ProjectDir)../SauvolaBinarizeCPP/x64/$(ConfigurationName)/SauvolaBinarizeCPP.so $(targetDir)" />
+    <Exec Condition="'$(OS)' == 'Unix'" Command="" />
     <Exec Condition="'$(OS)' == 'Windows _NT'" Command="copy /Y $(ProjectDir)..\x64\$(ConfigurationName)\SauvolaBinarizeCPP.dll $(targetDir)" />
   </Target>
 

@@ -16,6 +16,8 @@ namespace Linq2d.CodeGen
             InitLift<float>(Vector128.Create);
 
             InitStore<float>(Sse.Store);
+            InitStore<int>(Sse.Store);
+            InitStore<uint>(Sse.Store);
             InitStore<bool, Vector128<uint>>(Sse.Store);
             InitLoadAndConvert<float>(Sse.LoadVector128);
 

@@ -31,6 +31,19 @@ namespace Linq2d.CodeGen
             cachedTypes[t] = result;
             return result;
         }
+        public static bool IsSigned(this Type t)
+        {
+            return Type.GetTypeCode(t) switch
+            {
+                TypeCode.SByte => true,
+                TypeCode.Int16 => true,
+                TypeCode.Int32 => true,
+                TypeCode.Int64 => true,
+                TypeCode.Double => true,
+                TypeCode.Single => true,
+                _ => t.GetMethod("operator -", BindingFlags.Static, new Type[] { t }) != null
+            };
+        }
 
         public static bool IsNumeric(this Type type)
         {

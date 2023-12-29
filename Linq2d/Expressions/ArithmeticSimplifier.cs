@@ -99,7 +99,7 @@ namespace Linq2d.Expressions
 
                 Equal(var e1, var e2) when e1.Equals(e2) => Constant(true),
                 Subtract(var e1, var e2) when e1.Equals(e2) => Constant(Convert.ChangeType(0, ((Expression)expr).Type)),
-                //Subtract(var e1, var e2) => Add(e1, Negate(e2)),
+                Subtract(var e1, var e2) when ((Expression)e2).Type.IsSigned() => Add(e1, Negate(e2)),
 
                 Negate(Add(var e1, var e2)) => Add(Negate(e1), Negate(e2)),
                 Add(var e1, Negate(var e2)) when e1.Equals(e2) => Constant(0),

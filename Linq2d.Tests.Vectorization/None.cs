@@ -2,6 +2,25 @@
 {
     public class None: Base, IClassFixture<SuppressVectorizationFixture>
     {
+        private int[,] C4(int[,] data) => (from b in data.With(OutOfBoundsStrategy.Integral(0))
+                                           select b[-1, 0] + b[1, 0] + b[0, 1] + b[0, -1]).ToArray();
+        private int[,] C4Offset(int[,] data) => (from b in data.With(OutOfBoundsStrategy.Integral(0))
+                    select b.Offset(-1, 0).Value + b.Offset(1, 0).Value + b.Offset(0, 1) + b.Offset(0, -1)).ToArray();
+        [Fact]
+        public void C4OffsetVsDirect()
+        {
+            var source = ArrayHelper.InitAll(40, 40, 42);
+            Array2d.SaveDynamicCode = true;
+            try
+            {
+                Assert.Equal(C4(source), C4Offset(source));
+            }
+            finally
+            {
+                Array2d.SaveDynamicCode = false;
+            }
+        }
+
         [Fact]
         public void BooleanCopy()
         {

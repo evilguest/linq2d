@@ -1,10 +1,9 @@
-﻿using System;
-using Xunit;
-using Linq2d.Tests.Vectorization;
+﻿using Linq2d.Tests.Vectorization;
 using Square = System.Int64;
 
 namespace Linq2d.Tests
 {
+    [Collection("Vectorization")]
     public class SauvolaBinarize: IClassFixture<VectorizationStateFixture>
     {
 
@@ -17,8 +16,16 @@ namespace Linq2d.Tests
         {
             var data = ArrayHelper.InitAllRand(h, w, seed);
             //Array2d.SaveDynamicCode = true;
-            Assert.Equal(BaseBinarize(data), LinqBinarize(data));
-            //Array2d.SaveDynamicCode = false;
+            //Array2d.TryVectorize = false;
+            try
+            {
+                Assert.Equal(BaseBinarize(data), LinqBinarize(data));
+            }
+            finally
+            {
+                //Array2d.SaveDynamicCode = false;
+                //Array2d.TryVectorize = true;
+            }
         }
 
         [Theory]
@@ -48,7 +55,7 @@ namespace Linq2d.Tests
 
 
         public static double K { get; private set; } = 0.1;
-        public static byte W { get; private set; } = 10;
+        public static byte W { get; private set; } = 3;
 
         [Theory]
         [InlineData(17, 17, 5)]
@@ -84,7 +91,7 @@ namespace Linq2d.Tests
                        let br = i.Offset(whalf, whalf)
                        select br.Value + tl.Value - tr.Value - bl.Value;
             var diffA = diff.ToArray();
-            Assert.Equal(CalculateDiff(integral_image_linq, whalf), diff.ToArray());
+            Assert.Equal(CalculateDiff(integral_image_linq, whalf), diffA);
 
             var sqdiff = from i in integral_sqimg_linq.With(OutOfBoundsStrategy.Integral(0L))
                          let tl = i.Offset(-whalf - 1, -whalf - 1)
@@ -125,23 +132,41 @@ namespace Linq2d.Tests
         public void TestStepsWithoutAvx()
         {
             CodeGen.Intrinsics.Avx.Suppress = true;
-            TestSteps(17, 17, 5);
-            CodeGen.Intrinsics.Avx.Suppress = false;
+            try
+            {
+                TestSteps(17, 17, 5);
+            }
+            finally
+            {
+                CodeGen.Intrinsics.Avx.Suppress = false;
+            }
         }
 
         [Fact]
         public void TestStepsWithoutSse2()
         {
             CodeGen.Intrinsics.Sse2.Suppress = true;
-            TestSteps(17, 17, 5);
-            CodeGen.Intrinsics.Sse2.Suppress = false;
+            try
+            {
+                TestSteps(17, 17, 5);
+            }
+            finally
+            {
+                CodeGen.Intrinsics.Sse2.Suppress = false;
+            }
         }
         [Fact]
         public void TestStepsWithoutSse()
         {
             CodeGen.Intrinsics.Sse.Suppress = true;
-            TestSteps(17, 17, 5);
-            CodeGen.Intrinsics.Sse.Suppress = false;
+            try
+            {
+                TestSteps(17, 17, 5);
+            }
+            finally
+            {
+                CodeGen.Intrinsics.Sse.Suppress = false;
+            }
         }
 
         private double[,] CalculateThreshold(double[,] mean, double[,] std)
