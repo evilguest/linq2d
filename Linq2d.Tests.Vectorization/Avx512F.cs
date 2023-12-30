@@ -1,5 +1,4 @@
-﻿using Xunit;
-
+﻿
 namespace Linq2d.Tests.Vectorization
 {
     public class Avx512F:Base, IClassFixture<VectorizationStateFixture>
@@ -12,7 +11,15 @@ namespace Linq2d.Tests.Vectorization
             var q = from s in source select s + s - 3;
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorized(iv, 16);
+            if (CodeGen.Intrinsics.Avx512F.IsSupported)
+            {
+                AssertVectorized(iv, 16);
+            }
+            else
+            {
+                AssertVectorized(iv, 8);
+            }
+            Console.WriteLine(iv.Report);
         }
     }
 }

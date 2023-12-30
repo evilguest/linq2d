@@ -243,7 +243,7 @@ namespace Linq2d.Expressions
                 if (node.Member == CellValue(node.Type))
                     return MakeIndex(to, ArrayItem(node.Type), new[] { _i, _j });
             }
-            return node;//MakeMemberAccess(expression, node.Member);
+            return MakeMemberAccess(expression, node.Member);
         }
     }
 }

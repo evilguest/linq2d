@@ -5,14 +5,14 @@ namespace Linq2d.Tests
 {
     public class UnmanagedStructures
     {
-        [Theory]
-        [InlineData(17,13,67546,35324)]
-        public void TestIntRecordToInt(int h, int w, int a, int b)
+        [Fact]
+        public void TestIntRecordToInt()
         {
-            var s = ArrayHelper.InitAll(h, w, a + b);
-            var data = ArrayHelper.InitAll(h, w, (a, b));
-            var q = from d in data select d[0, 0].a + d[0, 0].b;
-            Assert.Equal(s, q.ToArray());
+            var source = ArrayHelper.InitAllRand(10, 40, 42, 17, (a, b) => (a, b));
+            var expect = ArrayHelper.InitAllRand(10, 40, 42, 17, (a, b)=>a + b); 
+            var q = from s in source 
+                    select s[0, 0].a + s[0, 0].b;
+            Assert.Equal(expect, q.ToArray());
 
         }
         [Theory]
