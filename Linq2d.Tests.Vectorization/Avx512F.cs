@@ -19,7 +19,7 @@ namespace Linq2d.Tests.Vectorization
             {
                 AssertVectorized(iv, 8);
             }
-            Console.WriteLine(iv.Report);
+            Console.WriteLine(iv.Report());
         }
     }
 }
