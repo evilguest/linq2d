@@ -26,7 +26,7 @@ jobs:
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: ./Linq2d.Tests/TestResults/coverage.info
+        files: ./Linq2d.Tests/TestResults/coverage.info ./Linq2d.Tests.Vectorization/TestResults/coverage.info
       continue-on-error: true
     - name: Perform the Release Build
       run: dotnet build -c Release
