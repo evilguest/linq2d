@@ -73,8 +73,9 @@ namespace Linq2d.Tests.Vectorization
         {
             var source = ArrayHelper.InitAllRand(70, 30, 42, x => (short)x);
             var expect = ArrayHelper.InitAll(70, 30, true);
-            var q = from s in source
-                    select (s == s);
+            var q = from s1 in source
+                    from s2 in source
+                    select (s1 == s2);
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
             AssertVectorized(iv, 8);

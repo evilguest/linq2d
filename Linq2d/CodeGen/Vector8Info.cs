@@ -89,6 +89,10 @@ namespace Linq2d.CodeGen
 
 
             InitBinary256<float, uint>(ExpressionType.Equal, Avx.CompareEqual);
+            //InitBinary256<float, uint>(ExpressionType.GreaterThan, Avx.CompareGreaterThan);
+            InitBinary256<float, uint>(ExpressionType.LessThan, Avx.CompareLessThan);
+            //InitBinary256<float, uint>(ExpressionType.GreaterThanOrEqual, Avx.CompareGreaterThanOrEqual);
+            InitBinary256<float, uint>(ExpressionType.LessThanOrEqual, Avx.CompareLessThanOrEqual);
             InitBinary256<float>(ExpressionType.Add, Avx.Add);
             InitBinary256<float>(ExpressionType.Subtract, Avx.Subtract);
             InitBinary256<float>(ExpressionType.Multiply, Avx.Multiply);

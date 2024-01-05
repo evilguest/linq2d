@@ -80,7 +80,8 @@ namespace Linq2d.Expressions
             Expr Simplify(Expr expr) => expr switch
             {
                 #region Universal arithmetics
-                Expr.Convert(var t, Expr.Convert(var e)) when t == ((Expression)e).Type => e,
+                Expr.Convert(var t2, Expr.Convert(var t1, var e)) 
+                    when t2 == ((Expression)e).Type && t1.Covers(t2) => e,
                 Negate(Negate(var e)) => e,                                     // - -e => e
                 Not(Not(var e)) => e,                                           // !!e => e
                 Expr.Convert(var to, Constant(var v, var iv))

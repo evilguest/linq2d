@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
@@ -8,6 +9,23 @@ namespace Linq2d.CodeGen
 {
     public static class TypeHelper
     {
+        private static readonly HashSet<(Type, Type)> _covers = new HashSet<(Type, Type)>()
+        {
+            (typeof(long), typeof(int)),
+            (typeof(long), typeof(uint)),
+            (typeof(long), typeof(short)),
+            (typeof(long), typeof(ushort)),
+            (typeof(long), typeof(byte)),
+            (typeof(long), typeof(sbyte)),
+            (typeof(int), typeof(short)),
+            (typeof(int), typeof(ushort)),
+            (typeof(int), typeof(byte)),
+            (typeof(int), typeof(sbyte)),
+            (typeof(short), typeof(byte)),
+            (typeof(short), typeof(sbyte)),
+            (typeof(double), typeof(float)),
+        };
+        public static bool Covers(this Type type, Type covered) => _covers.Contains((type, covered));
         internal static bool TryGetConditionalMethod(this IReadOnlyDictionary<Type, MethodInfo> conditionals, Type resultType, out MethodInfo method, out Type testType)
         {
             var found = conditionals.TryGetValue(resultType, out method);

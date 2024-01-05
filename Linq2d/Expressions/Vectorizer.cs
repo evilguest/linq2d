@@ -269,6 +269,7 @@ namespace Linq2d.Expressions
                         return (Expression.MakeBinary(node.NodeType, left, ConvertTo(ro, vectorOp.GetParameters()[1].ParameterType), false, vectorOp3));
                 }
             }
+            _success = true; // reset success so we don't fail immediately
             {
                 var left = Visit(node.Left);
                 var right = Visit(node.Right);

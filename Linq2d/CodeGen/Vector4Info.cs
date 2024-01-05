@@ -160,16 +160,19 @@ namespace Linq2d.CodeGen
             InitBinary256<double>(ExpressionType.Multiply, Avx.Multiply);
             InitBinary256<double>(ExpressionType.Divide, Avx.Divide);
 
+            InitBinary256<long, ulong>(ExpressionType.Equal, Avx.CompareEqual);
             InitBinary256<double, ulong>(ExpressionType.Equal, Avx.CompareEqual);
             InitBinary256<double, ulong>(ExpressionType.LessThan, Avx.LessThan);
             InitBinary256<double, ulong>(ExpressionType.LessThanOrEqual, Avx.LessThanOrEqual);
-            InitBinary256<double, ulong>(ExpressionType.GreaterThan, Avx.GreaterThan);
-            InitBinary256<double, ulong>(ExpressionType.GreaterThanOrEqual, Avx.GreaterThanOrEqual);
+            //InitBinary256<double, ulong>(ExpressionType.GreaterThan, Avx.GreaterThan);
+            //InitBinary256<double, ulong>(ExpressionType.GreaterThanOrEqual, Avx.GreaterThanOrEqual);
 
             InitBinary256<double>(Math.Max, Avx.Max);
             InitBinary256<double>(Math.Min, Avx.Min);
 
             InitConditional256<double, ulong>(Avx.BlendVariable);
+            InitConditional256<long, ulong>(Avx.BlendVariable);
+            InitConditional256<ulong, ulong>(Avx.BlendVariable);
             InitConditional<Vector256<byte>, Vector32<byte>>(Vector32.DoubleConditional);
 
             InitUnary256<double>(ExpressionType.Negate, Avx.Negate);

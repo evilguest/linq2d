@@ -222,7 +222,7 @@ namespace Linq2d.Expressions
 
 
                 if (node.Member == CellY)
-                    return Condition(LessThan(_j, Negate(dy)), oobStrategy.YBelow.Coordinate (y, _w),
+                    return Condition(LessThan(_j, Negate(dy)), oobStrategy.YBelow.Coordinate(y, _w),
                                 Condition(Not(LessThan(_j, Subtract(_w, dy))), oobStrategy.YAbove.Coordinate(y, _w),
                                     y));
                 if (node.Member == CellValue(node.Type))
@@ -232,17 +232,13 @@ namespace Linq2d.Expressions
 
             }
 
-            if(ShouldReplace(expression))
-            {
-                var (_, to, _) = _replacements[expression];
-                if (node.Member == CellX)
-                    return _i;
+            if (node.Member == CellX)
+                return _i;
+            if (node.Member == CellY)
+                return _j;
+            if (node.Member == CellValue(node.Type))
+                return expression; // already processed //MakeIndex(expression, ArrayItem(node.Type), new[] { _i, _j });
 
-                if (node.Member == CellY)
-                    return _j;
-                if (node.Member == CellValue(node.Type))
-                    return MakeIndex(to, ArrayItem(node.Type), new[] { _i, _j });
-            }
             return MakeMemberAccess(expression, node.Member);
         }
     }
