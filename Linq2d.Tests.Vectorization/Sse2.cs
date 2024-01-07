@@ -363,20 +363,6 @@ namespace Linq2d.Tests.Vectorization
             var iv = (IVectorizable)q;
             Assert.False(iv.Vectorized);
         }
-        //[Fact]
-        //public void ShortShiftRightA()
-        //{
-        //    var source1 = ArrayHelper.InitAllRand(70, 40, 42, x => (short)x);
-        //    var source2 = ArrayHelper.InitAllRand(70, 40, 17, x => (byte)(x % 16));
-        //    var expect = ArrayHelper.InitAllRand(70, 40, 42, 17, (x, y) => (short)((short)x >> (y % 16)));
-        //    var q = from s1 in source1
-        //            from s2 in source2
-        //            select (short)(s1 >>> s2);
-        //    Assert.Equal(expect, q.ToArray());
-        //    var iv = (IVectorizable)q;
-        //    AssertVectorised(iv, 8);
-        //}
-
 
         [Fact]
         public void UIntAdd()
@@ -876,5 +862,6 @@ namespace Linq2d.Tests.Vectorization
             var iv = (IVectorizable)q;
             AssertVectorized(iv, 16);
         }
+
     }
 }

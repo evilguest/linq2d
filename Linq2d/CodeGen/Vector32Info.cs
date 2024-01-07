@@ -25,6 +25,7 @@ namespace Linq2d.CodeGen
         protected override void InitAvx2()
         {
             InitBinary256<byte>(ExpressionType.Add, Avx2.Add);
+            InitBinary256<sbyte>(ExpressionType.Add, Avx2.Add);
             InitUnary256<sbyte>(ExpressionType.Negate, Avx2.Negate);
         }
     }

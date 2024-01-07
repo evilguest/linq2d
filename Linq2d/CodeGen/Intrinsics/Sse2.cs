@@ -29,6 +29,7 @@ namespace Linq2d.CodeGen.Intrinsics
         internal static unsafe Vector128<sbyte> LoadVector128(sbyte* address) => Base.LoadVector128(address);
         internal static unsafe void Store(byte* address, Vector128<byte> data) => Base.Store(address, data);
         internal static unsafe void Store(sbyte* address, Vector128<sbyte> data) => Base.Store(address, data);
+//        internal static Vector128<byte> Create(bool arg) => Vector128.Create(arg ? byte.MaxValue : byte.MinValue);
         #endregion
 
         #region Vector-8
@@ -38,7 +39,7 @@ namespace Linq2d.CodeGen.Intrinsics
                 (byte)data[2], (byte)data[3],
                 (byte)data[4], (byte)data[5],
                 (byte)data[6], (byte)data[7]) & Vector64.Create((byte)1), (byte*)address);
-        internal static Vector128<ushort> Create(bool arg) => Vector128.Create(arg ? ushort.MaxValue : ushort.MinValue);
+        //internal static Vector128<ushort> Create(bool arg) => Vector128.Create(arg ? ushort.MaxValue : ushort.MinValue);
 
         internal static Vector128<short> Add(Vector128<short> left, Vector128<short> right) => Base.Add(left, right);
         

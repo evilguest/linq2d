@@ -33,6 +33,8 @@ namespace Linq2d.CodeGen
 
             InitType128<int>();
             InitLift<int>(Vector128.Create);
+            InitType128<uint>();
+            InitLift<uint>(Vector128.Create);
         }
 
         protected override void InitSse2()

@@ -6,6 +6,27 @@ namespace Linq2d.Tests.Vectorization
     public class Avx2:Base, IClassFixture<SuppressAvx512Fixture>
     {
         [Fact]
+        public void LongArithmetics()
+        {
+            var source = ArrayHelper.InitAllRand(100, 110, 42L);
+            var expect = ArrayHelper.InitAllRand(100, 110, 42L, s => s + s - 3);
+            var q = from s in source select s + s - 3;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 4);
+        }
+        [Fact]
+        public void ULongArithmetics()
+        {
+            var source = ArrayHelper.InitAllRand(100, 110, 42L, x=>(ulong)x);
+            var expect = ArrayHelper.InitAllRand(100, 110, 42L, s => (ulong)s + (ulong)s - 3);
+            var q = from s in source select s + s - 3;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 4);
+        }
+
+        [Fact]
         public void IntArithmetics()
         {
             var source = ArrayHelper.InitAllRand(100, 110, 42);
@@ -15,6 +36,45 @@ namespace Linq2d.Tests.Vectorization
             var iv = (IVectorizable)q;
             AssertVectorized(iv, 8);
         }
+        [Fact]
+        public void UIntArithmetics()
+        {
+            var source = ArrayHelper.InitAllRand(100, 110, 42, x => (uint)x);
+            var expect = ArrayHelper.InitAllRand(100, 110, 42, s => (uint)s + (uint)s * 2 - 3);
+            var q = from s in source select s + s * 2 - 3;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 8);
+        }
+        [Fact]
+        public void IntEquality()
+        {
+            var source1 = ArrayHelper.InitAllRand(70, 40, 42);
+            var source2 = ArrayHelper.InitAllRand(70, 40, 42, x => x < 0 ? -x : x);
+            var expect = ArrayHelper.InitAllRand(70, 40, 42, x => x >= 0); // we're inverting the sign only for the negative x'es.
+            var q = from s1 in source1
+                    from s2 in source2
+                    select s1 == s2;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 8);
+        }
+
+        [Fact]
+        public void UIntEquality()
+        {
+            var source1 = ArrayHelper.InitAllRand(70, 40, 42, x => (uint)x);
+            var source2 = ArrayHelper.InitAllRand(70, 40, 42, x => (uint)(x & 0xFFFFFFFE));
+            var expect = ArrayHelper.InitAllRand(70, 40, 42, x => x % 2 == 0); // we're flipping the low bit only on odd numbers
+            var q = from s1 in source1
+                    from s2 in source2
+                    select s1 == s2;
+            Assert.Equal(expect, q.ToArray());
+
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 8);
+        }
+
 
         [Fact]
         public void TwoResultsDifferentSize()
@@ -122,5 +182,248 @@ namespace Linq2d.Tests.Vectorization
             var iv = (IVectorizable)q;
             AssertVectorized(iv, 16);
         }
+        [Fact]
+        public void UShortAddition()
+        {
+            var source1 = ArrayHelper.InitAllRand(100, 110, 42, x => (ushort)x);
+            var source2 = ArrayHelper.InitAllRand(100, 110, 42, x => (ushort)x);
+            var expect = ArrayHelper.InitAllRand(100, 110, 42, s => (ushort)(s + s));
+            var q = from s1 in source1
+                    from s2 in source2
+                    select (ushort)(s1 + s2);
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 16);
+        }
+        [Fact]
+        public void ByteAddition()
+        {
+            var source1 = ArrayHelper.InitAllRand(100, 110, 42, x => (byte)x);
+            var source2 = ArrayHelper.InitAllRand(100, 110, 42, x => (byte)x);
+            var expect = ArrayHelper.InitAllRand(100, 110, 42, s => (byte)(s + s));
+            var q = from s1 in source1
+                    from s2 in source2
+                    select (byte)(s1 + s2);
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 32);
+        }
+        [Fact]
+        public void SByteAddition()
+        {
+            var source1 = ArrayHelper.InitAllRand(100, 110, 42, x => (sbyte)x);
+            var source2 = ArrayHelper.InitAllRand(100, 110, 42, x => (sbyte)x);
+            var expect = ArrayHelper.InitAllRand(100, 110, 42, s => (sbyte)(s + s));
+            var q = from s1 in source1
+                    from s2 in source2
+                    select (sbyte)(s1 + s2);
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 32);
+        }
+        [Fact]
+        public void ByteLongAddition()
+        {
+            var source1 = ArrayHelper.InitAllRand(100, 110, 42L, x => (byte)x);
+            var source2 = ArrayHelper.InitAllRand(100, 110, 17L);
+            var expect = ArrayHelper.InitAllRand(100, 110, 42L, 17L, (s1, s2) => (byte)s1 + s2);
+            var q = from s1 in source1
+                    from s2 in source2
+                    select s1 + s2;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 4);
+        }
+        [Fact]
+        public void SByteLongAddition()
+        {
+            var source1 = ArrayHelper.InitAllRand(100, 110, 42L, x => (sbyte)x);
+            var source2 = ArrayHelper.InitAllRand(100, 110, 17L);
+            var expect = ArrayHelper.InitAllRand(100, 110, 42L, 17L, (s1, s2) => (sbyte)s1 + s2);
+            var q = from s1 in source1
+                    from s2 in source2
+                    select s1 + s2;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 4);
+        }
+        [Fact]
+        public void LongOr()
+        {
+            var source1 = ArrayHelper.InitAllRand(70, 40, 42L);
+            var source2 = ArrayHelper.InitAllRand(70, 40, 17L);
+            var expect = ArrayHelper.InitAllRand(70, 40, 42L, 17L, (x, y) => x | y);
+            var q = from s1 in source1
+                    from s2 in source2
+                    select s1 | s2;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 4);
+        }
+
+        [Fact]
+        public void ULongOr()
+        {
+            var source1 = ArrayHelper.InitAllRand(70, 40, 42L, x => (ulong)x);
+            var source2 = ArrayHelper.InitAllRand(70, 40, 17L, x => (ulong)x);
+            var expect = ArrayHelper.InitAllRand(70, 40, 42L, 17L, (x, y) => (ulong)(x | y));
+            var q = from s1 in source1
+                    from s2 in source2
+                    select s1 | s2;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 4);
+        }
+
+        [Fact]
+        public void LongXor()
+        {
+            var source1 = ArrayHelper.InitAllRand(70, 40, 42L);
+            var source2 = ArrayHelper.InitAllRand(70, 40, 17L);
+            var expect = ArrayHelper.InitAllRand(70, 40, 42L, 17L, (x, y) => x ^ y);
+            var q = from s1 in source1
+                    from s2 in source2
+                    select s1 ^ s2;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 4);
+        }
+
+        [Fact]
+        public void ULongXor()
+        {
+            var source1 = ArrayHelper.InitAllRand(70, 40, 42L, x => (ulong)x);
+            var source2 = ArrayHelper.InitAllRand(70, 40, 17L, x => (ulong)x);
+            var expect = ArrayHelper.InitAllRand(70, 40, 42L, 17L, (x, y) => (ulong)(x ^ y));
+            var q = from s1 in source1
+                    from s2 in source2
+                    select s1 ^ s2;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 4);
+        }
+
+        [Fact]
+        public void LongAnd()
+        {
+            var source1 = ArrayHelper.InitAllRand(70, 40, 42L);
+            var source2 = ArrayHelper.InitAllRand(70, 40, 17L);
+            var expect = ArrayHelper.InitAllRand(70, 40, 42L, 17L, (x, y) => x & y);
+            var q = from s1 in source1
+                    from s2 in source2
+                    select s1 & s2;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 4);
+        }
+
+        [Fact]
+        public void ULongAnd()
+        {
+            var source1 = ArrayHelper.InitAllRand(70, 40, 42L, x => (ulong)x);
+            var source2 = ArrayHelper.InitAllRand(70, 40, 17L, x => (ulong)x);
+            var expect = ArrayHelper.InitAllRand(70, 40, 42L, 17L, (x, y) => (ulong)(x & y));
+            var q = from s1 in source1
+                    from s2 in source2
+                    select s1 & s2;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 4);
+        }
+        [Fact]
+        public void LongShiftRight()
+        {
+            var source = ArrayHelper.InitAllRand(70, 40, 42L);
+            var expect = ArrayHelper.InitAllRand(70, 40, 42L, x => x >> 3);
+            var q = from s in source
+                    select s >> 3;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 4);
+        }
+
+        [Fact]
+        public void ULongShiftRight()
+        {
+            var source = ArrayHelper.InitAllRand(70, 40, 42L, x => (ulong)x);
+            var expect = ArrayHelper.InitAllRand(70, 40, 42L, x => (ulong)x >> 3);
+            var q = from s in source
+                    select s >> 3;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 4);
+        }
+
+        [Fact]
+        public void LongShiftLeft()
+        {
+            var source = ArrayHelper.InitAllRand(70, 40, 42L);
+            var expect = ArrayHelper.InitAllRand(70, 40, 42L, x => x << 3);
+            var q = from s in source
+                    select s << 3;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 4);
+        }
+
+        [Fact]
+        public void ULongShiftLeft()
+        {
+            var source = ArrayHelper.InitAllRand(70, 40, 42L, x => (ulong)x);
+            var expect = ArrayHelper.InitAllRand(70, 40, 42L, x => (ulong)x << 3);
+            var q = from s in source
+                    select s << 3;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 4);
+        }
+        [Fact]
+        public void IntShiftRight()
+        {
+            var source = ArrayHelper.InitAllRand(70, 40, 42);
+            var expect = ArrayHelper.InitAllRand(70, 40, 42, x => x >> 3);
+            var q = from s in source
+                    select s >> 3;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 8);
+        }
+
+        [Fact]
+        public void UIntShiftRight()
+        {
+            var source = ArrayHelper.InitAllRand(70, 40, 42, x => (uint)x);
+            var expect = ArrayHelper.InitAllRand(70, 40, 42, x => (uint)x >> 3);
+            var q = from s in source
+                    select s >> 3;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 8);
+        }
+
+        [Fact]
+        public void IntShiftLeft()
+        {
+            var source = ArrayHelper.InitAllRand(70, 40, 42);
+            var expect = ArrayHelper.InitAllRand(70, 40, 42, x => x << 3);
+            var q = from s in source
+                    select s << 3;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 8);
+        }
+
+        [Fact]
+        public void UIntShiftLeft()
+        {
+            var source = ArrayHelper.InitAllRand(70, 40, 42, x => (uint)x);
+            var expect = ArrayHelper.InitAllRand(70, 40, 42, x => (uint)x << 3);
+            var q = from s in source
+                    select s << 3;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 8);
+        }
+
     }
 }

@@ -9,10 +9,11 @@ namespace Linq2d.CodeGen
         protected override void InitSse2()
         {
             InitType128<byte>();
-            InitType256<sbyte>();
+            InitType128<sbyte>();
 
             InitLift<byte>(Vector128.Create);
             InitLift<sbyte>(Vector128.Create);
+            //InitLift<bool, byte>(Sse2.Create);
 
             InitStore<byte>(Sse2.Store);
             InitStore<sbyte>(Sse2.Store);
@@ -42,7 +43,7 @@ namespace Linq2d.CodeGen
             InitLoadAndConvert<sbyte, short>(Avx2.ConvertToVector256Int16);
 
             InitBinary256<short>(ExpressionType.Add, Avx2.Add);
-
+            InitBinary256<ushort>(ExpressionType.Add, Avx2.Add);
         }
         protected override void InitAvx512F()
         {

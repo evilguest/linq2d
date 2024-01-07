@@ -66,5 +66,25 @@ namespace Linq2d.Tests.Vectorization
             var iv = (IVectorizable)q;
             AssertVectorized(iv, 4);
         }
+        [Fact]
+        public void UIntStore()
+        {
+            var source = ArrayHelper.InitAll(100, 110, 42u);
+            var q = from s in source
+                    select 42u;
+            Assert.Equal(source, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 4);
+        }
+        [Fact]
+        public void IntStore()
+        {
+            var source = ArrayHelper.InitAll(100, 110, 42);
+            var q = from s in source
+                    select 42;
+            Assert.Equal(source, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 4);
+        }
     }
 }

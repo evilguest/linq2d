@@ -19,11 +19,24 @@ namespace Linq2d.Expressions
             var vectorizedExpression = expression is ConstantExpression ce
                 ? v.HandleConstant(ce)
                 : v.Visit(expression);
+            vectorizedExpression = v.EnsureStorable(vectorizedExpression, expression.Type);
             return new VectorizationResult(v._success, vectorSize, vectorizedExpression, v._blockedBy, v._reason);
         }
 
+        private Expression EnsureStorable(Expression node, Type scalarType)
+        {
+            if (!_success)
+                return node;
+            var smArgType = VectorInfo.StoreOperations[scalarType].GetParameters()[1].ParameterType;
+            return node.Type == smArgType
+                ? node
+                : VectorInfo.ConvertOperations.TryGetValue((node.Type, smArgType), out var co)
+                    ? Expression.Convert(node, smArgType, co)
+                    : Fail(node, $"Failed to find an appropiate store method to convert an expression of type {node.Type} to a vector of {scalarType} (storable as {smArgType})");
+        }
+
         protected Expression HandleConstant(ConstantExpression node) 
-            => VectorData.VectorInfo[_vectorSize].LiftOperations.TryGetValue(node.Type, out var method)
+            => VectorInfo.LiftOperations.TryGetValue(node.Type, out var method)
                 ? Expression.Call(method, node)
                 : Fail(node, $"Failed to lift the constant {node.Value} to {node.Type} vector of size {_vectorSize}");
 
