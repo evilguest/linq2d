@@ -66,6 +66,7 @@ namespace Linq2d.Expressions
         {
             var left = Visit(node.Left);
             var right = Visit(node.Right);
+
             if (node.Method != null) // let's try to perform the method fixup
             {
                 if (node.Method.GetParameters()[0].ParameterType != left.Type)
@@ -73,15 +74,7 @@ namespace Linq2d.Expressions
                 if (node.Method.GetParameters()[1].ParameterType != right.Type)
                     right = Convert(right, node.Method.GetParameters()[0].ParameterType);
             }
-
-            try
-            {
-                return node.Update(left, node.Conversion, right);
-            }
-            catch (InvalidOperationException)
-            {
-                return MakeBinary(node.NodeType, left, right);
-            }
+            return MakeBinary(node.NodeType, left, right, node.IsLiftedToNull, node.Method);
         }
         private static MethodInfo CellItemGet(Type t) => typeof(RelativeCell<>).MakeGenericType(t).GetProperty("Item").GetGetMethod();
         private static PropertyInfo CellValue(Type t) => typeof(Cell<>).MakeGenericType(t).GetProperty("Value");

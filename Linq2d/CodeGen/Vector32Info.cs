@@ -4,6 +4,7 @@ using System.Runtime.Intrinsics;
 namespace Linq2d.CodeGen
 {
     using Intrinsics;
+    using System;
 
     public unsafe class Vector32Info : VectorInfo
     {
@@ -16,6 +17,7 @@ namespace Linq2d.CodeGen
             InitLift<sbyte>(Vector256.Create);
 
             InitStore<byte, Vector256<byte>>(Avx.Store);
+            InitStore<bool, Vector256<byte>>(Avx.Store);
             InitStore<sbyte, Vector256<sbyte>>(Avx.Store);
 
             InitLoadAndConvert<byte>(Avx.LoadVector256);
@@ -27,6 +29,9 @@ namespace Linq2d.CodeGen
             InitBinary256<byte>(ExpressionType.Add, Avx2.Add);
             InitBinary256<sbyte>(ExpressionType.Add, Avx2.Add);
             InitUnary256<sbyte>(ExpressionType.Negate, Avx2.Negate);
+
+            InitBinary256<byte>(ExpressionType.Equal, Avx2.CompareEqual);
+            InitBinary256<sbyte, byte>(ExpressionType.Equal, Avx2.CompareEqual);
         }
     }
 }

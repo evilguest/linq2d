@@ -29,16 +29,25 @@ namespace Linq2d.CodeGen.Intrinsics
         internal static unsafe Vector128<sbyte> LoadVector128(sbyte* address) => Base.LoadVector128(address);
         internal static unsafe void Store(byte* address, Vector128<byte> data) => Base.Store(address, data);
         internal static unsafe void Store(sbyte* address, Vector128<sbyte> data) => Base.Store(address, data);
-//        internal static Vector128<byte> Create(bool arg) => Vector128.Create(arg ? byte.MaxValue : byte.MinValue);
+        //        internal static Vector128<byte> Create(bool arg) => Vector128.Create(arg ? byte.MaxValue : byte.MinValue);
+        internal static unsafe void Store(bool* address, Vector128<byte> data) => Base.Store((byte*) address, Base.And(data, Vector128.Create((byte)(1))));
         #endregion
 
         #region Vector-8
-        internal static unsafe void Store(bool* address, Vector128<ushort> data) =>
-            Vector64.Store(Vector64.Create(
+        internal static unsafe void Store(bool* address, Vector64<byte> data) => *(long*)address = 0x0101010101010101 & data.AsInt64()[0];
+
+        internal static Vector64<byte> ConvertToVector64BByte(Vector128<ushort> data) => Vector64.Create(
                 (byte)data[0], (byte)data[1],
                 (byte)data[2], (byte)data[3],
                 (byte)data[4], (byte)data[5],
-                (byte)data[6], (byte)data[7]) & Vector64.Create((byte)1), (byte*)address);
+                (byte)data[6], (byte)data[7]);
+
+        //internal static unsafe void Store(bool* address, Vector128<ushort> data) =>
+        //    Vector64.Store(Vector64.Create(
+        //        (byte)data[0], (byte)data[1],
+        //        (byte)data[2], (byte)data[3],
+        //        (byte)data[4], (byte)data[5],
+        //        (byte)data[6], (byte)data[7]) & Vector64.Create((byte)1), (byte*)address);
         //internal static Vector128<ushort> Create(bool arg) => Vector128.Create(arg ? ushort.MaxValue : ushort.MinValue);
 
         internal static Vector128<short> Add(Vector128<short> left, Vector128<short> right) => Base.Add(left, right);
@@ -155,7 +164,7 @@ namespace Linq2d.CodeGen.Intrinsics
         #region Vector-2
 
         internal static unsafe void Store(bool* address, Vector128<ulong> data) =>
-            *(ushort*)address = (ushort)((data[1] << 8 | data[0]) & 0x101);
+            *(ushort*)address = (ushort)((data[1] & 1) << 8 | data[0] & 1);
         internal static Vector128<long> Add(Vector128<long> left, Vector128<long> right) => Base.Add(left, right);
         
         internal static Vector128<ulong> Add(Vector128<ulong> left, Vector128<ulong> right) => Base.Add(left, right);
@@ -191,8 +200,8 @@ namespace Linq2d.CodeGen.Intrinsics
         internal static unsafe void Store(ulong* address, Vector128<ulong> data) => Base.Store(address, data);
         
         internal static unsafe void Store(double* address, Vector128<double> data) => Base.Store(address, data);
-        internal static Vector128<ulong> CompareEqual(Vector128<long> left, Vector128<long> right) => Base.CompareEqual(left.AsDouble(), right.AsDouble()).AsUInt64();
-        internal static Vector128<ulong> CompareEqual(Vector128<ulong> left, Vector128<ulong> right) => Base.CompareEqual(left.AsDouble(), right.AsDouble()).AsUInt64();
+        internal static Vector128<ulong> CompareEqual(Vector128<long> left, Vector128<long> right) => Base.CompareEqual(Base.Subtract(left, right).AsDouble(), Vector128<double>.Zero).AsUInt64();
+        internal static Vector128<ulong> CompareEqual(Vector128<ulong> left, Vector128<ulong> right) => Base.CompareEqual(Base.Subtract(left, right).AsDouble(), Vector128<double>.Zero).AsUInt64();
         internal static Vector128<ulong> CompareEqual(Vector128<double> left, Vector128<double> right) => Base.CompareEqual(left, right).AsUInt64();
         internal static Vector128<long> Subtract(Vector128<long> left, Vector128<long> right) => Base.Subtract(left, right);
 

@@ -176,7 +176,19 @@ namespace Linq2d.CodeGen
             where T : unmanaged
             where R : unmanaged
             => InitConvert(method);
+        public void InitConvert256to64<T, R>(Func<Vector256<T>, Vector64<R>> method)
+            where T : unmanaged
+            where R : unmanaged
+            => InitConvert(method);
+        public void InitConvert256to32<T, R>(Func<Vector256<T>, Vector32<R>> method)
+            where T : unmanaged
+            where R : unmanaged
+            => InitConvert(method);
         public void InitConvert128to64<T, R>(Func<Vector128<T>, Vector64<R>> method)
+            where T : unmanaged
+            where R : unmanaged
+            => InitConvert(method);
+        public void InitConvert128to32<T, R>(Func<Vector128<T>, Vector32<R>> method)
             where T : unmanaged
             where R : unmanaged
             => InitConvert(method);

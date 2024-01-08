@@ -1,5 +1,8 @@
-﻿using System.Runtime.CompilerServices;
+﻿using Linq2d.CodeGen.Fake;
+using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
+using System.Security.Cryptography;
 using Base = System.Runtime.Intrinsics.X86.Avx2;
 
 #pragma warning disable CA1857
@@ -79,15 +82,14 @@ namespace Linq2d.CodeGen.Intrinsics
         internal static unsafe Vector256<int> ConvertToVector256Int32(sbyte* address) => Base.ConvertToVector256Int32(address);
         internal static unsafe Vector256<int> ConvertToVector256Int32(short* address) => Base.ConvertToVector256Int32(address);
         internal static unsafe Vector256<int> ConvertToVector256Int32(ushort* address) => Base.ConvertToVector256Int32(address);
-//        private static readonly Vector256<byte> _shuffle = Vector256.Create(2, 3, 6, 7, 10, 11, 14, 15, 18, 19, 22, 23, 26, 27, 30, 31, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0);
 
-        private static readonly Vector128<byte> _shuffle128 = Vector128.Create(0, 1, 4, 5, 8, 9, 12, 13, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0);
+        private static readonly Vector128<byte> _shuffleInt = Vector128.Create(0, 1, 4, 5, 8, 9, 12, 13, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0);
         internal static Vector128<short> ConvertToVector128Int16(Vector256<int> arg)
-                => Vector128.Create(Base.Shuffle(arg.GetLower().AsByte(), _shuffle128).GetLower(),
-                                    Base.Shuffle(arg.GetUpper().AsByte(), _shuffle128).GetLower()).AsInt16();
-        internal static Vector128<ushort> ConvertToVector128Int16(Vector256<uint> arg)
-            => Vector128.Create(Base.Shuffle(arg.GetLower().AsByte(), _shuffle128).GetLower(),
-                                Base.Shuffle(arg.GetUpper().AsByte(), _shuffle128).GetLower()).AsUInt16();
+                => Vector128.Create(Base.Shuffle(arg.GetLower().AsByte(), _shuffleInt).GetLower(),
+                                    Base.Shuffle(arg.GetUpper().AsByte(), _shuffleInt).GetLower()).AsInt16();
+        internal static Vector128<ushort> ConvertToVector128UInt16(Vector256<uint> arg)
+            => Vector128.Create(Base.Shuffle(arg.GetLower().AsByte(), _shuffleInt).GetLower(),
+                                Base.Shuffle(arg.GetUpper().AsByte(), _shuffleInt).GetLower()).AsUInt16();
         //internal static Vector128<ushort> ConvertToVector128Int16(Vector256<uint> arg) => Base.Shuffle(arg.AsByte(), _shuffle).GetLower().AsUInt16();
         internal static Vector256<int> MultiplyLow(Vector256<int> left, Vector256<int> right) => Base.MultiplyLow(left, right);
         internal static Vector256<uint> MultiplyLow(Vector256<uint> left, Vector256<uint> right) => Base.MultiplyLow(left, right);
@@ -100,5 +102,16 @@ namespace Linq2d.CodeGen.Intrinsics
 
         internal static unsafe Vector256<short> ConvertToVector256Int16(byte* address) => Base.ConvertToVector256Int16(address);
         internal static unsafe Vector256<short> ConvertToVector256Int16(sbyte* address) => Base.ConvertToVector256Int16(address);
+
+        internal static Vector64<byte> ConvertToVector64Byte(Vector256<uint> vector) => Sse2.ConvertToVector64BByte(ConvertToVector128UInt16(vector));
+
+        private static readonly Vector128<byte> _shuffleShort = Vector128.Create(0, 2, 4, 6, 8, 10, 12, 14, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0);
+
+        internal static Vector128<byte> ConvertToVector128Byte(Vector256<ushort> arg) =>             
+            Vector128.Create(Base.Shuffle(arg.GetLower().AsByte(), _shuffleShort).GetLower(),
+                             Base.Shuffle(arg.GetUpper().AsByte(), _shuffleShort).GetLower()).AsByte();
+
+        internal static Vector32<byte> ConvertToVector32Byte(Vector256<ulong> arg) 
+            => new Vector32<byte>((byte)arg[0], (byte)arg[1], (byte)arg[2], (byte)arg[3]);
     }
 }

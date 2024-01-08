@@ -88,6 +88,8 @@ namespace Linq2d.CodeGen.Intrinsics
 
         internal static Vector256<double> Sqrt(Vector256<double> arg) => Base.Sqrt(arg);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static unsafe void Store(bool* address, Vector256<byte> data) => Base.Store((byte*)address, Base.And(data.AsDouble(), Vector256.Create((byte)1).AsDouble()).AsByte());
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static unsafe void Store(byte* address, Vector256<byte> data) => Base.Store(address, data);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static unsafe void Store(sbyte* address, Vector256<sbyte> data) => Base.Store(address, data);

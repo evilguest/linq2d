@@ -1,6 +1,7 @@
 ﻿using System.Runtime.Intrinsics;
 using System.Runtime.CompilerServices;
 using Base = System.Runtime.Intrinsics.X86.Sse;
+using Linq2d.CodeGen.Fake;
 
 namespace Linq2d.CodeGen.Intrinsics
 {
@@ -38,8 +39,10 @@ namespace Linq2d.CodeGen.Intrinsics
             0x01010100,
             0x01010101
         ];
-        internal static unsafe void Store(bool* destination, Vector128<uint> data) =>
-            *(uint*)destination = _ui2b[Base.MoveMask(data.AsSingle())];
+        internal static unsafe Vector32<byte> ConvertToVector32Byte(Vector128<uint> data) =>
+            Vector32.Create(_ui2b[Base.MoveMask(data.AsSingle())]).AsByte();
+
+        internal static unsafe void Store(bool* address, Vector32<byte> data) => *(int*)address = data._i & 0x01010101;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static Vector128<float> Add(Vector128<float> arg1, Vector128<float> arg2) => Base.Add(arg1, arg2);

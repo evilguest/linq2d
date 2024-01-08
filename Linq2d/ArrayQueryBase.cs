@@ -328,7 +328,8 @@ namespace Linq2d
                                             ilg.Ldloc(pTrgs[c]);
                                             kcs.Load2dPointerOffset(Results[c], iVar, jVar);
                                             kcs.Compile(vectorKernels[c]);
-                                            ilg.Call(VectorData.VectorInfo[vectorizationResults[c].Step].StoreOperations[Results[c]]);
+                                            var sm = VectorData.VectorInfo[vectorizationResults[c].Step].StoreOperations[Results[c]];
+                                            ilg.Call(sm);
                                         }
                                     }
                                     ilg.Increment(j, minStep);

@@ -592,13 +592,18 @@ namespace Linq2d.Tests.Vectorization
         [Fact]
         public void ULongEquality()
         {
-            var source1 = ArrayHelper.InitAllRand(70, 30, 42L, x => (ulong)x);
-            var source2 = ArrayHelper.InitAllRand(70, 30, 17L, x => (ulong)x);
-            var expect = ArrayHelper.InitAllRand(70, 30, 42L, 17L, (x, y) => (ulong)x == (ulong)y);
+            var source1 = ArrayHelper.InitAllRand(1, 2000, 17L, x => (ulong)x);
+            var source2 = ArrayHelper.InitAllRand(1, 2000, 17L, x => (ulong)x & 0xFFFFFFFFFFFFFFFE);
+            var expect = ArrayHelper.InitAllRand(1, 2000, 17L, x => x % 2 == 0); // we're flipping the low bit only on odd numbers
             var q = from s1 in source1
                     from s2 in source2
                     select s1 == s2;
-            Assert.Equal(expect, q.ToArray());
+            var a = q.ToArray();
+            for (int i = 0; i < source1.GetLength(0); i++)
+                for (int j = 0; j < source1.GetLength(1); j++)
+                    if (expect[i, j] != a[i, j])
+                        throw new Exception($"error at [{i},{j}]: {expect[i, j]}!={a[i, j]}");
+            Assert.Equal(expect, a);
             var iv = (IVectorizable)q;
             AssertVectorized(iv, 2);
         }

@@ -12,13 +12,16 @@ namespace Linq2d.CodeGen
     {
         protected override void InitSse()
         {
+            InitConditional<Vector256<ulong>, Vector32<byte>>(Vector32.DoubleConditional);
             InitType128<float>();
             InitLift<float>(Vector128.Create);
 
             InitStore<float>(Sse.Store);
             InitStore<int>(Sse.Store);
             InitStore<uint>(Sse.Store);
-            InitStore<bool, Vector128<uint>>(Sse.Store);
+            
+            InitStore<bool, Vector32<byte>>(Sse.Store);
+            InitConvert128to32<uint, byte>(Sse.ConvertToVector32Byte);
             InitLoadAndConvert<float>(Sse.LoadVector128);
 
 
@@ -50,6 +53,7 @@ namespace Linq2d.CodeGen
             InitType64<ushort>();
             InitLoadAndConvert<ushort>(Sse2.LoadVector64);
             InitConvert128to64<int, ushort>(Sse2.ConvertToVector64UInt16);
+            InitConvert128to64<uint, ushort>(Sse2.ConvertToVector64UInt16);
             InitConvert128to64<uint, ushort>(Sse2.ConvertToVector64UInt16);
             InitLift<ushort>(Vector64.Create);
             InitStore64<ushort>(Sse2.Store);
@@ -175,7 +179,6 @@ namespace Linq2d.CodeGen
             InitConditional256<double, ulong>(Avx.BlendVariable);
             InitConditional256<long, ulong>(Avx.BlendVariable);
             InitConditional256<ulong, ulong>(Avx.BlendVariable);
-            InitConditional<Vector256<byte>, Vector32<byte>>(Vector32.DoubleConditional);
 
             InitUnary256<double>(ExpressionType.Negate, Avx.Negate);
         }
@@ -188,6 +191,8 @@ namespace Linq2d.CodeGen
             InitLoadAndConvert<ushort, long>(Avx2.ConvertToVector256Int64);
             InitLoadAndConvert<int, long>(Avx2.ConvertToVector256Int64);
             InitLoadAndConvert<uint, long>(Avx2.ConvertToVector256Int64);
+
+            InitConvert256to32<ulong, byte>(Avx2.ConvertToVector32Byte);
 
             InitConvert<int, long>(Avx2.ConvertToVector256Int64);
             InitConvert<uint, long>(Avx2.ConvertToVector256Int64);

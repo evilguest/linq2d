@@ -166,7 +166,7 @@ namespace Linq2d.Tests.Vectorization
                     select (short)-s;
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
-            AssertVectorized(iv, 8);
+            AssertVectorized(iv, 16);
         }
 
         [Fact]
@@ -353,6 +353,20 @@ namespace Linq2d.Tests.Vectorization
             var iv = (IVectorizable)q;
             AssertVectorized(iv, 4);
         }
+        [Fact]
+        public void ULongEquality()
+        {
+            var source1 = ArrayHelper.InitAllRand(70, 40, 42L, x => (ulong)x);
+            var source2 = ArrayHelper.InitAllRand(70, 40, 42L, x => (ulong)x & 0xFFFFFFFFFFFFFFFE);
+            var expect = ArrayHelper.InitAllRand(70, 40, 42L, x => x % 2 == 0); // we're flipping the low bit only on odd numbers
+            var q = from s1 in source1
+                    from s2 in source2
+                    select s1 == s2;
+            Assert.Equal(expect, q.ToArray());
+
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 4);
+        }
 
         [Fact]
         public void LongShiftLeft()
@@ -384,6 +398,17 @@ namespace Linq2d.Tests.Vectorization
             var expect = ArrayHelper.InitAllRand(70, 40, 42, x => x >> 3);
             var q = from s in source
                     select s >> 3;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 8);
+        }
+        [Fact]
+        public void IntNegation()
+        {
+            var source = ArrayHelper.InitAllRand(100, 110, 42);
+            var expect = ArrayHelper.InitAllRand(100, 110, 42, s => -s);
+            var q = from s in source
+                    select -s;
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
             AssertVectorized(iv, 8);
@@ -423,6 +448,74 @@ namespace Linq2d.Tests.Vectorization
             Assert.Equal(expect, q.ToArray());
             var iv = (IVectorizable)q;
             AssertVectorized(iv, 8);
+        }
+        [Fact]
+        public void SByteEquality()
+        {
+            var source1 = ArrayHelper.InitAllRand(70, 40, 42, x=>(sbyte)x);
+            var source2 = ArrayHelper.InitAllRand(70, 40, 42, x => x < 0 ? (sbyte)-x : (sbyte)x);
+            var expect = ArrayHelper.InitAllRand(70, 40, 42, x => x >= 0); // we're inverting the sign only for the negative x'es.
+            var q = from s1 in source1
+                    from s2 in source2
+                    select s1 == s2;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 32);
+        }
+
+        [Fact]
+        public void ByteEquality()
+        {
+            var source1 = ArrayHelper.InitAllRand(70, 40, 42, x => (byte)x);
+            var source2 = ArrayHelper.InitAllRand(70, 40, 42, x => (byte)(x & 0xFFFFFFFE));
+            var expect = ArrayHelper.InitAllRand(70, 40, 42, x => x % 2 == 0); // we're flipping the low bit only on odd numbers
+            var q = from s1 in source1
+                    from s2 in source2
+                    select s1 == s2;
+            Assert.Equal(expect, q.ToArray());
+
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 32);
+        }
+        [Fact]
+        public void ShortEquality()
+        {
+            var source1 = ArrayHelper.InitAllRand(70, 40, 42, x => (short)x);
+            var source2 = ArrayHelper.InitAllRand(70, 40, 42, x => x < 0 ? (short)-x : (short)x);
+            var expect = ArrayHelper.InitAllRand(70, 40, 42, x => x >= 0); // we're inverting the sign only for the negative x'es.
+            var q = from s1 in source1
+                    from s2 in source2
+                    select s1 == s2;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 16);
+        }
+
+        [Fact]
+        public void UshortEquality()
+        {
+            var source1 = ArrayHelper.InitAllRand(70, 40, 42, x => (ushort)x);
+            var source2 = ArrayHelper.InitAllRand(70, 40, 42, x => (ushort)(x & 0xFFFFFFFE));
+            var expect = ArrayHelper.InitAllRand(70, 40, 42, x => x % 2 == 0); // we're flipping the low bit only on odd numbers
+            var q = from s1 in source1
+                    from s2 in source2
+                    select s1 == s2;
+            Assert.Equal(expect, q.ToArray());
+
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 16);
+        }
+
+        [Fact]
+        public void SByteNegation()
+        {
+            var source = ArrayHelper.InitAllRand(100, 110, 42, x => (sbyte)x);
+            var expect = ArrayHelper.InitAllRand(100, 110, 42, s => (sbyte)-s);
+            var q = from s in source
+                    select (sbyte)-s;
+            Assert.Equal(expect, q.ToArray());
+            var iv = (IVectorizable)q;
+            AssertVectorized(iv, 32);
         }
 
     }
