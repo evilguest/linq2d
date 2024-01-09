@@ -5,7 +5,7 @@ namespace ImageHelpers.Tests
         [Theory]
         [InlineData("GrayGradient.bmp")]
         [InlineData("ColorGradient.bmp")]
-        [InlineData("p00743.bmp.gz")]
+        [InlineData("p00743.png")]
         public void ReadBmp(string fileName)
         {
             var s = IO.ReadImage(fileName);
@@ -15,7 +15,6 @@ namespace ImageHelpers.Tests
         [InlineData("GrayGradient.bmp")]
         [InlineData("ColorGradient.bmp")]
         [InlineData("p00743.png")]
-        [InlineData("p00743.bmp.gz")]
         public void GrayScaleBmp(string fileName)
         {
             var s = IO.ReadGrayScale8(fileName);
