@@ -48,16 +48,14 @@ namespace SauvolaBinarize
 
             foreach (var fileName in args)
             {
-                var (data, palette) = IO.ReadImage(fileName);
-                data = (from d in data
-                        select palette[d]).ToArray();
+                var data = IO.ReadGrayScale8(fileName);
 
                 Array2d.TryVectorize = true;
                 var (s, sq) = integrate(data);
                 var t = getThreshold(s, sq);
                 var r = detect(data, t);
-                IO.WriteImage(Path.ChangeExtension(fileName, ".threshold.bmp"), t);
-                IO.WriteImage(Path.ChangeExtension(fileName, ".linq.bmp"), r);
+                IO.WriteImage(Path.ChangeExtension(fileName, ".threshold.png"), t);
+                IO.WriteImage(Path.ChangeExtension(fileName, ".linq.png"), r);
             }
         }
     }
