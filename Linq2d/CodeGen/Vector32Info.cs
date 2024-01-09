@@ -1,11 +1,9 @@
 ﻿using System.Linq.Expressions;
 using System.Runtime.Intrinsics;
+using Linq2d.CodeGen.Intrinsics;
 
 namespace Linq2d.CodeGen
 {
-    using Intrinsics;
-    using System;
-
     public unsafe class Vector32Info : VectorInfo
     {
         protected override void InitAvx()

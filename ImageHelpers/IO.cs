@@ -1,38 +1,32 @@
 ﻿using System;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
-
+using SkiaSharp;
 
 namespace ImageHelpers
 {
-    public class IO
+    public static class IO
     {
-        public unsafe static (byte[,], byte[]) ReadImage(string fileName)
+
+        public static byte[,] AsGrayScale8(this SKBitmap bitmap)
+        {
+            var data = new byte[bitmap.Height, bitmap.Width];
+            for (int i = 0; i < bitmap.Height; i++)
+                for (int j = 0; j < bitmap.Width; j++)
+                {
+                    var p = bitmap.GetPixel(j, i);
+                    data[i, j] = (byte)Math.Round(p.Red * 0.21f + p.Green * 0.72f + p.Blue * 0.07f);
+                }
+            return data;
+        }
+
+        public static byte[,] ReadGrayScale8(string fileName)
+            => ReadImage(fileName).AsGrayScale8();
+
+        public static SKBitmap ReadImage(string fileName)
         {
             using(var s = GetReadStream(fileName))
-            using (var b = new Bitmap(s))
-            {
-                var brightness = (from color in b.Palette.Entries select (byte)(color.GetBrightness() * byte.MaxValue)).ToArray();
-
-                BitmapData d = b.LockBits(new Rectangle(0, 0, b.Width, b.Height), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
-                try
-                {
-                    Console.WriteLine($"Found the bitmap of {d.Width}*{d.Height}");
-                    var data = new byte[d.Height, d.Stride];
-                    fixed (byte* pData = &data[0, 0])
-                    {
-                        Buffer.MemoryCopy((byte*)d.Scan0, pData, data.LongLength, d.Height * d.Stride);
-                    }
-                    return (data, brightness);
-                }
-                finally
-                {
-                    b.UnlockBits(d);
-                }
-            }
+                return SKBitmap.Decode(s);
         }
 
         private static Stream GetReadStream(string fileName)
@@ -42,26 +36,19 @@ namespace ImageHelpers
 
         }
 
-        public unsafe static void WriteImage(string fileName, byte[,] data)
+        public unsafe static void WriteImage(string fileName, byte[,] grayscale8)
         {
-            using (var b = new Bitmap(data.GetLength(1), data.GetLength(0), PixelFormat.Format8bppIndexed))
+            using(var s = File.OpenWrite(fileName))
+            using (var b = new SKBitmap(grayscale8.GetLength(1), grayscale8.GetLength(0), SKColorType.Gray8, SKAlphaType.Opaque))
             {
-                var p = b.Palette;
-                for (int i = 0; i < 256; i++)
-                    p.Entries[i] = Color.FromArgb(i, i, i);
-                b.Palette = p;
-                BitmapData d = b.LockBits(new Rectangle(0, 0, b.Width, b.Height), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);
-                try
-                {
-                    fixed (byte* pData = &data[0, 0])
-                        Buffer.MemoryCopy(pData, (byte*)d.Scan0, d.Stride * d.Height, data.LongLength);
-                }
-                finally
-                {
-                    b.UnlockBits(d);
-                }
-                b.Save(fileName);
+                var p = b.GetPixels();
+                var target = (byte*)p.ToPointer();
+                fixed (byte* source = &grayscale8[0, 0])
+                    Buffer.MemoryCopy(source, target, grayscale8.Length, b.GetPixelSpan().Length);
+                b.Encode(s, SKEncodedImageFormat.Png, 255);
+                s.Flush();
             }
         }
     }
 }
+

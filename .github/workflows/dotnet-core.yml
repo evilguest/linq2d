@@ -28,7 +28,7 @@ jobs:
       uses: coverallsapp/github-action@v2
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        files: ./Linq2d.Tests/TestResults/coverage.info ./Linq2d.Tests.Vectorization/TestResults/coverage.info
+        files: ./Linq2d.Tests/TestResults/coverage.info ./Linq2d.Tests.Vectorization/TestResults/coverage.info ./ImageHelpers.Tests/TestResults/coverage.info
         format: lcov
       continue-on-error: true
     - name: Perform the Release Build
