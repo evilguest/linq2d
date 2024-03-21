@@ -4,7 +4,6 @@
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.Linq" #>
 <#@ include file="..\CommonT4.tt" #>
-using System;
 using System.Linq.Expressions;
 
 namespace Linq2d

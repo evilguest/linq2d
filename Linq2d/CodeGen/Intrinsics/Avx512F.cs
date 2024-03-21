@@ -1,5 +1,4 @@
 ﻿using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.X86;
 using Base = System.Runtime.Intrinsics.X86.Avx512F;
 
 #pragma warning disable CA1857

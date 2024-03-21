@@ -13,8 +13,8 @@ namespace Linq2d.CodeGen
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public static Vector32<byte> Create(byte b) => new Vector32<byte>(b, b, b, b);
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public static Vector32<byte> CreateScalar(byte b) => new Vector32<byte>(b, 0, 0, 0);
+            //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+            //public static Vector32<byte> CreateScalar(byte b) => new Vector32<byte>(b, 0, 0, 0);
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public static Vector32<uint> Create(uint u) => new Vector32<uint>(u);

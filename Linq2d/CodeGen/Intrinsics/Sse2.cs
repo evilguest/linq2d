@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using Base = System.Runtime.Intrinsics.X86.Sse2;
 
@@ -30,7 +29,7 @@ namespace Linq2d.CodeGen.Intrinsics
         internal static unsafe void Store(byte* address, Vector128<byte> data) => Base.Store(address, data);
         internal static unsafe void Store(sbyte* address, Vector128<sbyte> data) => Base.Store(address, data);
         //        internal static Vector128<byte> Create(bool arg) => Vector128.Create(arg ? byte.MaxValue : byte.MinValue);
-        internal static unsafe void Store(bool* address, Vector128<byte> data) => Base.Store((byte*) address, Base.And(data, Vector128.Create((byte)(1))));
+        internal static unsafe void Store(bool* address, Vector128<byte> data) => Base.Store((byte*) address, Base.And(data, Vector128.Create((byte)1)));
         #endregion
 
         #region Vector-8

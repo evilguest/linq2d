@@ -71,7 +71,7 @@ namespace Linq2d.Benchmarks
         }
 
 
-        [Benchmark(Baseline = true)]
+        [Benchmark]
         unsafe public int[,] IntegrateUnsafeVector()
         {
             if (!Avx2.IsSupported)
@@ -218,18 +218,12 @@ namespace Linq2d.Benchmarks
             }
             return res;
         }
-        
 
-        [Benchmark] 
-        public int[,] IntegrateLinqCachedScalar()
-        {
-            return _integrateScalar(_data);
-        }
+
         [Benchmark]
-        public int[,] IntegrateLinqCachedVector()
-        {
-            return _integrateVector(_data);
-        }
+        public int[,] IntegrateLinqCachedScalar() => _integrateScalar(_data);
+        [Benchmark]
+        public int[,] IntegrateLinqCachedVector() => _integrateVector(_data);
 
 
         [Benchmark]
@@ -503,7 +497,8 @@ namespace Linq2d.Benchmarks
                 }
             }
         }
-        [Benchmark] public int[,] IntegrateUnsafeScalar() // 3 place; +32% to the winner
+        [Benchmark(Baseline = true)] 
+        public int[,] IntegrateUnsafeScalar() // 3 place; +32% to the winner
         {
             int[,] res = new int[_data.Height(), _data.Width()];
             IntegrateUnsafeScalar(_data, res);

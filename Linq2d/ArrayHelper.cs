@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
+// using System.Collections;
+// using System.Collections.Generic;
+// using System.Diagnostics.CodeAnalysis;
+// using System.Text;
 
 namespace Linq2d
 {
     public static class ArrayHelper
     {
         public static T[,] Create<T>(int h, int w, int startX, int startY)
-            => (T[,])Array.CreateInstance(typeof(T), new int[] { h, w }, new int[] { startX, startY });
+            => (T[,])Array.CreateInstance(typeof(T), [h, w], [startX, startY]);
         public static int Height<T>(this T[,] arr) => (arr ?? throw new ArgumentNullException(nameof(arr))).GetLength(0);
         public static int Width<T>(this T[,] arr) => (arr ?? throw new ArgumentNullException(nameof(arr))).GetLength(1);
 
@@ -38,7 +38,7 @@ namespace Linq2d
             return hasData ? size : throw new InvalidOperationException("No sources are provided");
         }
 
-        public static ArraySource<T> Wrap<T>(this T[,] array) => new ArraySource<T>(array);
+        public static ArraySource<T> Wrap<T>(this T[,] array) => new(array);
 
         public static byte[,] Init1Diagonal(int size) => InitDiagonal(size, (byte)1);
         public static T[,] InitDiagonal<T>(int size, T value)

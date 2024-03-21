@@ -1,7 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Linq2d.Tests;
 using Linq2d.Tests.Vectorization;
-using Mono.Linq.Expressions;
 using System;
 
 namespace Linq2d.Benchmarks
@@ -24,7 +23,7 @@ namespace Linq2d.Benchmarks
             _preIntegrateVector = GetIntegral().Transform;
             var edgeDetectVector = GetDetect(new int[0, 0], new long[0, 0]);
             _edgeDetectVector = edgeDetectVector.Transform;
-            IVectorizable ev = ((IVectorizable)edgeDetectVector);
+            IVectorizable ev = (IVectorizable)edgeDetectVector;
             if (!ev.Vectorized)
                 Console.Error.WriteLine($"Sauvola Edge Detect vectorization failed:\n{ev.Report}");
             Array2d.TryVectorize = false; // force scalar
@@ -39,7 +38,7 @@ namespace Linq2d.Benchmarks
         [Benchmark]
         public byte[,] SafeSauvola()
         {
-            return Tests.SauvolaBinarize.BaseBinarize(_data);
+            return SauvolaBinarize.BaseBinarize(_data);
         }
         [Benchmark(Baseline = true)]
         public byte[,] UnsafeSauvolaScalar()
@@ -108,7 +107,7 @@ namespace Linq2d.Benchmarks
 
             select g > threshold ? byte.MaxValue : byte.MinValue;
 
-        [Params(5)] //[Params(1, 2, 3, 4, 5, 6, 7, 8)]
+        [Params(25)] //[Params(1, 2, 3, 4, 5, 6, 7, 8)]
         public int WHalf { get; set; } = 5;
         public static readonly double K = 0.1;
 

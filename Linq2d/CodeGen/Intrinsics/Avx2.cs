@@ -1,8 +1,6 @@
 ﻿using Linq2d.CodeGen.Fake;
-using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
-using System.Security.Cryptography;
 using Base = System.Runtime.Intrinsics.X86.Avx2;
 
 #pragma warning disable CA1857

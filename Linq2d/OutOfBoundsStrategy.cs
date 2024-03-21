@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Diagnostics;
+
 using System.Linq.Expressions;
-using System.Reflection;
 using Linq2d.Expressions;
 using static System.Linq.Expressions.Expression;
 using static Linq2d.Expressions.ExpressionHelper;
 namespace Linq2d
 {
     using GetCoordinate = Func<Expression, Expression, Expression>;
-    public struct OutOfBoundsPolicy
+    public readonly struct OutOfBoundsPolicy
     {
         public Expression Value { get; }
         public GetCoordinate Coordinate { get; }
@@ -34,37 +33,29 @@ namespace Linq2d
         public static GetCoordinate ConstantCoordinate(int value) => (coordinate, upperBoundExclusive) => Constant(value);
 
     }
-    public abstract class OutOfBoundsStrategy
+    public abstract class OutOfBoundsStrategy(OutOfBoundsPolicy xBelow, OutOfBoundsPolicy yBelow, OutOfBoundsPolicy xAbove, OutOfBoundsPolicy yAbove)
     {
         protected OutOfBoundsStrategy(OutOfBoundsPolicy all) : this(all, all) { }
         protected OutOfBoundsStrategy(OutOfBoundsPolicy below, OutOfBoundsPolicy above) : this(below, below, above, above) { }
-        protected OutOfBoundsStrategy(OutOfBoundsPolicy xBelow, OutOfBoundsPolicy yBelow, OutOfBoundsPolicy xAbove, OutOfBoundsPolicy yAbove)
-        {
-            XBelow = xBelow;
-            XAbove = xAbove;
-            YBelow = yBelow;
-            YAbove = yAbove;
-        }
 
-        public OutOfBoundsPolicy XBelow { get; init; }
-        public OutOfBoundsPolicy XAbove { get; init; }
-        public OutOfBoundsPolicy YBelow{ get; init; }
-        public OutOfBoundsPolicy YAbove{ get; init; }
+        public OutOfBoundsPolicy XBelow { get; init; } = xBelow;
+        public OutOfBoundsPolicy XAbove { get; init; } = xAbove;
+        public OutOfBoundsPolicy YBelow { get; init; } = yBelow;
+        public OutOfBoundsPolicy YAbove { get; init; } = yAbove;
 
 
         public static OutOfBoundsStrategyUntyped Substitute(object value)
-            => new OutOfBoundsStrategyUntyped(OutOfBoundsPolicy.ReplaceBy(value));
+            => new(OutOfBoundsPolicy.ReplaceBy(value));
 
         public static OutOfBoundsStrategy<T> Substitute<T>(T value)
-            => new OutOfBoundsStrategy<T>(OutOfBoundsPolicy.ReplaceBy(value));
+            => new(OutOfBoundsPolicy.ReplaceBy(value));
         public static OutOfBoundsStrategy<T> Default<T>()
-            => new OutOfBoundsStrategy<T>(OutOfBoundsPolicy.Throw<T>());
+            => new(OutOfBoundsPolicy.Throw<T>());
         public static OutOfBoundsStrategyUntyped NearestNeighbour { get; } 
-            = new OutOfBoundsStrategyUntyped(
-                OutOfBoundsPolicy.LimitLow, 
-                OutOfBoundsPolicy.LimitHigh);
+            = new (OutOfBoundsPolicy.LimitLow, 
+                   OutOfBoundsPolicy.LimitHigh);
         public static OutOfBoundsStrategy<T> Integral<T>(T initValue)
-            => new OutOfBoundsStrategy<T>(OutOfBoundsPolicy.ReplaceByAndMoveTo(initValue, -1),
+            => new(OutOfBoundsPolicy.ReplaceByAndMoveTo(initValue, -1),
                 OutOfBoundsPolicy.LimitHigh);
     }
     public class OutOfBoundsStrategy<T> : OutOfBoundsStrategy {

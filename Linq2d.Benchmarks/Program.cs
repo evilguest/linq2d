@@ -1,5 +1,4 @@
 ﻿using BenchmarkDotNet.Running;
-using System.Diagnostics;
 
 namespace Linq2d.Benchmarks
 {

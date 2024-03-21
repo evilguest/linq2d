@@ -1,7 +1,6 @@
 ﻿using Linq2d.ComplexVector;
 using System;
 using System.Numerics;
-using System.Runtime.Intrinsics;
 using Xunit;
 
 namespace Linq2d.Tests

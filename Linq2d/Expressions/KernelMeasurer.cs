@@ -2,42 +2,33 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Runtime.ConstrainedExecution;
-using static System.Linq.Expressions.Expression;
 
 namespace Linq2d.Expressions
 {
     class KernelMeasurer : ExpressionVisitor
     {
-        private Dictionary<ParameterExpression, (int minX, int maxX, int minY, int maxY)> _accesses = new Dictionary<ParameterExpression, (int minX, int maxX, int minY, int maxY)>();
-        protected override Expression VisitUnary(UnaryExpression node)
+        private readonly Dictionary<ParameterExpression, AccessRange> _accesses = [];
+        public IReadOnlyDictionary<ParameterExpression, AccessRange> Accesses { get => _accesses; }
+/*        protected override Expression VisitUnary(UnaryExpression node)
         {
             //if (node.NodeType == ExpressionType.Convert && node.Operand.Type.IsGenericType && node.Operand.Type.GetGenericTypeDefinition() == typeof(Cell<>))
             // visit [0,0]
             return base.VisitUnary(node);
         }
-
-        public IReadOnlyDictionary<ParameterExpression, (int minX, int maxX, int minY, int maxY)> Accesses { get => _accesses; }
-        public (int minX, int maxX, int minY, int maxY) MergedAccesses
+*/
+        public AccessRange MergedAccesses
         {
             get
             {
-                (int minX, int maxX, int minY, int maxY) access = (0, 0, 0, 0);
+                AccessRange range = new (0, 0);
 
                 foreach (var acc in Accesses.Values)
-                    access = Merge(access, acc);
-                return access;
+                    range &= acc;
+
+                return range;
             }
         }
-        private static (int minX, int maxX, int minY, int maxY) Merge((int minX, int maxX, int minY, int maxY) left, (int minX, int maxX, int minY, int maxY) right)
-        {
-            return (
-                left.minX < right.minX ? left.minX : right.minX,
-                left.maxX > right.maxX ? left.maxX : right.maxX,
-                left.minY < right.minY ? left.minY : right.minY,
-                left.maxY > right.maxY ? left.maxY : right.maxY
-                );
-        }
+
 
         protected override Expression VisitMethodCall(MethodCallExpression node)
         {
@@ -54,16 +45,22 @@ namespace Linq2d.Expressions
 
         private void RegisterAccess(ParameterExpression pe, int x, int y)
         {
-            var a = (minX: x, maxX: x, minY: y, maxY: y);
-            if (_accesses.ContainsKey(pe))
-            {
-                a = _accesses[pe];
-                a.minX = Math.Min(a.minX, x);
-                a.maxX = Math.Max(a.maxX, x);
-                a.minY = Math.Min(a.minY, y);
-                a.maxY = Math.Max(a.maxY, y);
-            }
-            _accesses[pe] = a;
+            AccessRange range = new(x, y);
+            _accesses[pe] = _accesses.TryGetValue(pe, out var existingRange) 
+                ? range & existingRange 
+                : range;
         }
+    }
+
+    internal record struct AccessRange(int MinX, int MaxX, int MinY, int MaxY)
+    {
+        public AccessRange(int x, int y):this(x, x, y, y) {}
+        public static AccessRange operator &(AccessRange left, AccessRange right) 
+            => new(
+                Math.Min(left.MinX, right.MinX),
+                Math.Max(left.MaxX, right.MaxX),
+                Math.Min(left.MinY, right.MinY),
+                Math.Max(left.MaxY, right.MaxY)
+            );
     }
 }

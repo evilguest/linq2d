@@ -1,41 +1,29 @@
-﻿using Linq.Expressions.Deconstruct;
-using Linq2d.Expressions;
+﻿using Linq2d.Expressions;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection.Emit;
-using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace Linq2d.CodeGen
 {
-    abstract class KernelCompiler : ExpressionVisitor
+    abstract class KernelCompiler(ILGenerator generator, Expression width) : ExpressionVisitor
     {
-        private readonly ILGenerator _generator;
-        private readonly Dictionary<LabelTarget, Label> _labelMap = new Dictionary<LabelTarget, Label>();
-        private readonly Expression _width;
+        private readonly ILGenerator _generator = generator ?? throw new ArgumentNullException(nameof(generator));
+        private readonly Dictionary<LabelTarget, Label> _labelMap = [];
+        private readonly Expression _width = width ?? throw new ArgumentNullException(nameof(width));
         protected ILGenerator Generator { get => _generator; }
-        protected KernelCompiler(ILGenerator generator, Expression width)
-        {
-            _generator = generator ?? throw new ArgumentNullException(nameof(generator));
-            _width = width ?? throw new ArgumentNullException(nameof(width));
-        }
 
         public IDictionary<ParameterExpression, LocalBuilder> VariableMap { get; } = new Dictionary<ParameterExpression, LocalBuilder>();
 
         public void Compile(Expression expr) => Visit(expr);
-        public override Expression Visit(Expression node)
-        {
-            if (node == null)
-                return node;
-
-            switch (node.NodeType)
-            {
-                case ExpressionType.Assign: return VisitAssign((BinaryExpression)node);
-                default: return base.Visit(node);
-            }
-        }
+        public override Expression Visit(Expression node) => node == null
+                ? node
+                : node.NodeType switch
+                {
+                    ExpressionType.Assign => VisitAssign((BinaryExpression)node),
+                    _ => base.Visit(node),
+                };
 
         protected virtual Expression VisitAssign(BinaryExpression node)
         {
@@ -114,7 +102,7 @@ namespace Linq2d.CodeGen
             for (var i = 0; i < n; i++) r[i] = element;
             return r;
         }
-        private static Dictionary<Type, OpCode> _arrayStoreCodes = new Dictionary<Type, OpCode>()
+        private static readonly Dictionary<Type, OpCode> _arrayStoreCodes = new()
         {
             {typeof(byte),   OpCodes.Stelem_I1},
             {typeof(sbyte),  OpCodes.Stelem_I1},
@@ -138,8 +126,8 @@ namespace Linq2d.CodeGen
 
                 case ExpressionType.NewArrayInit:
                     var elementType = node.Type.GetElementType();
-                    var storeOpCode = _arrayStoreCodes.ContainsKey(elementType)
-                        ? _arrayStoreCodes[elementType]
+                    var storeOpCode = _arrayStoreCodes.TryGetValue(elementType, out OpCode value) 
+                        ? value 
                         : (elementType.IsClass ? OpCodes.Stelem_Ref : OpCodes.Stelem);
 
                     Generator.Emit(OpCodes.Ldc_I4, node.Expressions.Count);

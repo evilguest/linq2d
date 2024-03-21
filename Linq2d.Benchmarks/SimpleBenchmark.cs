@@ -1,13 +1,11 @@
 ﻿using BenchmarkDotNet.Attributes;
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace Linq2d.Benchmarks
 {
     [InProcess]
-    public class SaturatedMultiplyDoubleBenchmark 
+    public partial class SaturatedMultiplyDoubleBenchmark 
     {
         private double[,] array;
         private Func<double[,], double[,]> _transform;
@@ -39,19 +37,18 @@ namespace Linq2d.Benchmarks
             fixed (double* source = &data[0, 0])
             fixed (double* target = &result[0, 0])
             {
-                var r = SaturatedMultiplyDouble(h, w, source, target);
-                switch (r)
+                return SaturatedMultiplyDouble(h, w, source, target) switch
                 {
-                    case 0: return result;
-                    case -1: throw new InvalidOperationException("NULL input detected");
-                    case -2: throw new InvalidOperationException("NULL output detected");
-                    default: throw new InvalidOperationException($"Unexpected value {r} has been returned");
-                }
+                    0 => result,
+                    -1 => throw new InvalidOperationException("NULL input detected"),
+                    -2 => throw new InvalidOperationException("NULL output detected"),
+                    _ => throw new InvalidOperationException($"Unexpected value {SaturatedMultiplyDouble(h, w, source, target)} has been returned"),
+                };
             }
         }
 
-        [DllImport("SauvolaBinarizeCPP")]
-        private unsafe static extern int SaturatedMultiplyDouble(int h, int w, double* input, double* output);
+        [LibraryImport("SauvolaBinarizeCPP")]
+        private static unsafe partial int SaturatedMultiplyDouble(int h, int w, double* input, double* output);
 
     }
 }

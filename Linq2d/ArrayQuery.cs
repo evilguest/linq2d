@@ -62,7 +62,11 @@ namespace Linq2d
                 return _transform;
             }
         }
+        public void Test(int a)
+        {
+            System.Console.WriteLine(a);
 
+        }
         protected override R[,] GetResult() => Transform(Source.Array);
 
     }

@@ -1,9 +1,8 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 namespace Linq2d.Tests
 {
-    public static unsafe class UnmanagedSauvola
+    public static unsafe partial class UnmanagedSauvola
     {
         public static (int[,], long[,]) PreIntegrate(byte[,] data)
         {
@@ -15,14 +14,13 @@ namespace Linq2d.Tests
             fixed (int* pLinear = &linear[0, 0])
             fixed (long* pSquare = &square[0, 0])
             {
-                var r = preIntegrate(h, w, source, pLinear, pSquare);
-                switch (r)
+                return preIntegrate(h, w, source, pLinear, pSquare) switch
                 {
-                    case 0: return (linear, square);
-                    case -1: throw new InvalidOperationException("NULL input detected");
-                    case -2: throw new InvalidOperationException("NULL output detected");
-                    default: throw new InvalidOperationException($"Unexpected value {r} has been returned");
-                }
+                    0 => (linear, square),
+                    -1 => throw new InvalidOperationException("NULL input detected"),
+                    -2 => throw new InvalidOperationException("NULL output detected"),
+                    _ => throw new InvalidOperationException($"Unexpected value {preIntegrate(h, w, source, pLinear, pSquare)} has been returned"),
+                };
             }
 
         }
@@ -34,23 +32,22 @@ namespace Linq2d.Tests
             fixed (byte* source = &data[0, 0])
             fixed (byte* target = &result[0, 0])
             {
-                var r = sauvolaBinarize(h, w, source, target, wHalf, k);
-                switch (r)
+                return sauvolaBinarize(h, w, source, target, wHalf, k) switch
                 {
-                    case 0: return result;
-                    case -1: throw new InvalidOperationException("NULL input detected");
-                    case -2: throw new InvalidOperationException("NULL output detected");
-                    default: throw new InvalidOperationException($"Unexpected value {r} has been returned");
-                }
+                    0 => result,
+                    -1 => throw new InvalidOperationException("NULL input detected"),
+                    -2 => throw new InvalidOperationException("NULL output detected"),
+                    _ => throw new InvalidOperationException($"Unexpected value {sauvolaBinarize(h, w, source, target, wHalf, k)} has been returned"),
+                };
             }
         }
 
-        [DllImport("SauvolaBinarizeCPP")]
-        private static extern int sauvolaBinarize(int h, int w, byte* input, byte* output, int whalf, double K);
-        [DllImport("SauvolaBinarizeCPP")]
-        private static extern int preIntegrate(int h, int w, byte* input, int* linear, long* square);
+        [LibraryImport("SauvolaBinarizeCPP")]
+        private static partial int sauvolaBinarize(int h, int w, byte* input, byte* output, int whalf, double K);
+        [LibraryImport("SauvolaBinarizeCPP")]
+        private static partial int preIntegrate(int h, int w, byte* input, int* linear, long* square);
     }
-    public unsafe class UnmanagedC4
+    public unsafe partial class UnmanagedC4
     {
         public static int[,] TransformAsm(byte[,] data)
         {
@@ -60,14 +57,13 @@ namespace Linq2d.Tests
             fixed (byte* source = &data[0, 0])
             fixed (int* target = &result[0, 0])
             {
-                var r = c4filterAsm(h, w, source, target);
-                switch (r)
+                return c4filterAsm(h, w, source, target) switch
                 {
-                    case 0: return result;
-                    case -1: throw new InvalidOperationException("NULL input detected");
-                    case -2: throw new InvalidOperationException("NULL output detected");
-                    default: throw new InvalidOperationException($"Unexpected value {r} has been returned");
-                }
+                    0 => result,
+                    -1 => throw new InvalidOperationException("NULL input detected"),
+                    -2 => throw new InvalidOperationException("NULL output detected"),
+                    _ => throw new InvalidOperationException($"Unexpected value {c4filterAsm(h, w, source, target)} has been returned"),
+                };
             }
         }
         public static int[,] Transform(byte[,] data)
@@ -78,21 +74,20 @@ namespace Linq2d.Tests
             fixed (byte* source = &data[0, 0])
             fixed (int* target = &result[0, 0])
             {
-                var r = c4filter(h, w, source, target);
-                switch (r)
+                return c4filter(h, w, source, target) switch
                 {
-                    case 0: return result;
-                    case -1: throw new InvalidOperationException("NULL input detected");
-                    case -2: throw new InvalidOperationException("NULL output detected");
-                    default: throw new InvalidOperationException($"Unexpected value {r} has been returned");
-                }
+                    0 => result,
+                    -1 => throw new InvalidOperationException("NULL input detected"),
+                    -2 => throw new InvalidOperationException("NULL output detected"),
+                    _ => throw new InvalidOperationException($"Unexpected value {c4filter(h, w, source, target)} has been returned"),
+                };
             }
         }
 
-        [DllImport("SauvolaBinarizeCPP")]
-        private static extern int c4filter(int h, int w, byte* input, int* output);
-        [DllImport("SauvolaBinarizeCPP")]
-        private static extern int c4filterAsm(int h, int w, byte* input, int* output);
+        [LibraryImport("SauvolaBinarizeCPP")]
+        private static partial int c4filter(int h, int w, byte* input, int* output);
+        [LibraryImport("SauvolaBinarizeCPP")]
+        private static partial int c4filterAsm(int h, int w, byte* input, int* output);
     }
 
 }

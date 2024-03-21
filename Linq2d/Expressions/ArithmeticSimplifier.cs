@@ -11,7 +11,6 @@ namespace Linq2d.Expressions
 {
     using System;
     using System.Linq;
-
     public static class Arithmetic
     {
         public static Expression Simplify(Expression expression, IReadOnlyDictionary<Expression, (Expression minVal, Expression maxVal)> variableRanges)

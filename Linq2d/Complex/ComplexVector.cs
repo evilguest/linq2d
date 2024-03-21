@@ -5,7 +5,6 @@ namespace Linq2d.ComplexVector
 {
     using System;
     using System.Numerics;
-    using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
 
     //public struct Vector256Complex

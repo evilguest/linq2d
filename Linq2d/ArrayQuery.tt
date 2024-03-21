@@ -6,7 +6,6 @@
 <#@ include file="..\CommonT4.tt" #>
 using System;
 using System.Linq.Expressions;
-using Linq2d.Expressions;
 
 namespace Linq2d
 {
@@ -36,8 +35,7 @@ for(int k=1; k <= maxRes; k++)
         protected abstract <#= ReturnTuple(k, "[,]")#> GetResult();
         public <#= ReturnTuple(k, "[,]")#> <#=Plural("ToArray",k)#>()
         {
-            if (_result == null)
-                _result = GetResult();
+            _result  ??= GetResult();
             return _result<#= k>1?".Value":""#>;
         }
     }

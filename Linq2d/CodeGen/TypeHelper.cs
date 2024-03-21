@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
@@ -9,8 +8,8 @@ namespace Linq2d.CodeGen
 {
     public static class TypeHelper
     {
-        private static readonly HashSet<(Type, Type)> _covers = new HashSet<(Type, Type)>()
-        {
+        private static readonly HashSet<(Type, Type)> _covers =
+        [
             (typeof(long), typeof(int)),
             (typeof(long), typeof(uint)),
             (typeof(long), typeof(short)),
@@ -24,7 +23,7 @@ namespace Linq2d.CodeGen
             (typeof(short), typeof(byte)),
             (typeof(short), typeof(sbyte)),
             (typeof(double), typeof(float)),
-        };
+        ];
         public static bool Covers(this Type type, Type covered) => _covers.Contains((type, covered));
         internal static bool TryGetConditionalMethod(this IReadOnlyDictionary<Type, MethodInfo> conditionals, Type resultType, out MethodInfo method, out Type testType)
         {
@@ -32,12 +31,12 @@ namespace Linq2d.CodeGen
             testType = found ? method.GetParameters()[2].ParameterType : default;
             return found;
         } 
-        private static ConcurrentDictionary<Type, bool> cachedTypes = new ConcurrentDictionary<Type, bool>();
+        private static readonly ConcurrentDictionary<Type, bool> cachedTypes = new();
         public static bool IsUnmanaged(this Type t)
         {
             var result = false;
-            if (cachedTypes.ContainsKey(t))
-                return cachedTypes[t];
+            if (cachedTypes.TryGetValue(t, out bool value))
+                return value;
 
             if (t.IsPrimitive || t.IsPointer || t.IsEnum)
                 result = true;
@@ -59,7 +58,7 @@ namespace Linq2d.CodeGen
                 TypeCode.Int64 => true,
                 TypeCode.Double => true,
                 TypeCode.Single => true,
-                _ => t.GetMethod("operator -", BindingFlags.Static, new Type[] { t }) != null
+                _ => t.GetMethod("operator -", BindingFlags.Static, [t]) != null
             };
         }
 

@@ -1,31 +1,28 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
 namespace Linq2d.Expressions
 {
-    class DependencyChecker: ExpressionVisitor
+    class DependencyChecker(IEnumerable<Expression> parameters) : ExpressionVisitor
     {
         public static Expression FindInvariant(Expression expression, IEnumerable<Expression> parameters)
         {
             var dc = new DependencyChecker(parameters);
             dc.Visit(expression);
-            switch (dc._invariants.Count)
+            return dc._invariants.Count switch
             {
-                case 0: return null;
-                case 1: return dc._invariants.Single().expr;
-                default: return dc._invariants.OrderByDescending(_ => _.cost).First().expr;
-            }
+                0 => null,
+                1 => dc._invariants.Single().expr,
+                _ => dc._invariants.OrderByDescending(_ => _.cost).First().expr,
+            };
         }
 
-        private HashSet<(int cost, Expression expr)> _invariants = new HashSet<(int cost, Expression expr)>();
-        private HashSet<Expression> _parameters;
+        private readonly HashSet<(int cost, Expression expr)> _invariants = [];
+        private readonly HashSet<Expression> _parameters = new(parameters ?? throw new System.ArgumentNullException(nameof(parameters)));
         //private static CodeComparer _comparer = new CodeComparer();
         private bool _depends = false;
         private int _cost = 0;
-        public DependencyChecker(IEnumerable<Expression> parameters)
-            => _parameters = new HashSet<Expression>(parameters ?? throw new System.ArgumentNullException(nameof(parameters)));
 
         public override Expression Visit(Expression node)
         {

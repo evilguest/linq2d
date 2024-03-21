@@ -123,7 +123,7 @@ namespace Linq2d.Expressions
                     {
                         if ((int)dxConst.Value == 0)                     // result[0, ...]
                         {
-                            if (!(Arithmetic.Simplify(Expression.LessThan(node.Arguments[1], Expression.Constant(-_vectorSize)), Ranges.No) is ConstantExpression le) || (bool)le.Value != true)
+                            if (Arithmetic.Simplify(Expression.LessThan(node.Arguments[1], Expression.Constant(-_vectorSize)), Ranges.No) is not ConstantExpression le || (bool)le.Value != true)
                                 return Fail(node, $"Cannot prove that the same-row access to the {pe.Name} is vectorization-safe for step {_vectorSize}");
                         }
                     }
@@ -224,7 +224,7 @@ namespace Linq2d.Expressions
                 ? Expression.Convert(scalar, convertMethod.ReturnType, convertMethod)
                 : scalar;
 
-        private Dictionary<ParameterExpression, ParameterExpression> _variableReplacements = new();
+        private readonly Dictionary<ParameterExpression, ParameterExpression> _variableReplacements = [];
 
         protected override Expression VisitParameter(ParameterExpression node) 
             => _variableReplacements.TryGetValue(node, out var replacement) 
@@ -249,20 +249,20 @@ namespace Linq2d.Expressions
                 {
                     var ro = Visit(rue.Operand);
                     if (VectorInfo.BinaryOperations.TryGetValue((node.NodeType, lo.Type, ro.Type), out var vectorOp))
-                        return (Expression.MakeBinary(node.NodeType, lo, ConvertTo(ro, vectorOp.GetParameters()[1].ParameterType), false, vectorOp));
+                        return Expression.MakeBinary(node.NodeType, lo, ConvertTo(ro, vectorOp.GetParameters()[1].ParameterType), false, vectorOp);
                     if (!IsVector(ro.Type))
                         ro = ConvertToVector(ro);
                     if (VectorInfo.BinaryOperations.TryGetValue((node.NodeType, lo.Type, ro.Type), out var vectorOp2))
-                        return (Expression.MakeBinary(node.NodeType, lo, ConvertTo(ro, vectorOp.GetParameters()[1].ParameterType), false, vectorOp2));
+                        return Expression.MakeBinary(node.NodeType, lo, ConvertTo(ro, vectorOp2.GetParameters()[1].ParameterType), false, vectorOp2);
                 }
                 {
                     var right = Visit(node.Right);
                     if (VectorInfo.BinaryOperations.TryGetValue((node.NodeType, lo.Type, right.Type), out var vectorOp))
-                        return (Expression.MakeBinary(node.NodeType, lo, ConvertTo(right, vectorOp.GetParameters()[1].ParameterType), false, vectorOp));
+                        return Expression.MakeBinary(node.NodeType, lo, ConvertTo(right, vectorOp.GetParameters()[1].ParameterType), false, vectorOp);
                     if (!IsVector(right.Type))
                         right = ConvertToVector(right);
                     if (VectorInfo.BinaryOperations.TryGetValue((node.NodeType, lo.Type, right.Type), out var vectorOp2))
-                        return (Expression.MakeBinary(node.NodeType, lo, ConvertTo(right, vectorOp.GetParameters()[1].ParameterType), false, vectorOp2));
+                        return Expression.MakeBinary(node.NodeType, lo, ConvertTo(right, vectorOp2.GetParameters()[1].ParameterType), false, vectorOp2);
                 }
             }
             {
@@ -271,15 +271,15 @@ namespace Linq2d.Expressions
                     var ro = Visit(rue.Operand);
                     var left = Visit(node.Left);
                     if (VectorInfo.BinaryOperations.TryGetValue((node.NodeType, left.Type, ro.Type), out var vectorOp))
-                        return (Expression.MakeBinary(node.NodeType, left, ConvertTo(ro, vectorOp.GetParameters()[1].ParameterType), false, vectorOp));
+                        return Expression.MakeBinary(node.NodeType, left, ConvertTo(ro, vectorOp.GetParameters()[1].ParameterType), false, vectorOp);
                     if (!IsVector(left.Type))
                         left = ConvertToVector(left);
                     if (VectorInfo.BinaryOperations.TryGetValue((node.NodeType, left.Type, ro.Type), out var vectorOp2))
-                        return (Expression.MakeBinary(node.NodeType, left, ConvertTo(ro, vectorOp.GetParameters()[1].ParameterType), false, vectorOp2));
+                        return Expression.MakeBinary(node.NodeType, left, ConvertTo(ro, vectorOp2.GetParameters()[1].ParameterType), false, vectorOp2);
                     if(!IsVector(ro.Type))
                         ro  = ConvertToVector(ro);
                     if (VectorInfo.BinaryOperations.TryGetValue((node.NodeType, left.Type, ro.Type), out var vectorOp3))
-                        return (Expression.MakeBinary(node.NodeType, left, ConvertTo(ro, vectorOp.GetParameters()[1].ParameterType), false, vectorOp3));
+                        return Expression.MakeBinary(node.NodeType, left, ConvertTo(ro, vectorOp.GetParameters()[1].ParameterType), false, vectorOp3);
                 }
             }
             _success = true; // reset success so we don't fail immediately

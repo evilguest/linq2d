@@ -1,5 +1,4 @@
 ﻿using Linq2d.CodeGen.Fake;
-using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using Base = System.Runtime.Intrinsics.X86.Avx512BW;

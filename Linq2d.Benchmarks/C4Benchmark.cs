@@ -1,7 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Linq2d.Tests;
 using Linq2d.Tests.Vectorization;
-using Mono.Linq.Expressions;
 using System;
 
 namespace Linq2d.Benchmarks
@@ -97,7 +96,7 @@ namespace Linq2d.Benchmarks
         [Benchmark(Baseline=true)]
         public unsafe int[,] UnsafeC4()
         {
-            return Tests.SimpleFilters.C4NNUnsafeScalar(_data);
+            return SimpleFilters.C4NNUnsafeScalar(_data);
         }
         [Benchmark]
         public int[,] LinqC4()
