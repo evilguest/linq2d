@@ -12,20 +12,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@main
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@main
       with:
         dotnet-version: '8.0.x'
         dotnet-quality: 'ga'
     - name: Setup NASM
-      uses: ilammy/setup-nasm@v1
+      uses: ilammy/setup-nasm@main
     - name: Perform the Debug Build
       run: dotnet build -c Debug
     - name: Test
       run: dotnet test --verbosity normal /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
     - name: Publish coverage report to coveralls.io
-      uses: coverallsapp/github-action@v2
+      uses: coverallsapp/github-action@main
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         files: ./Linq2d.Tests/TestResults/coverage.info ./Linq2d.Tests.Vectorization/TestResults/coverage.info ./ImageHelpers.Tests/TestResults/coverage.info
@@ -38,7 +38,7 @@ jobs:
     - name: Check benchmark results
       run: ls ./Linq2d.Benchmarks/BenchmarkDotNet.Artifacts/results/*.csv
     - name: Update benchmark results 
-      uses: EndBug/add-and-commit@v9
+      uses: EndBug/add-and-commit@main
       with:
         message: 'Updating the benchmark results'
         add: './Linq2d.Benchmarks/BenchmarkDotNet.Artifacts/results/*.csv'
